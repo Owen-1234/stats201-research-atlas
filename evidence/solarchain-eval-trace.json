@@ -1,0 +1,851 @@
+{
+  "source": {
+    "run": 20260512,
+    "policy": "ppo",
+    "setting": "llmNoPhysics",
+    "episode": 6,
+    "highlight": 15
+  },
+  "steps": [
+    {
+      "step": 0,
+      "hour": 0,
+      "audited": true,
+      "decision": "revise",
+      "modified": true,
+      "delta": 0.6520000100135803,
+      "proposed": {
+        "reward_ratio": 0.049000002443790436,
+        "liquidity_ratio": 0.9309999942779541,
+        "burn_rate": 0.0
+      },
+      "executed": {
+        "reward_ratio": 0.15000000596046448,
+        "liquidity_ratio": 0.4000000059604645,
+        "burn_rate": 0.019999999552965164
+      },
+      "bounds": {
+        "reward_ratio": [
+          0.05,
+          0.5
+        ],
+        "liquidity_ratio": [
+          0.2,
+          0.4
+        ],
+        "burn_rate": [
+          0.0,
+          0.05
+        ]
+      },
+      "reason": "Action jitter (0.57) exceeds the audit trigger (0.15). The proposed action makes abrupt, large reductions in reward_ratio and liquidity_ratio relative to the previous action, creating fairness and stability risks. While the proposed values are within the plan bounds, the auditor revises conservatively to reduce abrupt change: keep liquidity at the plan upper bound (0.4) but moderate the reward cut (raise reward_ratio from 0.05 to 0.15) and retain previous burn_rate (0.02). This stays within planner bounds and reduces destabilizing jitter while respecting conservative governance intent.",
+      "rawRisk": 0.08,
+      "riskTrigger": 0.12
+    },
+    {
+      "step": 1,
+      "hour": 1,
+      "audited": false,
+      "decision": "not_called",
+      "modified": true,
+      "delta": 0.5320000052452087,
+      "proposed": {
+        "reward_ratio": 0.049000002443790436,
+        "liquidity_ratio": 0.9309999942779541,
+        "burn_rate": 0.0
+      },
+      "executed": {
+        "reward_ratio": 0.05000000074505806,
+        "liquidity_ratio": 0.4000000059604645,
+        "burn_rate": 0.0
+      },
+      "bounds": {
+        "reward_ratio": [
+          0.05,
+          0.5
+        ],
+        "liquidity_ratio": [
+          0.2,
+          0.4
+        ],
+        "burn_rate": [
+          0.0,
+          0.05
+        ]
+      },
+      "reason": "Audit trigger not reached.",
+      "rawRisk": 0.02,
+      "riskTrigger": 0.12
+    },
+    {
+      "step": 2,
+      "hour": 2,
+      "audited": false,
+      "decision": "not_called",
+      "modified": true,
+      "delta": 0.5320000052452087,
+      "proposed": {
+        "reward_ratio": 0.049000002443790436,
+        "liquidity_ratio": 0.9309999942779541,
+        "burn_rate": 0.0
+      },
+      "executed": {
+        "reward_ratio": 0.05000000074505806,
+        "liquidity_ratio": 0.4000000059604645,
+        "burn_rate": 0.0
+      },
+      "bounds": {
+        "reward_ratio": [
+          0.05,
+          0.5
+        ],
+        "liquidity_ratio": [
+          0.2,
+          0.4
+        ],
+        "burn_rate": [
+          0.0,
+          0.05
+        ]
+      },
+      "reason": "Audit trigger not reached.",
+      "rawRisk": 0.02,
+      "riskTrigger": 0.12
+    },
+    {
+      "step": 3,
+      "hour": 3,
+      "audited": false,
+      "decision": "not_called",
+      "modified": true,
+      "delta": 0.5320000052452087,
+      "proposed": {
+        "reward_ratio": 0.049000002443790436,
+        "liquidity_ratio": 0.9309999942779541,
+        "burn_rate": 0.0
+      },
+      "executed": {
+        "reward_ratio": 0.05000000074505806,
+        "liquidity_ratio": 0.4000000059604645,
+        "burn_rate": 0.0
+      },
+      "bounds": {
+        "reward_ratio": [
+          0.05,
+          0.5
+        ],
+        "liquidity_ratio": [
+          0.2,
+          0.4
+        ],
+        "burn_rate": [
+          0.0,
+          0.05
+        ]
+      },
+      "reason": "Audit trigger not reached.",
+      "rawRisk": 0.06,
+      "riskTrigger": 0.12
+    },
+    {
+      "step": 4,
+      "hour": 4,
+      "audited": false,
+      "decision": "not_called",
+      "modified": true,
+      "delta": 0.5320000052452087,
+      "proposed": {
+        "reward_ratio": 0.049000002443790436,
+        "liquidity_ratio": 0.9309999942779541,
+        "burn_rate": 0.0
+      },
+      "executed": {
+        "reward_ratio": 0.05000000074505806,
+        "liquidity_ratio": 0.4000000059604645,
+        "burn_rate": 0.0
+      },
+      "bounds": {
+        "reward_ratio": [
+          0.05,
+          0.5
+        ],
+        "liquidity_ratio": [
+          0.2,
+          0.4
+        ],
+        "burn_rate": [
+          0.0,
+          0.05
+        ]
+      },
+      "reason": "Audit trigger not reached.",
+      "rawRisk": 0.02,
+      "riskTrigger": 0.12
+    },
+    {
+      "step": 5,
+      "hour": 5,
+      "audited": false,
+      "decision": "not_called",
+      "modified": true,
+      "delta": 0.5320000052452087,
+      "proposed": {
+        "reward_ratio": 0.049000002443790436,
+        "liquidity_ratio": 0.9309999942779541,
+        "burn_rate": 0.0
+      },
+      "executed": {
+        "reward_ratio": 0.05000000074505806,
+        "liquidity_ratio": 0.4000000059604645,
+        "burn_rate": 0.0
+      },
+      "bounds": {
+        "reward_ratio": [
+          0.05,
+          0.5
+        ],
+        "liquidity_ratio": [
+          0.2,
+          0.4
+        ],
+        "burn_rate": [
+          0.0,
+          0.05
+        ]
+      },
+      "reason": "Audit trigger not reached.",
+      "rawRisk": 0.1,
+      "riskTrigger": 0.12
+    },
+    {
+      "step": 6,
+      "hour": 6,
+      "audited": false,
+      "decision": "not_called",
+      "modified": true,
+      "delta": 0.5320000052452087,
+      "proposed": {
+        "reward_ratio": 0.049000002443790436,
+        "liquidity_ratio": 0.9309999942779541,
+        "burn_rate": 0.0
+      },
+      "executed": {
+        "reward_ratio": 0.05000000074505806,
+        "liquidity_ratio": 0.4000000059604645,
+        "burn_rate": 0.0
+      },
+      "bounds": {
+        "reward_ratio": [
+          0.05,
+          0.5
+        ],
+        "liquidity_ratio": [
+          0.2,
+          0.4
+        ],
+        "burn_rate": [
+          0.0,
+          0.05
+        ]
+      },
+      "reason": "Audit trigger not reached.",
+      "rawRisk": 0.1,
+      "riskTrigger": 0.12
+    },
+    {
+      "step": 7,
+      "hour": 7,
+      "audited": false,
+      "decision": "not_called",
+      "modified": true,
+      "delta": 0.5656551122665405,
+      "proposed": {
+        "reward_ratio": 0.049000002443790436,
+        "liquidity_ratio": 0.9309999942779541,
+        "burn_rate": 0.08365508168935776
+      },
+      "executed": {
+        "reward_ratio": 0.05000000074505806,
+        "liquidity_ratio": 0.4000000059604645,
+        "burn_rate": 0.05000000074505806
+      },
+      "bounds": {
+        "reward_ratio": [
+          0.05,
+          0.5
+        ],
+        "liquidity_ratio": [
+          0.2,
+          0.4
+        ],
+        "burn_rate": [
+          0.0,
+          0.05
+        ]
+      },
+      "reason": "Audit trigger not reached.",
+      "rawRisk": 0.08,
+      "riskTrigger": 0.12
+    },
+    {
+      "step": 8,
+      "hour": 8,
+      "audited": true,
+      "decision": "revise",
+      "modified": true,
+      "delta": 0.7070000171661377,
+      "proposed": {
+        "reward_ratio": 0.049000002443790436,
+        "liquidity_ratio": 0.9309999942779541,
+        "burn_rate": 0.20000000298023224
+      },
+      "executed": {
+        "reward_ratio": 0.07500000298023224,
+        "liquidity_ratio": 0.4000000059604645,
+        "burn_rate": 0.05000000074505806
+      },
+      "bounds": {
+        "reward_ratio": [
+          0.05,
+          0.5
+        ],
+        "liquidity_ratio": [
+          0.2,
+          0.4
+        ],
+        "burn_rate": [
+          0.0,
+          0.05
+        ]
+      },
+      "reason": "Audit forced: observed violation_rate (0.18) exceeds audit threshold (0.12). The proposed action left parameters unchanged; to address elevated physics violations conservatively, increase reward_ratio modestly to 0.075 (within [0.05,0.5]) to incentivize better compliance. Keep liquidity_ratio at 0.4 and burn_rate at 0.05 to maintain market stability and remain within the plan's conservative bounds.",
+      "rawRisk": 0.18,
+      "riskTrigger": 0.12
+    },
+    {
+      "step": 9,
+      "hour": 9,
+      "audited": false,
+      "decision": "not_called",
+      "modified": true,
+      "delta": 0.6820000410079956,
+      "proposed": {
+        "reward_ratio": 0.049000002443790436,
+        "liquidity_ratio": 0.9309999942779541,
+        "burn_rate": 0.20000000298023224
+      },
+      "executed": {
+        "reward_ratio": 0.05000000074505806,
+        "liquidity_ratio": 0.4000000059604645,
+        "burn_rate": 0.05000000074505806
+      },
+      "bounds": {
+        "reward_ratio": [
+          0.05,
+          0.5
+        ],
+        "liquidity_ratio": [
+          0.2,
+          0.4
+        ],
+        "burn_rate": [
+          0.0,
+          0.05
+        ]
+      },
+      "reason": "Audit trigger not reached.",
+      "rawRisk": 0.04,
+      "riskTrigger": 0.12
+    },
+    {
+      "step": 10,
+      "hour": 10,
+      "audited": false,
+      "decision": "not_called",
+      "modified": true,
+      "delta": 0.6820000410079956,
+      "proposed": {
+        "reward_ratio": 0.049000002443790436,
+        "liquidity_ratio": 0.9309999942779541,
+        "burn_rate": 0.20000000298023224
+      },
+      "executed": {
+        "reward_ratio": 0.05000000074505806,
+        "liquidity_ratio": 0.4000000059604645,
+        "burn_rate": 0.05000000074505806
+      },
+      "bounds": {
+        "reward_ratio": [
+          0.05,
+          0.5
+        ],
+        "liquidity_ratio": [
+          0.2,
+          0.4
+        ],
+        "burn_rate": [
+          0.0,
+          0.05
+        ]
+      },
+      "reason": "Audit trigger not reached.",
+      "rawRisk": 0.08,
+      "riskTrigger": 0.12
+    },
+    {
+      "step": 11,
+      "hour": 11,
+      "audited": false,
+      "decision": "not_called",
+      "modified": true,
+      "delta": 0.6820000410079956,
+      "proposed": {
+        "reward_ratio": 0.049000002443790436,
+        "liquidity_ratio": 0.9309999942779541,
+        "burn_rate": 0.20000000298023224
+      },
+      "executed": {
+        "reward_ratio": 0.05000000074505806,
+        "liquidity_ratio": 0.4000000059604645,
+        "burn_rate": 0.05000000074505806
+      },
+      "bounds": {
+        "reward_ratio": [
+          0.05,
+          0.5
+        ],
+        "liquidity_ratio": [
+          0.2,
+          0.4
+        ],
+        "burn_rate": [
+          0.0,
+          0.05
+        ]
+      },
+      "reason": "Audit trigger not reached.",
+      "rawRisk": 0.06,
+      "riskTrigger": 0.12
+    },
+    {
+      "step": 12,
+      "hour": 12,
+      "audited": true,
+      "decision": "revise",
+      "modified": true,
+      "delta": 0.7319999933242798,
+      "proposed": {
+        "reward_ratio": 0.049000002443790436,
+        "liquidity_ratio": 0.9309999942779541,
+        "burn_rate": 0.20000000298023224
+      },
+      "executed": {
+        "reward_ratio": 0.05000000074505806,
+        "liquidity_ratio": 0.3499999940395355,
+        "burn_rate": 0.05000000074505806
+      },
+      "bounds": {
+        "reward_ratio": [
+          0.05,
+          0.5
+        ],
+        "liquidity_ratio": [
+          0.2,
+          0.4
+        ],
+        "burn_rate": [
+          0.0,
+          0.05
+        ]
+      },
+      "reason": "Audit forced by violation_rate (0.16 > 0.12). Proposed action is within planner bounds but leaving liquidity at the upper bound (0.4) maintains higher systemic exposure while violation rate is elevated. Conservatively reduce liquidity_ratio to 0.35 to lower potential artificial liquidity/unsafe-backed exposure, keep reward_ratio at the floor and burn_rate at the configured max to maintain downward pressure on supply. All values remain inside the plan's action_bounds.",
+      "rawRisk": 0.16,
+      "riskTrigger": 0.12
+    },
+    {
+      "step": 13,
+      "hour": 13,
+      "audited": false,
+      "decision": "not_called",
+      "modified": true,
+      "delta": 0.6820000410079956,
+      "proposed": {
+        "reward_ratio": 0.049000002443790436,
+        "liquidity_ratio": 0.9309999942779541,
+        "burn_rate": 0.20000000298023224
+      },
+      "executed": {
+        "reward_ratio": 0.05000000074505806,
+        "liquidity_ratio": 0.4000000059604645,
+        "burn_rate": 0.05000000074505806
+      },
+      "bounds": {
+        "reward_ratio": [
+          0.05,
+          0.5
+        ],
+        "liquidity_ratio": [
+          0.2,
+          0.4
+        ],
+        "burn_rate": [
+          0.0,
+          0.05
+        ]
+      },
+      "reason": "Audit trigger not reached.",
+      "rawRisk": 0.04,
+      "riskTrigger": 0.12
+    },
+    {
+      "step": 14,
+      "hour": 14,
+      "audited": false,
+      "decision": "not_called",
+      "modified": true,
+      "delta": 0.6820000410079956,
+      "proposed": {
+        "reward_ratio": 0.049000002443790436,
+        "liquidity_ratio": 0.9309999942779541,
+        "burn_rate": 0.20000000298023224
+      },
+      "executed": {
+        "reward_ratio": 0.05000000074505806,
+        "liquidity_ratio": 0.4000000059604645,
+        "burn_rate": 0.05000000074505806
+      },
+      "bounds": {
+        "reward_ratio": [
+          0.05,
+          0.5
+        ],
+        "liquidity_ratio": [
+          0.2,
+          0.4
+        ],
+        "burn_rate": [
+          0.0,
+          0.05
+        ]
+      },
+      "reason": "Audit trigger not reached.",
+      "rawRisk": 0.02,
+      "riskTrigger": 0.12
+    },
+    {
+      "step": 15,
+      "hour": 15,
+      "audited": true,
+      "decision": "revise",
+      "modified": true,
+      "delta": 0.9319999814033508,
+      "proposed": {
+        "reward_ratio": 0.049000002443790436,
+        "liquidity_ratio": 0.9309999942779541,
+        "burn_rate": 0.20000000298023224
+      },
+      "executed": {
+        "reward_ratio": 0.05000000074505806,
+        "liquidity_ratio": 0.20000000298023224,
+        "burn_rate": 0.0
+      },
+      "bounds": {
+        "reward_ratio": [
+          0.05,
+          0.5
+        ],
+        "liquidity_ratio": [
+          0.2,
+          0.4
+        ],
+        "burn_rate": [
+          0.0,
+          0.05
+        ]
+      },
+      "reason": "Observation violation_rate (0.14) exceeds the planner audit trigger (0.12). Conservative, event-triggered policy requires tightening allocations to limit exposure while keeping reward at the planner minimum. Liquidity and burn were moved to their lower bounds within the plan to reduce potential market-side impacts during an elevated violation state. All values remain inside the plan action_bounds.",
+      "rawRisk": 0.14,
+      "riskTrigger": 0.12
+    },
+    {
+      "step": 16,
+      "hour": 16,
+      "audited": false,
+      "decision": "not_called",
+      "modified": true,
+      "delta": 0.6820000410079956,
+      "proposed": {
+        "reward_ratio": 0.049000002443790436,
+        "liquidity_ratio": 0.9309999942779541,
+        "burn_rate": 0.20000000298023224
+      },
+      "executed": {
+        "reward_ratio": 0.05000000074505806,
+        "liquidity_ratio": 0.4000000059604645,
+        "burn_rate": 0.05000000074505806
+      },
+      "bounds": {
+        "reward_ratio": [
+          0.05,
+          0.5
+        ],
+        "liquidity_ratio": [
+          0.2,
+          0.4
+        ],
+        "burn_rate": [
+          0.0,
+          0.05
+        ]
+      },
+      "reason": "Audit cooldown active (1 steps).",
+      "rawRisk": 0.06,
+      "riskTrigger": 0.12
+    },
+    {
+      "step": 17,
+      "hour": 17,
+      "audited": false,
+      "decision": "not_called",
+      "modified": true,
+      "delta": 0.6820000410079956,
+      "proposed": {
+        "reward_ratio": 0.049000002443790436,
+        "liquidity_ratio": 0.9309999942779541,
+        "burn_rate": 0.20000000298023224
+      },
+      "executed": {
+        "reward_ratio": 0.05000000074505806,
+        "liquidity_ratio": 0.4000000059604645,
+        "burn_rate": 0.05000000074505806
+      },
+      "bounds": {
+        "reward_ratio": [
+          0.05,
+          0.5
+        ],
+        "liquidity_ratio": [
+          0.2,
+          0.4
+        ],
+        "burn_rate": [
+          0.0,
+          0.05
+        ]
+      },
+      "reason": "Audit trigger not reached.",
+      "rawRisk": 0.1,
+      "riskTrigger": 0.12
+    },
+    {
+      "step": 18,
+      "hour": 18,
+      "audited": true,
+      "decision": "revise",
+      "modified": true,
+      "delta": 0.7120000123977661,
+      "proposed": {
+        "reward_ratio": 0.049000002443790436,
+        "liquidity_ratio": 0.9309999942779541,
+        "burn_rate": 0.20000000298023224
+      },
+      "executed": {
+        "reward_ratio": 0.07999999821186066,
+        "liquidity_ratio": 0.4000000059604645,
+        "burn_rate": 0.05000000074505806
+      },
+      "bounds": {
+        "reward_ratio": [
+          0.05,
+          0.5
+        ],
+        "liquidity_ratio": [
+          0.2,
+          0.4
+        ],
+        "burn_rate": [
+          0.0,
+          0.05
+        ]
+      },
+      "reason": "Audit triggered: observed violation_rate (0.16) exceeds audit threshold (0.12). To address physics non-compliance while staying within planner action_bounds, increase reward_ratio modestly from 0.05 to 0.08 to strengthen incentives for correct supply behavior. Keep liquidity_ratio and burn_rate at their current (bounded) settings to avoid introducing liquidity stress or large distribution changes. Monitor next-hour physics metrics and revert or further adjust if violation_rate does not decline.",
+      "rawRisk": 0.16,
+      "riskTrigger": 0.12
+    },
+    {
+      "step": 19,
+      "hour": 19,
+      "audited": false,
+      "decision": "not_called",
+      "modified": true,
+      "delta": 0.6820000410079956,
+      "proposed": {
+        "reward_ratio": 0.049000002443790436,
+        "liquidity_ratio": 0.9309999942779541,
+        "burn_rate": 0.20000000298023224
+      },
+      "executed": {
+        "reward_ratio": 0.05000000074505806,
+        "liquidity_ratio": 0.4000000059604645,
+        "burn_rate": 0.05000000074505806
+      },
+      "bounds": {
+        "reward_ratio": [
+          0.05,
+          0.5
+        ],
+        "liquidity_ratio": [
+          0.2,
+          0.4
+        ],
+        "burn_rate": [
+          0.0,
+          0.05
+        ]
+      },
+      "reason": "Audit trigger not reached.",
+      "rawRisk": 0.08,
+      "riskTrigger": 0.12
+    },
+    {
+      "step": 20,
+      "hour": 20,
+      "audited": false,
+      "decision": "not_called",
+      "modified": true,
+      "delta": 0.6764868497848511,
+      "proposed": {
+        "reward_ratio": 0.05000000074505806,
+        "liquidity_ratio": 0.9264868497848511,
+        "burn_rate": 0.20000000298023224
+      },
+      "executed": {
+        "reward_ratio": 0.05000000074505806,
+        "liquidity_ratio": 0.4000000059604645,
+        "burn_rate": 0.05000000074505806
+      },
+      "bounds": {
+        "reward_ratio": [
+          0.05,
+          0.5
+        ],
+        "liquidity_ratio": [
+          0.2,
+          0.4
+        ],
+        "burn_rate": [
+          0.0,
+          0.05
+        ]
+      },
+      "reason": "Audit trigger not reached.",
+      "rawRisk": 0.06,
+      "riskTrigger": 0.12
+    },
+    {
+      "step": 21,
+      "hour": 21,
+      "audited": false,
+      "decision": "not_called",
+      "modified": true,
+      "delta": 0.6802977323532104,
+      "proposed": {
+        "reward_ratio": 0.049851082265377045,
+        "liquidity_ratio": 0.9301488995552063,
+        "burn_rate": 0.20000000298023224
+      },
+      "executed": {
+        "reward_ratio": 0.05000000074505806,
+        "liquidity_ratio": 0.4000000059604645,
+        "burn_rate": 0.05000000074505806
+      },
+      "bounds": {
+        "reward_ratio": [
+          0.05,
+          0.5
+        ],
+        "liquidity_ratio": [
+          0.2,
+          0.4
+        ],
+        "burn_rate": [
+          0.0,
+          0.05
+        ]
+      },
+      "reason": "Audit trigger not reached.",
+      "rawRisk": 0.06,
+      "riskTrigger": 0.12
+    },
+    {
+      "step": 22,
+      "hour": 22,
+      "audited": false,
+      "decision": "not_called",
+      "modified": true,
+      "delta": 0.6083792448043823,
+      "proposed": {
+        "reward_ratio": 0.04960877075791359,
+        "liquidity_ratio": 0.930391252040863,
+        "burn_rate": 0.12759676575660706
+      },
+      "executed": {
+        "reward_ratio": 0.05000000074505806,
+        "liquidity_ratio": 0.4000000059604645,
+        "burn_rate": 0.05000000074505806
+      },
+      "bounds": {
+        "reward_ratio": [
+          0.05,
+          0.5
+        ],
+        "liquidity_ratio": [
+          0.2,
+          0.4
+        ],
+        "burn_rate": [
+          0.0,
+          0.05
+        ]
+      },
+      "reason": "Audit trigger not reached.",
+      "rawRisk": 0.04,
+      "riskTrigger": 0.12
+    },
+    {
+      "step": 23,
+      "hour": 23,
+      "audited": false,
+      "decision": "not_called",
+      "modified": true,
+      "delta": 0.5389296412467957,
+      "proposed": {
+        "reward_ratio": 0.04903262481093407,
+        "liquidity_ratio": 0.930967390537262,
+        "burn_rate": 0.056994881480932236
+      },
+      "executed": {
+        "reward_ratio": 0.05000000074505806,
+        "liquidity_ratio": 0.4000000059604645,
+        "burn_rate": 0.05000000074505806
+      },
+      "bounds": {
+        "reward_ratio": [
+          0.05,
+          0.5
+        ],
+        "liquidity_ratio": [
+          0.2,
+          0.4
+        ],
+        "burn_rate": [
+          0.0,
+          0.05
+        ]
+      },
+      "reason": "Audit trigger not reached.",
+      "rawRisk": 0.04,
+      "riskTrigger": 0.12
+    }
+  ]
+}

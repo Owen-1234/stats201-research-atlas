@@ -1,0 +1,9 @@
+# Local working files and review records
+.DS_Store
+__pycache__/
+*.py[cod]
+notes/*-preflight.json
+notes/validation.md
+
+# GitHub Pages publishes directly from main
+.github/workflows/pages.yml

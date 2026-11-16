@@ -1,0 +1,62 @@
+{
+  "canonicalManuscript": "Solar_RL/SolarChain_Eval_KDD_AgenticAI_Camera_Ready_arXiv_latest/evaluation.tex",
+  "records": 1620,
+  "mainRecords": 540,
+  "recordsPerPolicyAndSetting": 90,
+  "trainingRuns": [
+    20260511,
+    20260512,
+    20260513
+  ],
+  "sourceFiles": [
+    {
+      "file": "paper_final_seed_20260511/runs/main/metrics.csv",
+      "sha256": "9399ecf714995eb5e716d97b47c1f2fd0a5b3d67dcf741297108c90d368bdb77"
+    },
+    {
+      "file": "paper_final_seed_20260512/runs/main/metrics.csv",
+      "sha256": "2fb5b4fda9375a75e7c240f0697189d02a455f1b40ff63e713cd86590ad5a284"
+    },
+    {
+      "file": "paper_final_seed_20260513/runs/main/metrics.csv",
+      "sha256": "0d663b71830c4cff7f6fb0509fb569b6949bd74b954fd77b1801f07e0051eb6e"
+    },
+    {
+      "file": "paper_final_seed_20260511/runs/no_physics_penalty/metrics.csv",
+      "sha256": "60f7fac096192b2d998b04dcf73368759e584d98dc405765b16d779c44892e33"
+    },
+    {
+      "file": "paper_final_seed_20260512/runs/no_physics_penalty/metrics.csv",
+      "sha256": "04590bb33c7ca932ad718bed48519614684662115e16fd36d2946149c4ca094f"
+    },
+    {
+      "file": "paper_final_seed_20260513/runs/no_physics_penalty/metrics.csv",
+      "sha256": "c14d200df1659a9b21b9de2ec727b37ecb9bfa665902015f3e96c900fe751cef"
+    },
+    {
+      "file": "paper_final_seed_20260511/runs/agentic_llm_llm/metrics.csv",
+      "sha256": "ec967cde3a1700158ddb23b8d783148dd12f88d643c0770508b3cbb5a58dacb1"
+    },
+    {
+      "file": "paper_final_seed_20260512/runs/agentic_llm_llm/metrics.csv",
+      "sha256": "ad1403b859eca3ecc79d82608ff09c41151e5eb20795f5cc5a904b6d9a7262e6"
+    },
+    {
+      "file": "paper_final_seed_20260513/runs/agentic_llm_llm/metrics.csv",
+      "sha256": "d33aa6b5f37200cfe15a7beb9bbad154b92ae7bff3c9e3d8f91830cd80ac329c"
+    },
+    {
+      "file": "paper_final_seed_20260511/runs/agentic_llm_llm_no_physics_penalty/metrics.csv",
+      "sha256": "072c664080bfe23c1a6027364c44a306da2e1b17cc4f1532d7896867c6cc9af3"
+    },
+    {
+      "file": "paper_final_seed_20260512/runs/agentic_llm_llm_no_physics_penalty/metrics.csv",
+      "sha256": "36ea0af49f8ac3532789c7caa7c18630ce83592873b6d68ad02d43db9b051fc8"
+    },
+    {
+      "file": "paper_final_seed_20260513/runs/agentic_llm_llm_no_physics_penalty/metrics.csv",
+      "sha256": "f58401b87492c09eab33b83cfdecee2262f69ce95429a2a86e9c2342be6eaf0f"
+    }
+  ],
+  "checked": "All five main-table means and both governance regimes of artificial-liquidity ablation deltas match the paper at its displayed precision."
+}
