@@ -12,7 +12,8 @@ The presenter supplied these city/project associations: Singapore — Capital Co
 
 **Authors:** Shilin Ou, Yifan Xu, Zhenshan Zhang, Luyao Zhang, Ming-Chun Huang.
 
-- [Paper DOI](https://doi.org/10.1145/3798063.3839423)
+- [Duke Scholars paper record](https://scholars.duke.edu/publication/1828101)
+- [EIoT 2026 conference program](https://eiot-workshop.github.io/#section-program)
 - [Public repository](https://github.com/Global-Nomad-Nexus/SolarSave)
 - Local source directory: `SolarChain Camera Ready/` in the supplied SolarChain workspace.
 - Read: `Main.tex`, `Introduction.tex`, `Evaluation.tex`, plus the existing local talk script.
@@ -227,11 +228,11 @@ The original research figures retain their original pixels. The new SVG views ar
 | Study | Direct paper entry on the page | Verification source |
 | --- | --- | --- |
 | Capital Cost | [OpenReview](https://openreview.net/forum?id=ary7hTgqkx) | Official OpenReview attachment identifies the title, authors, and note ID. |
-| SolarChain | [ACM proceedings](https://dl.acm.org/doi/10.1145/3798063.3839423) | Author-maintained SolarSave README, Official publication links, and supplied camera-ready metadata. |
+| SolarChain | [Duke Scholars](https://scholars.duke.edu/publication/1828101) | University-maintained record with the matching title and five authors; EIoT program confirms the conference presentation. |
 | SolarChain-Eval | [OpenReview](https://openreview.net/forum?id=XcWTS5iVvY) | Author-maintained SolarChain-Eval README, Official publication links; the workshop lists the same title as accepted paper 25. |
 | ViRel-Budget | [ACM proceedings](https://dl.acm.org/doi/10.1145/3840750.3841450) | Presenter-supplied ACM URL and publisher-deposited Crossref title/DOI metadata. |
 
-The four links appear directly below the corresponding article titles and in the paper-detail dialogs. Their primary destinations are OpenReview or ACM. OpenReview's forum pages presented a browser-verification screen during retrieval; record identity was checked using the official attachment or author-maintained publication links. The Capital Cost public attachment and the later local rewrite are versions of the same titled study; the page's figures and analytical descriptions continue to follow the supplied local rewrite.
+The four links appear directly below the corresponding article titles and in the paper-detail dialogs. Their primary destinations are OpenReview, ACM, or Duke Scholars. OpenReview's forum pages presented a browser-verification screen during retrieval; record identity was checked using the official attachment or author-maintained publication links. The Capital Cost public attachment and the later local rewrite are versions of the same titled study; the page's figures and analytical descriptions continue to follow the supplied local rewrite.
 
 ### Two-minute pruning video
 
@@ -250,4 +251,11 @@ The page and speaking draft use direct descriptions of the methods and results. 
 
 ## Revision 8: compact links
 
-The presenter's supplied [LinkedIn profile](https://www.linkedin.com/in/shilin-ou-069284352/) replaces the opening guest-talk label. The closing directory now links directly to the four existing OpenReview/ACM records. Figure and data provenance remain in this file; the speaking draft remains in `notes/speaker-notes.md`.
+The presenter's supplied [LinkedIn profile](https://www.linkedin.com/in/shilin-ou-069284352/) replaces the opening guest-talk label. The closing directory links directly to the four paper records. Figure and data provenance remain in this file; the speaking draft remains in `notes/speaker-notes.md`.
+
+
+## SolarChain link correction · 17 November 2026
+
+The ACM DOI `10.1145/3798063.3839423` listed by the SolarSave repository returns HTTP 404 from both doi.org and the Crossref works endpoint. It has been removed from the page's active links. SolarChain now points to [Scholars@Duke](https://scholars.duke.edu/publication/1828101), whose title and five authors match the paper. That institutional record classifies the item as a preprint. The [official EIoT program](https://eiot-workshop.github.io/#section-program) separately lists the conference presentation. The paper-details dialog includes both entries.
+
+The audit replay's highlighted-step shortcut was removed. Readers can select hour 15 in the existing hourly timeline.

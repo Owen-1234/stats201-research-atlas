@@ -13,7 +13,7 @@ const papers = {
     how: 'Weather-driven PV bounds, rule-based adaptive verification, planner review, configurable reward allocation, and hash-linked settlement traces.',
     lesson: 'The monthly results favor IQR/MAD on aggregate F1. The adaptive verifier supplies contextual evidence, while the attack-category tests identify remaining failures.',
     figures: [['solarchain-architecture.png', 'Original system architecture: physics engine, planner interface, and contracts.'], ['solarchain-cities.png', 'Original five-city companion trace: weather-driven simulation with synthetic PV nodes.'], ['solarchain-physics.png', 'Reported output against the theoretical physical maximum.']],
-    links: [['ACM proceedings', 'https://dl.acm.org/doi/10.1145/3798063.3839423'], ['Code & artifacts', 'https://github.com/Global-Nomad-Nexus/SolarSave']],
+    links: [['Duke Scholars', 'https://scholars.duke.edu/publication/1828101'], ['Conference program', 'https://eiot-workshop.github.io/#section-program'], ['Code & artifacts', 'https://github.com/Global-Nomad-Nexus/SolarSave']],
     note: 'The benchmark uses historical city-level weather, physics-modeled bounds, and synthetic nodes, demand, trades, and scripted attacks. F1 results describe the fixed monthly benchmark. The settlement trace preserves the accepted reports and the decisions made from them.'
   },
   eval: {

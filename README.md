@@ -16,8 +16,8 @@ Open http://127.0.0.1:4173. The map, figures, and classroom interactions are loc
 
 ## Classroom controls
 
-- Click a city or its full paper title to jump directly to the corresponding study. Each study ends with **Return to the Research Atlas** and a link to the next stop. The four paper links at the end open the corresponding OpenReview or ACM record directly.
-- Each paper title has a direct OpenReview or ACM proceedings link. Click a research figure for a full-resolution view; Escape closes the dialog.
+- Click a city or its full paper title to jump directly to the corresponding study. Each study ends with **Return to the Research Atlas** and a link to the next stop. The four paper links at the end open the corresponding OpenReview, ACM, or Duke Scholars record directly.
+- Each paper title has a direct link to its OpenReview, ACM, or Duke Scholars record. Click a research figure for a full-resolution view; Escape closes the dialog.
 - **Present** or **P** opens chapter navigation and an elapsed timer. Arrow keys or Page Up/Down move between chapters. The timer starts explicitly; **Notes** shows the current chapter prompt.
 - The financing studio compares 4%, 8%, 12%, and a custom financing case. Adjust investment and project life, or select a rate/lifetime cell in the cost matrix.
 - The Shanghai map uses local OpenStreetMap geography. Choose Solar array or Factory, set capacity in the side panel, then click a point on land. An asset appears after a short construction delay and keeps reporting at that coordinate.
@@ -27,7 +27,7 @@ Open http://127.0.0.1:4173. The map, figures, and classroom interactions are loc
 - Run a two-step battery episode to compare the discounted returns of all three noon actions.
 - SolarChain-Eval: switch between the policy landscape and rollout box plots; choose an outcome, toggle recorded episodes or ±1 SD, and select a policy or individual rollout. Policy selections also update the main results table.
 - The matched experiment view compares removal of the physics penalty with addition of the Planner/Auditor. Choose an outcome and policy, then inspect the paired-change histogram and four-condition matrix.
-- Replay a recorded 24-hour PPO episode, select an hour, or return to the paper’s highlighted hour 15. The allocation plane and three action tracks update together.
+- Replay a recorded 24-hour PPO episode, select an hour, or choose hour 15 in the timeline. The allocation plane and three action tracks update together.
 - The cost illustration compares proposed and executed placement, with a capacity marker.
 - Hover or focus a ViRel method to highlight it across both charts and its reliability summary. The allocation and policy explorers retain the reported paper values.
 

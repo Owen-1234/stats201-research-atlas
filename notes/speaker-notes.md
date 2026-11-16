@@ -138,7 +138,7 @@ The policy is trained first and stays frozen during this evaluation. A Planner b
 
 ### Following one action · about two minutes
 
-**Use Inspect an audit record. Select hour 1, then Paper’s highlighted step. Start and pause Replay 24 hours briefly.**
+**Use Inspect an audit record. Select hour 1, then hour 15 in the timeline. Start and pause Replay 24 hours briefly.**
 
 This is PPO episode six from the May twelve training run, without the physics penalty. Some hours pass through the Planner alone; ochre marks identify calls to the Auditor.
 
