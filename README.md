@@ -18,7 +18,6 @@ Open http://127.0.0.1:4173. The map, figures, and classroom interactions are loc
 
 - Click a city or its full paper title to jump directly to the corresponding study. Each study ends with **Return to the Research Atlas** and a link to the next stop. The four paper links at the end open the corresponding OpenReview, ACM, or Duke Scholars record directly.
 - Each paper title has a direct link to its OpenReview, ACM, or Duke Scholars record. Click a research figure for a full-resolution view; Escape closes the dialog.
-- **Present** or **P** opens chapter navigation and an elapsed timer. Arrow keys or Page Up/Down move between chapters. The timer starts explicitly; **Notes** shows the current chapter prompt.
 - The financing studio compares 4%, 8%, 12%, and a custom financing case. Adjust investment and project life, or select a rate/lifetime cell in the cost matrix.
 - The Shanghai map uses local OpenStreetMap geography. Choose Solar array or Factory, set capacity in the side panel, then click a point on land. An asset appears after a short construction delay and keeps reporting at that coordinate.
 - Inspect a marker or select its device name to see readings. The map supports dragging and zooming; Remove deletes a chosen asset, and Reset restores the demonstration.

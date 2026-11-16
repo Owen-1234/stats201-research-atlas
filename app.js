@@ -242,32 +242,19 @@ classroomVideos.forEach(video=>{
   $(`#reset-${video.key}-video`).addEventListener('click',()=>resetClassroomVideo(video));
 });
 
-const stages=$$('[data-stage]');
-const notesByStage={
-  top: 'Introduce Between Data and Decisions as the title of this Research Atlas. The course theme is how evidence, objectives, and resource choices enter a learning system.',
-  journey: '00–02 min. Follow the route Singapore, Shanghai, Jeju, then Rio. Each city is a direct link to the study. Full article titles are printed below the map; every study has a return link.',
-  capital: '02–05 min. Compare the 4%, 8%, and 12% financing cases, then click a lifetime/rate cell in the cost matrix. The calculation is a teaching scenario. Show the original forecasting workflow and distinguish prediction from causality.',
-  verify: '05–11 min. Use the real Shanghai map to place a solar array and a factory, inspect a device, then send one inflated report. Follow its physics check and the change in verified supply. Compare the paper’s 20/80 and 50/50 allocation results afterwards.',
-  learn: '11–22 min overall. Introduce SolarChain-Eval as the next study, then use the RL primer before reading the benchmark results.',
-  'rl-basics': '11–16 min. Play the complete 2½-minute Udacity introduction. Name state, action, policy, and reward. Run one battery episode to illustrate delayed return.',
-  benchmark: '16–22 min. Explain the actual state, actions, and reward. Use the rollout landscape, compare a paired experiment, then inspect the recorded action at hour 15; algorithm details can stay optional.',
-  'pruning-basics': '22–24 min. Play Mısra Turp’s complete two-minute pruning lesson. Follow the dense-to-sparse network diagram, then introduce visual tokens as the next unit of selection.',
-  'virel-study': '24–27 min. Introduce visual-token budgeting. Compare the same backend on energy change and dense avoidance. The charts use the released 630-query replication results.',
-  future: '27–28 min. Introduce Who Bears the Cost as ongoing work. Move the capacity slider and follow the executed placement into the user and institutional accounts.',
-  discussion: '28–30 min. Connect representations and evaluation choices to the people affected. Ask whose outcome would change first if a student changed one assumption.'
-};
-let presenting=false, currentStage=0, elapsed=0, timerStart=0, timerRunning=false;
-function renderStage() {$('#stage-name').textContent=stages[currentStage].dataset.stage;$('#notes-title').textContent=stages[currentStage].dataset.stage;$('#notes-text').textContent=notesByStage[stages[currentStage].id]||'';}
-function jumpStage(delta) {currentStage=Math.max(0,Math.min(stages.length-1,currentStage+delta));stages[currentStage].scrollIntoView({behavior:'instant',block:'start'});renderStage();}
-function togglePresent(force) {presenting=typeof force==='boolean'?force:!presenting;document.body.classList.toggle('presenting',presenting);$('#presenter-bar').hidden=!presenting;$('#present-toggle').setAttribute('aria-pressed',String(presenting));if(!presenting){$('#presenter-notes').hidden=true;$('#notes-toggle').setAttribute('aria-expanded','false');}renderStage();}
-$('#present-toggle').addEventListener('click',()=>togglePresent());$('#present-exit').addEventListener('click',()=>togglePresent(false));
-$('#stage-prev').addEventListener('click',()=>jumpStage(-1));$('#stage-next').addEventListener('click',()=>jumpStage(1));
-$('#notes-toggle').addEventListener('click',()=>{const show=$('#presenter-notes').hidden;$('#presenter-notes').hidden=!show;$('#notes-toggle').setAttribute('aria-expanded',String(show));});
-function renderTimer() {const total=Math.floor((elapsed+(timerRunning?performance.now()-timerStart:0))/1000);$('#talk-timer').innerHTML=`${String(Math.floor(total/60)).padStart(2,'0')}:${String(total%60).padStart(2,'0')} <small>/ 30:00</small>`;}
-$('#timer-toggle').addEventListener('click',()=>{if(timerRunning){elapsed+=performance.now()-timerStart;timerRunning=false;}else{timerStart=performance.now();timerRunning=true;}$('#timer-toggle').textContent=timerRunning?'Ⅱ':'▷';$('#timer-toggle').setAttribute('aria-label',timerRunning?'Pause talk timer':'Start talk timer');renderTimer();});
-$('#timer-reset').addEventListener('click',()=>{elapsed=0;timerStart=performance.now();renderTimer();});setInterval(()=>{if(timerRunning)renderTimer();},1000);
 let scrollScheduled=false;
-window.addEventListener('scroll',()=>{if(scrollScheduled)return;scrollScheduled=true;requestAnimationFrame(()=>{scrollScheduled=false;const cutoff=window.innerHeight*.35;let stage=0;stages.forEach((el,i)=>{if(el.getBoundingClientRect().top<=cutoff)stage=i;});const study=$$('[data-study]').find(el=>{const r=el.getBoundingClientRect();return r.top<=cutoff&&r.bottom>cutoff;});if(study&&study.dataset.study!==selectedPaper)selectPaper(study.dataset.study);if(stage!==currentStage){currentStage=stage;renderStage();}});},{passive:true});
-document.addEventListener('keydown',event=>{if(event.target.closest('input,textarea,select,[contenteditable="true"]')||event.ctrlKey||event.metaKey||event.altKey||document.querySelector('dialog[open]'))return;if(event.key.toLowerCase()==='p'){event.preventDefault();togglePresent();}if(presenting&&['ArrowRight','PageDown','ArrowLeft','PageUp'].includes(event.key)){event.preventDefault();jumpStage(['ArrowRight','PageDown'].includes(event.key)?1:-1);}if(presenting&&event.key==='Escape'){togglePresent(false);}});
+window.addEventListener('scroll',()=>{
+  if(scrollScheduled)return;
+  scrollScheduled=true;
+  requestAnimationFrame(()=>{
+    scrollScheduled=false;
+    const cutoff=window.innerHeight*.35;
+    const study=$$('[data-study]').find(el=>{
+      const r=el.getBoundingClientRect();
+      return r.top<=cutoff&&r.bottom>cutoff;
+    });
+    if(study&&study.dataset.study!==selectedPaper)selectPaper(study.dataset.study);
+  });
+},{passive:true});
 
-selectPaper('capital'); renderVirel(); renderAllocation(20); renderCost(); renderBattery(); renderStage();
+selectPaper('capital'); renderVirel(); renderAllocation(20); renderCost(); renderBattery();
