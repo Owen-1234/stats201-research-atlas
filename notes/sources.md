@@ -101,7 +101,7 @@ The local rewrite includes ACAIT 2026 framing, while the presenter associates th
 - `cost-placement.png` is copied unchanged from `docs/assets/placement.png`.
 - The repository describes proposed/executed placements, deterministic runtime repair, party-level GPU energy and reference-charge accounts, Decision Accountability Receipts, and independent verification.
 
-This site introduces the ongoing question and architecture, without reproducing submitted manuscript text, benchmark results, or model weights. Its cost slider is a separate equal-cost teaching illustration: 100 identical requests, capacity-limited user placement, remaining requests assigned to the institution, and one reference unit per request.
+This site introduces the ongoing question and architecture, without reproducing submitted manuscript text, benchmark results, or model weights. The introduction follows one illustrative request proposed for the user GPU. A single busy/ready switch shows an executed local host or an available institutional host; resource accounts follow that execution. No numerical cost or energy estimate is introduced.
 
 ## Map and technical assets
 
@@ -214,9 +214,9 @@ Violation rates and slippage are fractions in the source records and are display
 
 ### The 24-hour audit record
 
-The replay uses PPO, episode 6, from `paper_final_seed_20260512/runs/agentic_llm_llm_no_physics_penalty`. The exporter joins `agentic_logs.jsonl` to `actions.csv` by policy, episode, and step. The downloadable `evidence/solarchain-eval-trace.json` contains its 24 steps, proposed/executed actions, Planner bounds, audit-call indicators, recorded rationale, and risk context.
+The source record uses PPO, episode 6, from `paper_final_seed_20260512/runs/agentic_llm_llm_no_physics_penalty`. The exporter joins `agentic_logs.jsonl` to `actions.csv` by policy, episode, and step. The downloadable `evidence/solarchain-eval-trace.json` contains its 24 steps, proposed/executed actions, Planner bounds, audit-call indicators, recorded rationale, and risk context.
 
-Hour 15 matches the manuscript's highlighted case: reward 0.049 → 0.050, liquidity 0.931 → 0.200, and burn 0.200 → 0.000 at displayed precision. Recorded L1 action change is 0.932; raw input violation is 14% against a 12% Planner trigger. The allocation plane displays reward and liquidity shares under their 0.98 sum limit, plus the hour's actual Planner bounds. Burn has its own independent track. Playback follows the original step order and performs no model or LLM calls.
+Hour 15 matches the manuscript's highlighted case: reward 0.049 → 0.050, liquidity 0.931 → 0.200, and burn 0.200 → 0.000 at displayed precision. Recorded L1 action change is 0.932; raw input violation is 14% against a 12% Planner trigger. The compact view compares the three proposed/executed action values in 3D columns, using a common percentage scale. Tabs select the recorded Auditor intervention at hour 15 and Planner adjustment at hour 1.
 
 The original research figures retain their original pixels. The new SVG views are authored from the records described above.
 
@@ -258,7 +258,7 @@ The presenter's supplied [LinkedIn profile](https://www.linkedin.com/in/shilin-o
 
 The ACM DOI `10.1145/3798063.3839423` listed by the SolarSave repository returns HTTP 404 from both doi.org and the Crossref works endpoint. It has been removed from the page's active links. SolarChain now points to [Scholars@Duke](https://scholars.duke.edu/publication/1828101), whose title and five authors match the paper. That institutional record classifies the item as a preprint. The [official EIoT program](https://eiot-workshop.github.io/#section-program) separately lists the conference presentation. The paper-details dialog includes both entries.
 
-The audit replay's highlighted-step shortcut was removed. Readers can select hour 15 in the existing hourly timeline.
+The current audit view uses two recorded-example tabs; the full 24-hour log remains in the source download.
 
 
 ## 18 November 2026: model-based finance and benchmark transitions
@@ -272,4 +272,11 @@ The financing panel is a transparent discounted cash-flow sensitivity model. It 
 
 The market-step panel implements only the liquidity, demand and unsafe-backing transitions from [the released SolarChain-Eval environment](https://github.com/Global-Nomad-Nexus/SolarChain-Eval/blob/main/src/solarchain_eval/env.py). Its two hourly states are chosen teaching inputs, clearly labeled; no new experiment or trained policy is claimed. At alpha=.20, liquidity=.40, burn=0, opening=.10, verified=1, unsafe=.15, and demand=.70, unsafe backing is .0918367, liquidity addition .4367347, matching .5367347, artificial liquidity .0367347, and carryover zero. At liquidity=.78, carryover is .297 at the first hour and .059 at the second (verified=.35, unsafe=.05, demand=.55). Token price, full reward and city fairness are not modeled here.
 
-The 3D cloud shows the original recorded episodes by default. The redesigned audit review reads the unchanged 24-hour released log and presents its proposal, bounds and final execution; a post-Planner intermediate action is not available and is not fabricated.
+The 3D cloud shows the original recorded episodes by default. The compact audit view reads the unchanged released log and compares proposal with final execution; the download retains all 24 steps and their metadata.
+
+
+## 18 November 2026: concise placement introduction and 3D action comparison
+
+The placement sketch was checked against the local project README, `src/ecochainai/phase4/repair.py` (endpoint-busy capacity failure and selection of a feasible action), and `src/ecochainai/phase2/accounting.py` (party-level resource accounts). The displayed busy/ready scenario selects between a local host and an available institutional host; it is a short introduction to the research question. The original architecture remains available through the figure viewer.
+
+The compact audit chart reads `trace[15]` and `trace[1]` from the unchanged evaluation evidence. Front-face heights are the recorded action values times one common scale; all six columns use 0–100%, fixed depth and explicit numeric labels. Zero remains zero height. The two tabs select an Auditor intervention and a Planner-only adjustment. The full original trace download remains available.

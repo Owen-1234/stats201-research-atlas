@@ -5,7 +5,7 @@
   const names={static:'Static',random:'Random',myopic:'Myopic',ppo:'PPO',sac:'SAC',dqn:'DQN'};
   const colors={static:'#93a5a2',random:'#b6ad94',myopic:'#8a8e96',ppo:'#426c8c',sac:'#528c7d',dqn:'#b18e53'};
   const defs={reward:{label:'Cumulative reward',unit:'',scale:1,digits:2,direction:'↑'},violation:{label:'Physics violation rate',unit:'%',scale:100,digits:2,direction:'↓'},liquidity:{label:'Artificial liquidity',unit:'MWh',scale:1,digits:4,direction:'↓'},slippage:{label:'Mean slippage',unit:'%',scale:100,digits:2,direction:'↓'},volume:{label:'Trading volume',unit:'MWh',scale:1,digits:3,direction:'↑'},jitter:{label:'Action jitter',unit:'',scale:1,digits:4,direction:'↓'}};
-  const state={policy:'ppo',learned:'ppo',view:'landscape',x:'violation',dist:'reward',showRuns:true,showSD:false,baselines:true,run:null,experiment:'physics',effectView:'columns',metric:'liquidity',physics:true,llm:false,step:15,playing:false};
+  const state={policy:'ppo',learned:'ppo',view:'landscape',x:'violation',dist:'reward',showRuns:true,showSD:false,baselines:true,run:null,experiment:'physics',effectView:'columns',metric:'liquidity',physics:true,llm:false,step:15};
   const groups=new Map();E.records.forEach((r,i)=>{r.index=i;const key=`${r.setting}:${r.policy}`;if(!groups.has(key))groups.set(key,[]);groups.get(key).push(r);});
   const group=(setting,policy)=>groups.get(`${setting}:${policy}`)||[];
   const stats=(setting,policy,key)=>M.summarize(group(setting,policy),key);
@@ -126,24 +126,26 @@
     q('#eval-condition-reading').innerHTML=`<span>${names[selected]} / ${state.physics?'PHYSICS PENALTY':'PENALTY REMOVED'} / ${state.llm?'RL + LLM':'RL'}</span><strong>${f(chosen.mean,key)}<small>${unit(key)}</small></strong><p>Mean ${defs[key].label.toLowerCase()} · ± ${f(chosen.sd,key)} SD</p>`;
     q('#eval-effect-summary').textContent=state.experiment==='physics'?`${names[selected]}: removing the physics term changes mean ${defs[key].label.toLowerCase()} by ${signed(d.delta,key)}.`:`${names[selected]}: the observed oversight effect on ${defs[key].label.toLowerCase()} is ${signed(d.delta,key)}.`;
   }
-  let replayTimer=null;
-  function pauseReplay(){if(replayTimer)clearInterval(replayTimer);replayTimer=null;state.playing=false;q('#eval-trace-play').setAttribute('aria-pressed','false');q('#eval-trace-play').textContent='▷ Replay 24 hours';}
   function renderTrace(){
-    const trace=E.trace[state.step],a=trace.proposed,b=trace.executed,bounds=trace.bounds,pct=v=>(v*100).toFixed(1),esc=s=>s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
-    q('#eval-timeline').innerHTML=E.trace.map(t=>'<button data-eval-step="'+t.step+'" class="'+(t.audited?'audited':'planner-only')+'" aria-pressed="'+(t.step===state.step)+'" aria-label="Hour '+t.hour+', '+(t.audited?'audit called':'Planner only')+', action change '+t.delta.toFixed(3)+'"><i style="height:'+(7+Math.min(t.delta,1.5)/1.5*32)+'px"></i><span>'+String(t.hour).padStart(2,'0')+'</span></button>').join('');
-    q('#eval-trace-hour').textContent=String(trace.hour).padStart(2,'0')+':00';
-    const decision=trace.audited?(trace.decision==='revise'?'Auditor revised the action':'Auditor approved the action'):'Planner bounds applied';
-    q('#eval-audit-status').innerHTML='<span class="'+(trace.audited?'called':'not-called')+'"><i></i>'+(trace.audited?'AUDIT CALLED':'PLANNER ONLY')+'</span><strong>'+decision+'</strong><p>PPO · seed 20260512 · episode 6 · hour '+trace.hour+'</p>';
-    const allocation=(action,which)=>{
-      const reserved=Math.max(0,1-action.reward_ratio-action.liquidity_ratio);
-      return '<div class="audit-allocation-bar" role="img" aria-label="'+which+': producer '+pct(action.reward_ratio)+' percent, liquidity '+pct(action.liquidity_ratio)+' percent, unallocated '+pct(reserved)+' percent"><i style="width:'+pct(action.reward_ratio)+'%" class="allocation-producer"></i><i style="width:'+pct(action.liquidity_ratio)+'%" class="allocation-liquidity"></i><i style="width:'+pct(reserved)+'%" class="allocation-reserved"></i></div><div class="audit-allocation-values"><span>Producer <b>'+pct(action.reward_ratio)+'%</b></span><span>Liquidity <b>'+pct(action.liquidity_ratio)+'%</b></span><span>Unallocated <b>'+pct(reserved)+'%</b></span></div>';
-    };
-    q('#eval-action-flow').innerHTML='<section class="audit-snapshot audit-proposed"><span>01 / POLICY PROPOSES</span><h5>A frozen PPO policy</h5>'+allocation(a,'Proposed allocation')+'<small>Burn rate: '+pct(a.burn_rate)+'%</small></section><section class="audit-governance"><span>02 / GOVERNANCE CHECK</span><h5>Planner intervals</h5><div>'+[['reward_ratio','α'],['liquidity_ratio','ℓ'],['burn_rate','b']].map(([k,l])=>'<span>'+l+' <b>'+pct(bounds[k][0])+'–'+pct(bounds[k][1])+'%</b></span>').join('')+'</div><p>'+(trace.audited?'Auditor called · '+esc(trace.decision):'No Auditor call at this hour')+'</p></section><section class="audit-snapshot audit-executed"><span>03 / ENVIRONMENT EXECUTES</span><h5>The final recorded action</h5>'+allocation(b,'Executed allocation')+'<small>Burn rate: '+pct(b.burn_rate)+'%</small></section>';
-    q('#eval-action-comparison').innerHTML=[['reward_ratio','Reward share','α'],['liquidity_ratio','Liquidity share','ℓ'],['burn_rate','Burn rate','b']].map(([key,label,symbol])=>{
-      const delta=b[key]-a[key],interval=bounds[key];
-      return '<section class="audit-action-card"><header><span>'+label+'</span><i>'+symbol+'</i></header><div class="audit-paired-values"><span>'+pct(a[key])+'<small>%</small></span><i>→</i><strong>'+pct(b[key])+'<small>%</small></strong></div><div class="audit-bar-label"><span>Proposed</span><b>'+a[key].toFixed(3)+'</b></div><div class="audit-horizontal-bar"><i style="left:'+pct(interval[0])+'%;width:'+pct(interval[1]-interval[0])+'%" class="audit-interval"></i><b style="width:'+pct(a[key])+'%" class="audit-proposal-fill"></b></div><div class="audit-bar-label"><span>Executed</span><b>'+b[key].toFixed(3)+'</b></div><div class="audit-horizontal-bar"><i style="left:'+pct(interval[0])+'%;width:'+pct(interval[1]-interval[0])+'%" class="audit-interval"></i><b style="width:'+pct(b[key])+'%" class="audit-executed-fill"></b></div><div class="audit-bar-scale"><span>0</span><span>1</span></div><footer>'+(delta>=0?'+':'−')+pct(Math.abs(delta))+' <span>percentage points</span></footer></section>';
+    const trace=E.trace[state.step],a=trace.proposed,b=trace.executed;
+    const {svg,w,h}=size('#audit-action-chart',360,300),narrow=w<500;
+    const L=narrow?34:52,R=w-16,B=h-70,H=h-116,step=(R-L)/3,bw=narrow?17:30,gap=narrow?11:18,depth=narrow?5:8,rise=depth*.55;
+    const y=v=>B-v*H,pct=v=>(v*100).toFixed(1);
+    const labels=[['reward_ratio','Reward','share'],['liquidity_ratio','Liquidity','support'],['burn_rate','Burn','rate']];
+    qa('[data-audit-step]').forEach(button=>button.setAttribute('aria-pressed',String(Number(button.dataset.auditStep)===state.step)));
+    q('#audit-example-time').textContent=String(trace.hour).padStart(2,'0')+':00';
+    const grid=[0,.5,1].map(v=>'<path d="M'+L+' '+y(v)+'H'+R+'" class="audit-3d-grid"/>'+text(L-10,y(v)+4,Math.round(v*100)+'%','text-anchor="end" class="audit-3d-tick"')).join('');
+    function column(x,value,series){
+      const yy=y(value),height=value*H,front=series==='proposed'?'url(#audit-gold-face)':'url(#audit-green-face)',top=series==='proposed'?'#ddd0ad':'#bfd2b0',side=series==='proposed'?'#a18b60':'#5c8066';
+      const faces=height>0?'<rect x="'+x+'" y="'+yy+'" width="'+bw+'" height="'+height+'" fill="'+front+'"/><path d="M'+x+' '+yy+'l'+depth+' '+(-rise)+'h'+bw+'l'+(-depth)+' '+rise+'Z" fill="'+top+'"/><path d="M'+(x+bw)+' '+yy+'l'+depth+' '+(-rise)+'v'+height+'l'+(-depth)+' '+rise+'Z" fill="'+side+'"/>':'<path d="M'+x+' '+B+'h'+bw+'l'+depth+' '+(-rise)+'" fill="none" stroke="'+side+'" opacity=".5"/>';
+      return '<g class="audit-3d-column" data-series="'+series+'" data-value="'+value+'"><ellipse cx="'+(x+bw*.6)+'" cy="'+(B+3)+'" rx="'+(bw*.85)+'" ry="4" fill="#68815a" opacity=".07"/>'+faces+text(x+bw/2+depth/3,yy-15,pct(value),'text-anchor="middle" class="audit-3d-value '+series+'"')+'</g>';
+    }
+    const groups=labels.map(([key,line1,line2],i)=>{
+      const c=L+step*(i+.5),left=c-gap/2-bw,right=c+gap/2;
+      return '<g>'+column(left,a[key],'proposed')+column(right,b[key],'executed')+text(c,B+29,line1,'text-anchor="middle" class="audit-3d-label"')+text(c,B+45,line2,'text-anchor="middle" class="audit-3d-label"')+'</g>';
     }).join('');
-    q('#eval-raw-risk').textContent=(trace.rawRisk*100).toFixed(0)+'%';q('#eval-risk-trigger').textContent=(trace.riskTrigger*100).toFixed(0)+'%';q('#eval-action-delta').textContent=trace.delta.toFixed(3);q('#eval-recorded-reason').textContent=trace.reason;
+    svg.innerHTML='<title>Hour '+trace.hour+': reward share '+pct(a.reward_ratio)+' to '+pct(b.reward_ratio)+' percent; liquidity '+pct(a.liquidity_ratio)+' to '+pct(b.liquidity_ratio)+' percent; burn '+pct(a.burn_rate)+' to '+pct(b.burn_rate)+' percent.</title><defs><linearGradient id="audit-gold-face"><stop stop-color="#b59d70"/><stop offset="1" stop-color="#d0bb8c"/></linearGradient><linearGradient id="audit-green-face"><stop stop-color="#6f9477"/><stop offset="1" stop-color="#9dbb91"/></linearGradient></defs>'+grid+groups;
+    q('#audit-simple-reading').innerHTML=trace.audited?'The Auditor reduces liquidity support from <strong>'+pct(a.liquidity_ratio)+'% to '+pct(b.liquidity_ratio)+'%</strong> and removes the burn.':'The Planner brings liquidity support to <strong>'+pct(b.liquidity_ratio)+'%</strong>. The burn rate remains at zero.';
   }
   function handleSelection(event){const run=event.target.closest('[data-eval-run]'),policy=event.target.closest('[data-eval-policy]'),experimentPolicy=event.target.closest('[data-eval-learned]');if(run){const i=Number(run.dataset.evalRun);selectPolicy(E.records[i].policy,i);}else if(policy)selectPolicy(policy.dataset.evalPolicy);else if(experimentPolicy)selectPolicy(experimentPolicy.dataset.evalLearned);}
   document.addEventListener('click',handleSelection);
@@ -160,9 +162,7 @@
   qa('[data-eval-effect-view]').forEach(b=>b.addEventListener('click',()=>{state.effectView=b.dataset.evalEffectView;renderExperiments();}));
   q('#eval-effect-metric').addEventListener('change',event=>{state.metric=event.target.value;renderExperiments();});q('#eval-context').addEventListener('change',event=>{if(state.experiment==='physics')state.llm=event.target.checked;else state.physics=event.target.checked;renderExperiments();});
   q('#eval-condition-matrix').addEventListener('click',event=>{const b=event.target.closest('[data-eval-condition]');if(!b)return;state.physics=['main','llm'].includes(b.dataset.evalCondition);state.llm=['llm','llmNoPhysics'].includes(b.dataset.evalCondition);renderExperiments();});
-  q('#eval-timeline').addEventListener('click',event=>{const b=event.target.closest('[data-eval-step]');if(b){pauseReplay();state.step=Number(b.dataset.evalStep);renderTrace();q(`#eval-timeline [data-eval-step="${state.step}"]`).focus({preventScroll:true});}});
-  q('#eval-trace-play').addEventListener('click',()=>{if(state.playing){pauseReplay();return;}state.playing=true;state.step=0;renderTrace();q('#eval-trace-play').textContent='Ⅱ Pause replay';q('#eval-trace-play').setAttribute('aria-pressed','true');replayTimer=setInterval(()=>{if(document.hidden){pauseReplay();return;}if(state.step>=23){pauseReplay();return;}state.step++;renderTrace();},700);});
-  new IntersectionObserver(entries=>{if(!entries[0].isIntersecting&&state.playing)pauseReplay();}).observe(q('#eval-replay'));
+  qa('[data-audit-step]').forEach(button=>button.addEventListener('click',()=>{state.step=Number(button.dataset.auditStep);renderTrace();}));
   let lastWidth=0;new ResizeObserver(entries=>{const width=entries[0].contentRect.width;if(Math.abs(width-lastWidth)<1)return;lastWidth=width;renderMain();renderExperiments();renderTrace();}).observe(q('#eval-landscape'));
   qa('[data-result-policy] th').forEach(th=>{const row=th.closest('[data-result-policy]'),policy=row.dataset.resultPolicy.toLowerCase();th.innerHTML=`<button data-eval-policy="${policy}" class="eval-table-policy">${names[policy]}</button>`;});
   renderMain();renderExperiments();renderTrace();

@@ -1,46 +1,6 @@
 // Classroom illustrations. Recorded benchmark values are handled by eval-lab.js.
 const q = (s) => document.querySelector(s);
 
-function renderRouting({proposed,capacity,user,repaired}) {
-  const direct = 100 - proposed, totalInstitution = 100 - user;
-  const y0 = 100, factor = 1.65;
-  const inputInstitution = 360 - direct * factor;
-  const outputInstitution = 378 - totalInstitution * factor;
-  const ribbon = (x1,a,b,x2,c,d,cls) => `<path d="M${x1} ${a}C340 ${a} 530 ${c} ${x2} ${c}V${d}C530 ${d} 340 ${b} ${x1} ${b}Z" class="${cls}"/>`;
-  q('#routing-scene').innerHTML = `<svg viewBox="0 0 880 430" role="img" aria-label="100 requests: ${proposed} proposed on user GPUs; capacity ${capacity}; ${user} execute on user GPUs, ${totalInstitution} on institutional GPUs, including ${repaired} rerouted requests.">
-    <defs><pattern id="routing-grid" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M28 0H0V28" fill="none" stroke="#b5c6b0" stroke-width=".5"/></pattern></defs><rect x="165" y="65" width="550" height="335" fill="url(#routing-grid)" opacity=".35"/>
-    <text x="158" y="33" class="routing-axis">01 / PROPOSED</text><text x="445" y="33" text-anchor="middle" class="routing-axis">02 / CAPACITY CHECK</text><text x="720" y="33" class="routing-axis">03 / EXECUTED</text>
-    ${user?ribbon(185,y0,y0+user*factor,710,82,82+user*factor,'routing-user-ribbon'):''}
-    ${repaired?ribbon(185,y0+user*factor,y0+proposed*factor,710,outputInstitution,outputInstitution+repaired*factor,'routing-repair-ribbon'):''}
-    ${direct?ribbon(185,inputInstitution,360,710,outputInstitution+repaired*factor,378,'routing-institution-ribbon'):''}
-    <path d="M445 64V398" stroke="#91aa8c" stroke-width="1.2" stroke-dasharray="4 6"/>
-    <rect x="398" y="68" width="94" height="39" rx="19" fill="#f7f9ee" stroke="#cbd9bf"/><text x="445" y="92" text-anchor="middle" class="routing-gate-label">${capacity}% capacity</text>
-    <rect x="173" y="${y0}" width="12" height="${proposed*factor}" rx="3" fill="#648d6c"/>
-    <rect x="173" y="${inputInstitution}" width="12" height="${direct*factor}" rx="3" fill="#b5bca8"/>
-    <rect x="710" y="82" width="12" height="${user*factor}" rx="3" fill="#416f54"/>
-    <rect x="710" y="${outputInstitution}" width="12" height="${totalInstitution*factor}" rx="3" fill="#b28e5c"/>
-    <text x="155" y="116" text-anchor="end" class="routing-count">${proposed}</text><text x="155" y="136" text-anchor="end" class="routing-small">user-side</text>
-    <text x="155" y="${Math.max(inputInstitution+25,312)}" text-anchor="end" class="routing-count">${direct}</text><text x="155" y="${Math.max(inputInstitution+45,332)}" text-anchor="end" class="routing-small">institution</text>
-    <text x="739" y="107" class="routing-count">${user}</text><text x="739" y="127" class="routing-small">user-side</text>
-    <text x="739" y="${Math.max(outputInstitution+25,316)}" class="routing-count">${totalInstitution}</text><text x="739" y="${Math.max(outputInstitution+45,336)}" class="routing-small">institution</text>
-    <g transform="translate(445 ${repaired ? 267 : 218})"><rect x="-81" y="-20" width="162" height="43" rx="7" fill="${repaired?'#fbf1df':'#eef4e7'}" stroke="${repaired?'#d5b78b':'#bdcfad'}"/><text text-anchor="middle" y="6" class="routing-callout">${repaired ? `${repaired} requests rerouted ↘` : 'The proposal fits ✓'}</text></g>
-    <text x="445" y="422" text-anchor="middle" class="routing-small">Ribbon thickness represents request count. Total: 100 requests.</text>
-  </svg>`;
-  q('#routing-rerouted-count').textContent = String(repaired);
-  q('#routing-request-grid').innerHTML = Array.from({length:100},(_,i)=>`<i class="${i<user?'request-local':i<proposed?'request-rerouted':'request-direct'}" aria-hidden="true"></i>`).join('');
-  q('#routing-request-grid').setAttribute('aria-label',`${user} user-side requests, ${repaired} rerouted requests, ${direct} direct institution requests`);
-  q('#routing-overflow-label').textContent = repaired ? 'CAPACITY OVERFLOW' : 'NO REPAIR NEEDED';
-  q('#routing-reroute-card').classList.toggle('has-overflow', repaired > 0);
-  document.querySelectorAll('[data-routing-preset]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.proposed===String(proposed)&&b.dataset.capacity===String(capacity))));
-}
-
-document.addEventListener('atlas:routing',e=>renderRouting(e.detail));
-document.addEventListener('click',e=>{
-  const preset=e.target.closest('[data-routing-preset]');
-  if(preset){q('#placement').value=preset.dataset.proposed;q('#capacity').value=preset.dataset.capacity;window.renderCost();}
-});
-window.renderCost();
-
 // A small, explicitly illustrative state, using the liquidity/risk equations in env.py.
 let marketHour = 0;
 function marketTransition(state, liquidityRatio, burn, risk) {
@@ -79,3 +39,23 @@ q('#market-reset').addEventListener('click',()=>{q('#market-liquidity').value=.4
 renderMarketStep();
 
 let marketLastWidth=0;new ResizeObserver(entries=>{const width=entries[0].contentRect.width;if(Math.abs(width-marketLastWidth)>1){marketLastWidth=width;renderMarketStep();}}).observe(q('#market-waterfall'));
+
+// A single-request introduction to the user's ongoing placement project.
+function placementDevice(kind) {
+  const art=kind==='institution'
+    ? '<path d="m35 128 87-35 88 37-89 34Z" fill="#dce6d3"/><path d="m71 42 52 23v78l-52-23Z" fill="#86a184"/><path d="m123 65 47-20v78l-47 20Z" fill="#5c8067"/><path d="m71 42 47-20 52 23-47 20Z" fill="#becfb0"/><g stroke="#e0e9d5" stroke-width="1.4"><path d="m81 61 32 14m-32 8 32 14m-32 8 32 14"/></g><g fill="#d9c38e"><path d="m85 61 5 2v5l-5-2Zm0 22 5 2v5l-5-2Zm0 22 5 2v5l-5-2Z"/></g><g fill="#9bb798"><path d="m135 72 22-9v5l-22 9Zm0 19 22-9v5l-22 9Zm0 19 22-9v5l-22 9Z"/></g>'
+    : '<ellipse cx="122" cy="144" rx="85" ry="15" fill="#a8bb9e" opacity=".13"/><path d="m40 25 110-13 19 82-110 12Z" fill="#4f6e5e"/><path d="m48 32 96-11 14 66-93 11Z" fill="#8ead91"/><path d="m59 106 110-12 40 29-121 18Z" fill="#c9d5bc"/><path d="m88 141 121-18v7L88 149Z" fill="#92a688"/><path d="m59 106 29 35v8l-29-36Z" fill="#a9b99c"/><g stroke="#90a588" stroke-width="1.2"><path d="m81 113 90-11m-79 19 90-12m-72 18 63-9"/></g><g fill="none" stroke="#dce8cf" stroke-width="1.5"><path d="m88 49 30-3 5 27-30 4Z"/><path d="m99 48-1-8m12 6-1-8m-8 37 1 8m12-10 1 8m-26-23-8 1m10 10-8 1m37-15 8-1m-6 12 8-1"/></g>';
+  return '<svg viewBox="0 0 240 170" aria-hidden="true">'+art+'</svg>';
+}
+function renderPlacementStory() {
+  const busy=q('#placement-busy').checked;
+  q('#placement-proposed-icon').innerHTML=placementDevice('user');
+  q('#placement-executed-icon').innerHTML=placementDevice(busy?'institution':'user');
+  q('#placement-check-state').textContent=busy?'Local GPU busy':'Local GPU ready';
+  q('#placement-executed-host').textContent=busy?'Institutional GPU':'Your GPU';
+  q('#placement-executed-account').innerHTML=busy?'Institution-side energy<br>and reference charge':'User-side energy<br>on your own device';
+  q('#placement-story-reading').textContent=busy?'The request moves to the institution. Its resource use is recorded on the institutional side.':'The request stays on your device. Its GPU energy is recorded on the user side.';
+  q('#routing-lab').dataset.host=busy?'institution':'user';
+}
+q('#placement-busy').addEventListener('change',renderPlacementStory);
+renderPlacementStory();

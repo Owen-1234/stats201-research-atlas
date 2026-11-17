@@ -26,8 +26,8 @@ Open http://127.0.0.1:4173. The map, figures, and classroom interactions are loc
 - Explore the SolarChain-Eval liquidity state transition at two consecutive hours. Change liquidity support, burn and suspicious supply; the waterfall accounts for opening liquidity, added liquidity, matched demand and the next state. The illustrative states are labeled separately from recorded benchmark results, and the equations link to env.py.
 - SolarChain-Eval: switch between the policy landscape and rollout box plots; choose an outcome, toggle recorded episodes or ±1 SD, and select a policy or individual rollout. Policy selections also update the main results table.
 - The matched experiment view compares removal of the physics penalty with addition of the Planner/Auditor. Choose an outcome and policy, then inspect the paired-change histogram and four-condition matrix.
-- Replay a recorded 24-hour PPO episode, select an hour, or choose hour 15 in the timeline. The proposal snapshot, recorded Planner intervals, final action and three paired action bars update together. No intermediate post-Planner action is inferred from the logs.
-- The cost illustration compares proposed and executed placement, using a proportional ribbon flow and a 100-request grid.
+- Compare two recorded PPO decisions using a compact 3D action chart: an Auditor intervention at 15:00 and a Planner adjustment at 01:00. Paired columns show reward, liquidity and burn on a common 0–100% scale. The full 24-hour source record remains downloadable.
+- The ongoing research illustration follows one Web AI request from its proposed host through a runtime check to its executed host. A single GPU-busy switch changes the executed device and its resource account.
 - Hover or focus a ViRel method to highlight it across both charts and its reliability summary. The allocation and policy explorers retain the reported paper values.
 
 ## Vercel and the 3D experience
@@ -50,10 +50,10 @@ The new experience includes:
 - A warm-paper and deep-green visual system, mobile layouts, keyboard-accessible selection controls, reduced-motion support, and animation that pauses outside the viewport or in a background tab.
 - A benchmark-specific liquidity ledger using the published environment transition equations, with a two-hour state carryover and an explicit artificial-liquidity measure.
 - Paired experimental results shown as zero-baseline 3D columns, focused paired-value plots, or signed changes with ±1 paired SD.
-- A request-routing ribbon diagram and 100-request grid that make the capacity repair and resulting reference charges visible.
+- A single-request placement sketch connecting runtime repair with user-side or institutional resource accounts, using one availability switch.
 - A local copy of Three.js 0.180.0 and its MIT license under `assets/vendor/three/`.
 
-`experience.css` and `experience.js` own the additional presentation and progressive loading; `interactives.css` and `teaching-scenes.js` implement the benchmark transition and request-routing illustrations; `revision.css` styles the DCF, responsive chart alignment and audit decision review; `spatial.js` owns the WebGL scenes. If WebGL is unavailable, the atlas falls back to the original flat map and the evaluation section retains its original two-dimensional visualizations.
+`experience.css` and `experience.js` own the additional presentation and progressive loading; `interactives.css` and `teaching-scenes.js` implement the benchmark transition and request-routing illustrations; `revision.css` styles the DCF and responsive chart alignment; `simple-scenes.css` styles the compact 3D action comparison and placement introduction; `spatial.js` owns the WebGL scenes. If WebGL is unavailable, the atlas falls back to the original flat map and the evaluation section retains its original two-dimensional visualizations.
 
 Automatic deployment uses the Vercel GitHub App with access to `Owen-1234/stats201-research-atlas`, the existing `stats201-research-atlas` Vercel project, and production branch `main`. The repository is connected: pushes to `main` build and publish this version; other branches receive preview deployments. Manual releases can also use the deploy command above.
 

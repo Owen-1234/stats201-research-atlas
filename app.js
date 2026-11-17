@@ -159,17 +159,6 @@ function renderAllocation(ratio) {
 }
 $$('[data-ratio]').forEach(el=>el.addEventListener('click',()=>renderAllocation(Number(el.dataset.ratio))));
 
-function renderCost() {
-  paintRanges();
-  const proposed=Number($('#placement').value), capacity=Number($('#capacity').value), user=Math.min(proposed,capacity), repaired=proposed-user;
-  $('#placement-output').textContent=`${proposed}%`; $('#capacity-output').textContent=`${capacity}%`;
-  $('#proposal-number').textContent=`${proposed} / ${100-proposed}`; $('#repair-number').textContent=`${user} / ${100-user}`;
-  $('#user-cost').textContent=String(user); $('#institution-cost').textContent=String(100-user);
-  document.dispatchEvent(new CustomEvent('atlas:routing',{detail:{proposed,capacity,user,repaired}}));
-  $('#repair-explanation').textContent=repaired?`${repaired} requests move to the institution after the capacity check. The executed split determines the accounts.`:'The proposal fits the available capacity. Proposed and executed accounts agree.';
-}
-$('#placement').addEventListener('input',renderCost); $('#capacity').addEventListener('input',renderCost);
-
 // Classroom videos load on request; opening one restores the other's cover.
 const classroomVideos=[
   {key:'rl',id:'2xATEwcRpy8',title:'Udacity: Reinforcement Learning Basics, complete video (about two and a half minutes)'},
@@ -211,4 +200,4 @@ window.addEventListener('scroll',()=>{
   });
 },{passive:true});
 
-selectPaper('capital'); renderVirel(); renderAllocation(20); renderCost();
+selectPaper('capital'); renderVirel(); renderAllocation(20);
