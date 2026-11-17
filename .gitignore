@@ -4,6 +4,15 @@ __pycache__/
 *.py[cod]
 notes/*-preflight.json
 notes/validation.md
+node_modules/
+dist/
+.vercel/
+*.log
 
 # GitHub Pages publishes directly from main
 .github/workflows/pages.yml
+.vercel
+.env*
+
+.qa/
+notes/vercel-setup-*.md

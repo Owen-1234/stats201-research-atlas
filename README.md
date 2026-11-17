@@ -30,6 +30,30 @@ Open http://127.0.0.1:4173. The map, figures, and classroom interactions are loc
 - The cost illustration compares proposed and executed placement, with a capacity marker.
 - Hover or focus a ViRel method to highlight it across both charts and its reliability summary. The allocation and policy explorers retain the reported paper values.
 
+## Vercel and the 3D experience
+
+Production: **https://stats201-research-atlas.vercel.app/**.
+
+The site is linked locally to the `stats201-research-atlas` project in the `owen1234` Vercel scope. `vercel.json` builds a static `dist/` with Node 24. No backend, API key, database, or external asset CDN is needed.
+
+```sh
+npm run dev       # http://127.0.0.1:4173
+npm run check     # anchors, local files, script syntax, original evidence
+npm run build     # produce the static dist/ directory
+vercel --prod --scope owen1234
+```
+
+The new experience includes:
+
+- A Three.js globe using the bundled land geography, four geographic study markers, raised research-route arcs, selectable cities, orbit/zoom controls, and a flat-map alternative.
+- A three-dimensional view of the original 1,620 benchmark records. Its axes are cumulative reward, physics violation rate (percent), and artificial liquidity (MWh). Axis domains are shared across all four settings. Removing the physics penalty changes the reward definition, so reward should be compared within each setting. Policy summaries, single-episode inspection, and CSV downloads retain the original recorded values.
+- A warm-paper and deep-green visual system, mobile layouts, keyboard-accessible selection controls, reduced-motion support, and animation that pauses outside the viewport or in a background tab.
+- A local copy of Three.js 0.180.0 and its MIT license under `assets/vendor/three/`.
+
+`experience.css` and `experience.js` own the additional presentation and progressive loading; `spatial.js` owns the WebGL scenes. If WebGL is unavailable, the atlas falls back to the original flat map and the evaluation section retains its original two-dimensional visualizations.
+
+Automatic deployment uses the Vercel GitHub App with access to `Owen-1234/stats201-research-atlas`, the existing `stats201-research-atlas` Vercel project, and production branch `main`. Once that Git connection is enabled, pushes to `main` build and publish this version; other branches receive preview deployments. Manual releases can also use the deploy command above.
+
 ## GitHub Pages
 
 The public site is hosted at **https://owen-1234.github.io/stats201-research-atlas/**.

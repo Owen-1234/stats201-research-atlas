@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#20394d">
+  <meta name="theme-color" content="#173d3c">
   <meta name="description" content="The Research Atlas: four studies on how machine learning represents evidence, shapes decisions, and allocates resources. A STATS 201 guest talk by Shilin Ou.">
   <title>Between Data and Decisions · The Research Atlas · STATS 201</title>
-  <link rel="canonical" href="https://owen-1234.github.io/stats201-research-atlas/">
+  <link rel="canonical" href="https://stats201-research-atlas.vercel.app/">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="lesson.css">
@@ -21,27 +21,54 @@
   <script src="assets/eval-evidence.js" defer></script>
   <script src="eval-model.js" defer></script>
   <script src="eval-lab.js" defer></script>
+  <link rel="stylesheet" href="experience.css?v=3">
+  <script type="importmap">{"imports":{"three":"./assets/vendor/three/three.module.js"}}</script>
+  <script type="module" src="experience.js?v=3"></script>
 </head>
 <body>
+  <div class="reading-progress" aria-hidden="true"><span id="reading-progress-fill"></span></div>
   <a class="skip-link" href="#journey">Skip to the research map</a>
   <header class="site-header">
-    <a class="brand" href="#top" aria-label="Shilin Ou, home"><span>Shilin Ou<span class="brand-sub">RESEARCH ATLAS</span></span></a>
-    <nav aria-label="Main navigation"><a href="#journey">The atlas</a><a href="#capital">Singapore</a><a href="#verify">Shanghai</a><a href="#learn">Jeju</a><a href="#virel">Rio</a><a href="#discussion">Conclusion</a></nav>
+    <a class="brand" href="#top" aria-label="Shilin Ou, home"><span class="brand-orbit" aria-hidden="true">◎</span><span>Shilin Ou<span class="brand-sub">THE RESEARCH ATLAS</span></span></a>
+    <nav aria-label="Main navigation"><a href="#journey">The atlas</a><a href="#capital">Singapore</a><a href="#verify">Shanghai</a><a href="#learn">Jeju</a><a href="#virel">Rio</a><a href="#discussion">Conclusion</a><a class="nav-explore" href="#journey">Explore in 3D <span aria-hidden="true">↗</span></a></nav>
   </header>
 
   <main>
     <section class="hero wrap" id="top">
       <div class="eyebrow"><span class="tiny-sun">✳</span> STATS 201 <span class="eyebrow-rule"></span> INTRODUCTION TO MACHINE LEARNING IN SOCIAL SCIENCE</div>
-      <div class="atlas-folio">01 / THE RESEARCH ATLAS</div>
+      <div class="atlas-folio"><span>FIELD NOTES ON MACHINE LEARNING</span><span>VOL. 01 / 2026</span></div>
       <div class="hero-row"><h1>Between data<br><em>and decisions.</em></h1><div class="hero-side"><span class="issue-label">MACHINE LEARNING IN SOCIAL SCIENCE</span><p>A model begins with a choice about what to observe. Its consequences depend on what we choose to do with what it learns.</p></div></div>
-      <div class="hero-bottom"><p>Four studies on energy, evidence, and the decisions<br>we ask learning systems to make.</p><div class="byline"><strong>Shilin Ou</strong><span>Duke Kunshan University <span class="dot">·</span> <a class="linkedin-profile" href="https://www.linkedin.com/in/shilin-ou-069284352/" target="_blank" rel="noopener" aria-label="Shilin Ou on LinkedIn">LinkedIn ↗</a></span></div></div>
+      <div class="hero-bottom"><div class="hero-intro"><p>Four studies. Four places. A closer look at the choices<br>between what a model learns and what the world needs.</p><a class="hero-cta" href="#journey">Enter the research atlas <span aria-hidden="true">↗</span></a></div><div class="byline"><strong>Shilin Ou</strong><span>Duke Kunshan University <span class="dot">·</span> <a class="linkedin-profile" href="https://www.linkedin.com/in/shilin-ou-069284352/" target="_blank" rel="noopener" aria-label="Shilin Ou on LinkedIn">LinkedIn ↗</a></span></div></div>
     </section>
 
     <section class="atlas-section wrap" id="journey">
-      <div class="section-topline"><span>CONTENTS / FOUR RESEARCH STOPS</span><span>SELECT A CITY TO READ THE STUDY <span aria-hidden="true">↙</span></span></div>
+      <div class="section-topline"><span><span class="atlas-index">01</span> A WORLD OF CONNECTED QUESTIONS</span><div class="atlas-view-switch" role="group" aria-label="Atlas display"><button type="button" id="atlas-mode-3d" aria-pressed="true">◎ 3D globe</button><button type="button" id="atlas-mode-flat" aria-pressed="false">▱ Flat map</button></div></div>
       <div class="atlas-grid">
         <div class="map-column">
-          <div class="map-canvas">
+        <div class="globe-experience" id="globe-experience">
+          <div class="globe-stage" id="globe-stage" aria-label="Interactive three-dimensional research globe">
+            <div class="globe-kicker"><span class="live-dot"></span> FOUR PLACES. ONE RESEARCH JOURNEY.</div>
+            <div class="globe-watermark" aria-hidden="true">The atlas.</div>
+            <div class="globe-canvas-mount" id="globe-mount"></div>
+            <div class="globe-labels" id="globe-labels"></div>
+            <p class="scene-loading" id="globe-loading" role="status">Preparing your view of the world…</p>
+            <div class="globe-coordinate" id="globe-coordinate">01°17′ N &nbsp; 103°51′ E</div>
+            <div class="globe-tools" role="group" aria-label="Globe controls"><button type="button" id="globe-rotate" aria-pressed="true" aria-label="Pause globe rotation">Ⅱ</button><button type="button" id="globe-zoom-in" aria-label="Zoom in on globe">+</button><button type="button" id="globe-zoom-out" aria-label="Zoom out on globe">−</button><button type="button" id="globe-reset" aria-label="Reset globe view">↺</button></div>
+            <div class="globe-instructions"><span aria-hidden="true">↔</span> Drag to orbit <i>·</i> Pinch to zoom <i>·</i> Pick a place</div>
+          </div>
+          <aside class="globe-sidebar">
+            <div class="globe-sidebar-top"><span>THE RESEARCH ROUTE</span><span>01 — 04</span></div>
+            <div class="globe-stops" role="group" aria-label="Focus the globe on a research stop">
+              <button type="button" data-globe-city="capital" aria-pressed="true"><span>01</span><div><strong>Singapore</strong><small>PREDICTION &amp; FINANCE</small></div><b aria-hidden="true">↗</b></button>
+              <button type="button" data-globe-city="solar" aria-pressed="false"><span>02</span><div><strong>Shanghai</strong><small>EVIDENCE &amp; VERIFICATION</small></div><b aria-hidden="true">↗</b></button>
+              <button type="button" data-globe-city="eval" aria-pressed="false"><span>03</span><div><strong>Jeju Island</strong><small>LEARNING &amp; GOVERNANCE</small></div><b aria-hidden="true">↗</b></button>
+              <button type="button" data-globe-city="virel" aria-pressed="false"><span>04</span><div><strong>Rio de Janeiro</strong><small>RELIABILITY &amp; RESOURCES</small></div><b aria-hidden="true">↗</b></button>
+            </div>
+            <div class="globe-study-preview" aria-live="polite"><span class="globe-study-tag" id="globe-study-tag">PREDICT</span><h3 id="globe-study-title">What does the energy transition cost?</h3><p id="globe-study-description">Follow fuel prices into the financing conditions that shape energy investment.</p><a id="globe-study-link" href="#capital">Explore this study <span aria-hidden="true">↗</span></a></div>
+          </aside>
+        </div>
+
+          <div class="map-canvas" id="flat-atlas" hidden>
             <div class="map-caption"><span class="status-dot"></span> A few stops along the way</div>
             <svg id="world-map" viewBox="0 0 1000 440" role="group" aria-label="Research atlas: Singapore, Shanghai, Jeju Island, and Rio de Janeiro. Each city links directly to its study.">
               <defs><pattern id="map-grid" width="83.333" height="91.034" patternUnits="userSpaceOnUse"><path d="M 83.333 0 L 0 0 0 91.034" fill="none" stroke="#e0e4de" stroke-width=".7"/></pattern></defs>
@@ -143,7 +170,15 @@
       <div class="reward-definition"><div><span class="eyebrow">THE STEP REWARD</span><h3>Matched energy,<br>with several penalties.</h3><p>We reward market clearing and penalize drawdown, abrupt action changes, unmet demand, physical risk, and unequal allocations across cities.</p></div><div><div class="math-line">R<sub>t</sub> = M<sub>t</sub> − λ<sub>d</sub>D<sub>t</sub> − λ<sub>j</sub>J<sub>t</sub> − λ<sub>u</sub>U<sub>t</sub> − λ<sub>p</sub>Φ<sub>t</sub> − λ<sub>f</sub>F<sub>t</sub></div><p>Φ<sub>t</sub> combines the physics violation term with the amount of suspicious supply the action backs. In the ablation, we remove this penalty while continuing to measure physical violations and artificial liquidity.</p><p class="source-note">Notation follows the paper. The λ terms set the weight of each penalty in the benchmark score.</p></div></div>
       <figure class="full-figure"><button class="image-button" data-image="assets/eval-workflow.png" data-caption="SolarChain-Eval · original benchmark logic. Data, market simulation, policies, and trustworthiness evaluation."><img src="assets/eval-workflow.png" alt="Original SolarChain-Eval benchmark diagram connecting data, physics-constrained market environment, policies, and evaluation" loading="lazy" width="2100" height="791"></button><figcaption><span>FIG. 02</span> From an energy simulator to a benchmark for economic agents. <button data-open-paper="eval">Read the paper ↗</button></figcaption></figure>
 
-      <nav class="eval-route" aria-label="Explore the SolarChain-Eval results"><a href="#eval-landscape"><span>01</span> Compare policies</a><a href="#eval-experiments"><span>02</span> Change an experimental condition</a><a href="#eval-replay"><span>03</span> Inspect an audit record</a></nav>
+      <nav class="eval-route" aria-label="Explore the SolarChain-Eval results"><a href="#spatial-lab"><span>3D</span> Explore the evidence</a><a href="#eval-landscape"><span>01</span> Compare policies</a><a href="#eval-experiments"><span>02</span> Change an experimental condition</a><a href="#eval-replay"><span>03</span> Inspect an audit record</a></nav>
+      <section class="spatial-lab" id="spatial-lab" aria-label="Three-dimensional view of recorded evaluation outcomes">
+        <header class="spatial-heading"><div><span class="eyebrow">A DIFFERENT PERSPECTIVE / THE SAME EVIDENCE</span><h3>One policy.<br><em>More than one outcome.</em></h3></div><p>Turn the experiment around. Each point is one recorded episode, positioned by its reward, physics violation rate, and artificial liquidity. Select a policy to find it in the cloud. Removing the physics penalty changes the reward definition; compare reward within each setting.</p></header>
+        <div class="spatial-toolbar"><div><span class="spatial-live-dot" aria-hidden="true"></span><strong id="spatial-count">540 recorded episodes</strong></div><label for="spatial-setting">Experiment<select id="spatial-setting" aria-label="Experiment"><option value="main">With physics penalty · RL</option><option value="noPhysics">Without physics penalty · RL</option><option value="llm">With physics penalty · RL + LLM</option><option value="llmNoPhysics">Without physics penalty · RL + LLM</option></select></label></div>
+        <div class="spatial-body"><div class="spatial-stage" id="spatial-stage"><div id="spatial-mount" class="spatial-mount"></div><div class="spatial-axis-labels" id="spatial-axis-labels"></div><p class="scene-loading" id="spatial-loading" role="status">Preparing the recorded experiment…</p><div class="spatial-camera-tools" role="group" aria-label="Data view controls"><button type="button" id="spatial-home">Reset view ↺</button><button type="button" id="spatial-front">Front view</button></div><span class="spatial-hint">DRAG TO ROTATE · PINCH TO ZOOM · SELECT A POINT</span></div>
+        <aside class="spatial-sidebar"><span class="spatial-side-label">POLICIES</span><div id="spatial-policies" class="spatial-policies" role="group" aria-label="Highlight a policy in three dimensions"></div><div class="spatial-readout" id="spatial-readout" aria-live="polite"><span>READING THE SPACE</span><h4>Find the trade-offs.</h4><p>Higher reward goes up. Physics violations and artificial liquidity extend along the floor. Axes retain the same scale across experiments.</p></div><button type="button" class="spatial-clear" id="spatial-clear" hidden>Clear selected episode ×</button></aside></div>
+        <footer class="spatial-footer"><span>Original evaluation records · 3 training seeds · 90 episodes per policy</span><a href="evidence/solarchain-eval-rollouts.csv" download>Download the evidence ↓</a></footer>
+      </section>
+
       <section class="eval-lab" id="eval-landscape" aria-label="Interactive main benchmark results">
         <header class="eval-heading"><div><span class="eyebrow">MAIN BENCHMARK / 540 RECORDED ROLLOUTS</span><h3>Comparing policies,<br>outcome by outcome.</h3></div><p>Follow the same evaluated episodes across reward, physical risk, and market friction. Select a policy or inspect an individual rollout.</p></header>
         <div class="eval-controls"><div class="eval-segmented" role="group" aria-label="Choose a result visualization"><button data-eval-view="landscape" aria-pressed="true">Policy landscape</button><button data-eval-view="distribution" aria-pressed="false">Rollout distributions</button></div><label class="eval-axis-control" id="eval-x-control">Horizontal axis<select id="eval-x-metric"><option value="violation">Physics violation rate</option><option value="liquidity">Artificial liquidity</option><option value="slippage">Mean slippage</option></select></label><label class="eval-axis-control" id="eval-dist-control" hidden>Outcome<select id="eval-dist-metric"><option value="reward">Cumulative reward</option><option value="violation">Physics violation rate</option><option value="liquidity">Artificial liquidity</option><option value="slippage">Mean slippage</option><option value="volume">Trading volume</option></select></label></div>

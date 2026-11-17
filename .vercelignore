@@ -1,0 +1,12 @@
+.git
+.github
+.DS_Store
+node_modules
+dist
+notes
+*.log
+.env*
+assets/shanghai-osm-source.xml.gz
+assets/shanghai-osm.geojson
+
+.qa
