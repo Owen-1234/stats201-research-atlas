@@ -5,7 +5,7 @@
   const names={static:'Static',random:'Random',myopic:'Myopic',ppo:'PPO',sac:'SAC',dqn:'DQN'};
   const colors={static:'#93a5a2',random:'#b6ad94',myopic:'#8a8e96',ppo:'#426c8c',sac:'#528c7d',dqn:'#b18e53'};
   const defs={reward:{label:'Cumulative reward',unit:'',scale:1,digits:2,direction:'↑'},violation:{label:'Physics violation rate',unit:'%',scale:100,digits:2,direction:'↓'},liquidity:{label:'Artificial liquidity',unit:'MWh',scale:1,digits:4,direction:'↓'},slippage:{label:'Mean slippage',unit:'%',scale:100,digits:2,direction:'↓'},volume:{label:'Trading volume',unit:'MWh',scale:1,digits:3,direction:'↑'},jitter:{label:'Action jitter',unit:'',scale:1,digits:4,direction:'↓'}};
-  const state={policy:'ppo',learned:'ppo',view:'landscape',x:'violation',dist:'reward',showRuns:true,showSD:false,baselines:true,run:null,experiment:'physics',metric:'liquidity',physics:true,llm:false,step:15,playing:false};
+  const state={policy:'ppo',learned:'ppo',view:'landscape',x:'violation',dist:'reward',showRuns:true,showSD:false,baselines:true,run:null,experiment:'physics',effectView:'columns',metric:'liquidity',physics:true,llm:false,step:15,playing:false};
   const groups=new Map();E.records.forEach((r,i)=>{r.index=i;const key=`${r.setting}:${r.policy}`;if(!groups.has(key))groups.set(key,[]);groups.get(key).push(r);});
   const group=(setting,policy)=>groups.get(`${setting}:${policy}`)||[];
   const stats=(setting,policy,key)=>M.summarize(group(setting,policy),key);
@@ -65,27 +65,43 @@
   }
   function selectPolicy(p,run=null){if(!learned.includes(p)){state.baselines=true;q('#eval-baselines').checked=true;}state.policy=p;if(learned.includes(p))state.learned=p;state.run=run;renderMain();renderExperiments();}
   function settingsForEffect(){return state.experiment==='physics'?(state.llm?['llm','llmNoPhysics']:['main','noPhysics']):(state.physics?['main','llm']:['noPhysics','llmNoPhysics']);}
+  function renderEffectColumns(data,key){
+    const maximum=Math.max(...data.flatMap(d=>[d.before,d.after]));
+    const power=Math.pow(10,Math.floor(Math.log10(maximum||1)));
+    const ceiling=Math.ceil(maximum*1.15/power*2)/2*power||1;
+    const label=v=>Number((v*defs[key].scale).toPrecision(3)).toString();
+    const focused=document.activeElement?.closest('#eval-effect-columns [data-eval-learned]')?.dataset.evalLearned;
+    const beforeLabel=state.experiment==='physics'?'With penalty':'RL only';
+    const afterLabel=state.experiment==='physics'?'Without penalty':'RL + LLM';
+    q('#eval-effect-columns').innerHTML=`<div class="effect-axis">${Array.from({length:5},(_,i)=>`<span style="bottom:${i*25}%">${label(ceiling*i/4)}</span>`).join('')}</div><div class="effect-columns-grid">${data.map(d=>`<button type="button" data-eval-learned="${d.policy}" class="effect-column-card" aria-pressed="${d.policy===state.learned}" aria-label="${names[d.policy]}: ${beforeLabel} ${f(d.before,key)}, ${afterLabel} ${f(d.after,key)} ${unit(key)}, paired change ${signed(d.delta,key)}"><span class="effect-bar-scene"><i class="effect-bar ${d.before===0?'is-zero':''}" style="--bar-height:${d.before/ceiling*100}%"><span>${f(d.before,key)}</span></i><i class="effect-bar effect-bar-after ${d.after===0?'is-zero':''}" style="--bar-height:${d.after/ceiling*100}%"><span>${f(d.after,key)}</span></i></span><span class="effect-column-policy">${names[d.policy]}</span><span class="effect-column-delta">Δ ${signed(d.delta,key)}</span></button>`).join('')}</div><p class="effect-columns-caption"><span>CONDITION MEANS · ${unit(key)||defs[key].label}</span><span>ZERO BASELINE · 90 MATCHED PAIRS</span></p>`;
+    if(focused)q(`#eval-effect-columns [data-eval-learned="${focused}"]`)?.focus({preventScroll:true});
+  }
   function renderExperiments(){
     const key=state.metric,[before,after]=settingsForEffect(),selected=state.learned;
     const data=learned.map(p=>{const pairs=M.paired(group(before,p),group(after,p),key);return {policy:p,before:stats(before,p,key).mean,after:stats(after,p,key).mean,delta:M.mean(pairs.map(r=>r.delta)),sd:M.summarize(pairs,'delta').sd,pairs};});
-    const {svg,w,h}=size('#eval-effect-chart',270,310),narrow=w<500;
+    q('#eval-effect-columns').hidden=state.effectView!=='columns';q('#eval-effect-chart').hidden=state.effectView==='columns';
+    qa('[data-eval-effect-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.evalEffectView===state.effectView)));
+    const {svg,w,h}=size('#eval-effect-chart',300,330),narrow=w<500;
     qa('[data-eval-experiment]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.evalExperiment===state.experiment)));
     qa('[data-eval-learned]').forEach(b=>{b.setAttribute('aria-pressed',String(b.dataset.evalLearned===selected));b.style.setProperty('--policy-color',colors[b.dataset.evalLearned]);});
     q('#eval-effect-metric').value=key;q('#eval-context').checked=state.experiment==='physics'?state.llm:state.physics;
     q('#eval-context-label').textContent=state.experiment==='physics'?'With LLM governance':'Physics penalty included';
     q('#eval-effect-title').textContent=state.experiment==='physics'?'Without − with the physics penalty':'RL + LLM − the same RL policy';
-    q('#eval-effect-legend').innerHTML=`<b>${axisLabel(key)}</b>`+(state.experiment==='physics'?'<i class="effect-before-key"></i> With penalty <i class="effect-after-key"></i> Without penalty':'Mean paired change · whiskers ±1 SD');
+    q('#eval-effect-legend').innerHTML=`<b>${axisLabel(key)}</b>`+(state.effectView==='delta'?'Mean paired change · whiskers ±1 paired SD':state.experiment==='physics'?'<i class="effect-before-key"></i> With penalty <i class="effect-after-key"></i> Without penalty':'<i class="effect-before-key"></i> RL only <i class="effect-after-key"></i> RL + LLM');
+    q('#eval-effect-scale-note').textContent=state.effectView==='columns'?'Column height encodes the original mean on a shared zero baseline. Exact values and paired changes are shown.':state.effectView==='paired'?'The horizontal axis focuses on these condition means. Read the labeled values; the axis need not begin at zero.':'Change = after minus before. Whiskers show ±1 standard deviation of matched episode changes, not a confidence interval.';
     let content='';
-    if(state.experiment==='physics'){
+    if(state.effectView==='columns'){
+      renderEffectColumns(data,key);
+    }else if(state.effectView==='paired'){
       const [lo,hi]=domain(data.flatMap(d=>[d.before,d.after]),.15),L=narrow?28:62,R=w-(narrow?24:94),x=v=>L+(v-lo)/(hi-lo)*(R-L);
       const grid=Array.from({length:4},(_,i)=>{const v=lo+i*(hi-lo)/3;return `<line x1="${x(v)}" x2="${x(v)}" y1="30" y2="${h-42}" class="eval-grid"/>${text(x(v),h-16,tickValue(v,key),'text-anchor="middle" class="eval-axis"')}`;}).join('');
       const rows=data.map((d,i)=>{const y=narrow?66+i*86:65+i*70,a=x(d.before),b=x(d.after),active=d.policy===selected;return `<g data-eval-learned="${d.policy}" role="button" tabindex="0" aria-label="${names[d.policy]}: ${f(d.before,key)} to ${f(d.after,key)} ${unit(key)}; change ${signed(d.delta,key)}" class="eval-paired-row ${active?'selected':''}">${active?`<rect x="0" y="${y-(narrow?34:28)}" width="${w}" height="${narrow?77:63}" rx="5" fill="#eff2e9"/>`:''}${text(narrow?L:8,narrow?y-26:y+4,names[d.policy],'class="eval-policy-name"')}${text(narrow?R:w-4,narrow?y-26:y+4,signed(d.delta,key),'class="eval-delta-value" text-anchor="end"')}<line x1="${a}" x2="${b}" y1="${y}" y2="${y}" stroke="#a0b2a8" stroke-width="2"/><circle cx="${a}" cy="${y}" r="6" fill="#5d9282" stroke="#fffdf6" stroke-width="2"/><circle cx="${b}" cy="${y}" r="6" fill="#b3955e" stroke="#fffdf6" stroke-width="2"/>${text(a,y-13,f(d.before,key),'text-anchor="middle" class="eval-small-number"')}${text(b,y+22,f(d.after,key),'text-anchor="middle" class="eval-small-number"')}</g>`;}).join('');
-      content=`<title>Removing the physics penalty: mean ${defs[key].label} for the matched learned policies</title>${grid}${rows}`;
+      content=`<title>Matched condition means of ${defs[key].label} for PPO, SAC, and DQN</title>${grid}${rows}`;
     }else{
       const span=Math.max(...data.map(d=>Math.abs(d.delta)+d.sd))*1.2||.01,L=narrow?28:62,R=w-(narrow?24:94),x=v=>L+(v+span)/(2*span)*(R-L);
       const grid=[-1,-.5,0,.5,1].map(t=>`<line x1="${x(t*span)}" x2="${x(t*span)}" y1="30" y2="${h-42}" class="${t===0?'eval-zero':'eval-grid'}"/>${text(x(t*span),h-16,tickValue(t*span,key),'text-anchor="middle" class="eval-axis"')}`).join('');
       const rows=data.map((d,i)=>{const y=narrow?66+i*86:65+i*70,a=x(0),b=x(d.delta),active=d.policy===selected,color=d.delta<0?'#619483':'#b3955e';return `<g data-eval-learned="${d.policy}" role="button" tabindex="0" aria-label="${names[d.policy]}: paired change ${signed(d.delta,key)}, standard deviation ${f(d.sd,key)}" class="eval-paired-row ${active?'selected':''}">${active?`<rect x="0" y="${y-(narrow?34:28)}" width="${w}" height="${narrow?77:63}" rx="5" fill="#eff2e9"/>`:''}${text(narrow?L:8,narrow?y-26:y+4,names[d.policy],'class="eval-policy-name"')}${text(narrow?R:w-4,narrow?y-26:y+4,signed(d.delta,key),'class="eval-delta-value" text-anchor="end"')}<rect x="${Math.min(a,b)}" y="${y-10}" width="${Math.max(1,Math.abs(b-a))}" height="20" fill="${color}" rx="3"/><path d="M${x(d.delta-d.sd)} ${y}H${x(d.delta+d.sd)}M${x(d.delta-d.sd)} ${y-4}v8M${x(d.delta+d.sd)} ${y-4}v8" fill="none" stroke="#3c5a67" stroke-width="1.1"/><circle cx="${b}" cy="${y}" r="3.5" fill="#33566a"/></g>`;}).join('');
-      content=`<title>Effect of adding Planner and Auditor on ${defs[key].label}</title>${grid}${rows}`;
+      content=`<title>Mean paired changes in ${defs[key].label}, with one paired standard deviation</title>${grid}${rows}`;
     }
     svg.innerHTML=content;
     const d=data.find(d=>d.policy===selected),hist=M.histogram(d.pairs.map(r=>r.delta)),histSize=size('#eval-delta-histogram',140,145),hw=histSize.w,hh=histSize.h,L=30,R=hw-20,B=hh-30,maxCount=Math.max(...hist.bins.map(b=>b.n)),x=v=>L+(v-hist.min)/(hist.max-hist.min)*(R-L),y=n=>B-n/maxCount*(B-20);
@@ -125,6 +141,7 @@
   q('#eval-profile-metrics').addEventListener('click',event=>{const b=event.target.closest('[data-eval-profile-metric]');if(b){state.dist=b.dataset.evalProfileMetric;state.view='distribution';renderMain();}});
   q('#eval-run-select').addEventListener('change',event=>{state.run=event.target.value===''?null:Number(event.target.value);renderMain();});q('#eval-clear-run').addEventListener('click',()=>{state.run=null;renderMain();});
   qa('[data-eval-experiment]').forEach(b=>b.addEventListener('click',()=>{state.experiment=b.dataset.evalExperiment;state.metric=state.experiment==='governance'?'jitter':'liquidity';renderExperiments();}));
+  qa('[data-eval-effect-view]').forEach(b=>b.addEventListener('click',()=>{state.effectView=b.dataset.evalEffectView;renderExperiments();}));
   q('#eval-effect-metric').addEventListener('change',event=>{state.metric=event.target.value;renderExperiments();});q('#eval-context').addEventListener('change',event=>{if(state.experiment==='physics')state.llm=event.target.checked;else state.physics=event.target.checked;renderExperiments();});
   q('#eval-condition-matrix').addEventListener('click',event=>{const b=event.target.closest('[data-eval-condition]');if(!b)return;state.physics=['main','llm'].includes(b.dataset.evalCondition);state.llm=['llm','llmNoPhysics'].includes(b.dataset.evalCondition);renderExperiments();});
   q('#eval-timeline').addEventListener('click',event=>{const b=event.target.closest('[data-eval-step]');if(b){pauseReplay();state.step=Number(b.dataset.evalStep);renderTrace();q(`#eval-timeline [data-eval-step="${state.step}"]`).focus({preventScroll:true});}});

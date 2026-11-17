@@ -164,10 +164,8 @@ function renderCost() {
   const proposed=Number($('#placement').value), capacity=Number($('#capacity').value), user=Math.min(proposed,capacity), repaired=proposed-user;
   $('#placement-output').textContent=`${proposed}%`; $('#capacity-output').textContent=`${capacity}%`;
   $('#proposal-number').textContent=`${proposed} / ${100-proposed}`; $('#repair-number').textContent=`${user} / ${100-user}`;
-  $('#proposed-share').style.width=`${proposed}%`; $('#executed-share').style.width=`${user}%`;
-  $('#capacity-marker').style.left=`${capacity}%`;
-  $('#proposed-share-label').textContent=`${proposed} / ${100-proposed}`; $('#executed-share-label').textContent=`${user} / ${100-user}`;
   $('#user-cost').textContent=String(user); $('#institution-cost').textContent=String(100-user);
+  document.dispatchEvent(new CustomEvent('atlas:routing',{detail:{proposed,capacity,user,repaired}}));
   $('#repair-explanation').textContent=repaired?`${repaired} requests move to the institution after the capacity check. The executed split determines the accounts.`:'The proposal fits the available capacity. Proposed and executed accounts agree.';
 }
 $('#placement').addEventListener('input',renderCost); $('#capacity').addEventListener('input',renderCost);
@@ -179,6 +177,7 @@ let eveningComplete = false;
 function renderBattery() {
   paintRanges();
   const gamma=Number($('#discount').value);
+  document.dispatchEvent(new CustomEvent('atlas:battery',{detail:{storedUnits,eveningComplete,gamma}}));
   $('#discount-output').textContent=gamma.toFixed(2);
   $$('[data-store]').forEach(el=>{const active=storedUnits!==null&&Number(el.dataset.store)===storedUnits;el.classList.toggle('active',active);el.setAttribute('aria-pressed',String(active));});
   const charge=storedUnits===null||eveningComplete?0:storedUnits;

@@ -38,7 +38,7 @@ async function startGlobe() {
   if (globeStarting) return globeStarting;
   globeStarting = (async () => {
     try {
-      const { createGlobe } = await import('./spatial.js?v=3');
+      const { createGlobe } = await import('./spatial.js?v=7');
       globe = await createGlobe({ cities, onSelect: selectCity, reducedMotion: reducedMotion.matches });
       selectCity(activeCity.id, false);
     } catch (error) {
@@ -79,13 +79,15 @@ const spatialObserver = new IntersectionObserver(async (entries) => {
   if (!entries.some((entry) => entry.isIntersecting)) return;
   spatialObserver.disconnect();
   try {
-    const { createLandscape } = await import('./spatial.js?v=3');
+    const { createLandscape } = await import('./spatial.js?v=7');
     createLandscape({ reducedMotion: reducedMotion.matches });
   } catch (error) {
     console.warn('The 3D evidence view is unavailable; the linked two-dimensional results remain available.', error);
     q('#spatial-loading').textContent = 'The 3D view is unavailable on this device. Explore the same recorded results in the charts below.';
     q('#spatial-loading').classList.add('scene-error');
     q('#spatial-stage').style.height = '180px';
+    q('#spatial-stage').style.minHeight = '180px';
+    q('#spatial-lab').querySelectorAll('button,select').forEach(control => { control.disabled = true; });
   }
 }, { rootMargin: '250px' });
 spatialObserver.observe(q('#spatial-lab'));

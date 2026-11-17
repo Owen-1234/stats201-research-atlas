@@ -46,11 +46,14 @@ vercel --prod --scope owen1234
 The new experience includes:
 
 - A Three.js globe using the bundled land geography, four geographic study markers, raised research-route arcs, selectable cities, orbit/zoom controls, and a flat-map alternative.
-- A three-dimensional view of the original 1,620 benchmark records. Its axes are cumulative reward, physics violation rate (percent), and artificial liquidity (MWh). Axis domains are shared across all four settings. Removing the physics penalty changes the reward definition, so reward should be compared within each setting. Policy summaries, single-episode inspection, and CSV downloads retain the original recorded values.
+- A three-dimensional view of the original 1,620 benchmark records. Its axes are cumulative reward, physics violation rate (percent), and artificial liquidity (MWh). The default view shows policy means on axes focused on the current setting; switches reveal every episode or restore a common scale across settings. Tick precision adapts to small ranges. Removing the physics penalty changes the reward definition, so reward should be compared within each setting. Policy summaries, single-episode inspection, and CSV downloads retain the original recorded values.
 - A warm-paper and deep-green visual system, mobile layouts, keyboard-accessible selection controls, reduced-motion support, and animation that pauses outside the viewport or in a background tab.
+- An isometric solar-to-battery teaching scene with original two-step rewards and discounted-return comparisons.
+- Paired experimental results shown as zero-baseline 3D columns, focused paired-value plots, or signed changes with ±1 paired SD.
+- A request-routing ribbon diagram and 100-request grid that make the capacity repair and resulting reference charges visible.
 - A local copy of Three.js 0.180.0 and its MIT license under `assets/vendor/three/`.
 
-`experience.css` and `experience.js` own the additional presentation and progressive loading; `spatial.js` owns the WebGL scenes. If WebGL is unavailable, the atlas falls back to the original flat map and the evaluation section retains its original two-dimensional visualizations.
+`experience.css` and `experience.js` own the additional presentation and progressive loading; `interactives.css` and `teaching-scenes.js` implement the energy and request-routing illustrations; `spatial.js` owns the WebGL scenes. If WebGL is unavailable, the atlas falls back to the original flat map and the evaluation section retains its original two-dimensional visualizations.
 
 Automatic deployment uses the Vercel GitHub App with access to `Owen-1234/stats201-research-atlas`, the existing `stats201-research-atlas` Vercel project, and production branch `main`. The repository is connected: pushes to `main` build and publish this version; other branches receive preview deployments. Manual releases can also use the deploy command above.
 

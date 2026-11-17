@@ -282,12 +282,21 @@ export function createLandscape({ reducedMotion }) {
   const names = { static: 'Static', random: 'Random', myopic: 'Myopic', ppo: 'PPO', sac: 'SAC', dqn: 'DQN' };
   const colors = { static: '#9baca1', random: '#bda989', myopic: '#8f91a2', ppo: '#4383a0', sac: '#4a9271', dqn: '#c39955' };
   const allPolicies = Object.keys(names);
+  let setting = q('#spatial-setting').value, policy = 'all', detailMode = 'means', rangeMode = 'focused';
+  let records = evidence.records.filter(record => record.setting === setting);
+  function meanRows(rows) {
+    const groups = new Map();
+    rows.forEach(record => { const key = `${record.setting}:${record.policy}`; if (!groups.has(key)) groups.set(key, []); groups.get(key).push(record); });
+    return [...groups.values()].map(group => ({ policy: group[0].policy, setting: group[0].setting, n: group.length, ...Object.fromEntries(['reward','violation','liquidity'].map(key => [key,group.reduce((sum,record)=>sum+record[key],0)/group.length])) }));
+  }
   const domain = (key) => {
-    const values = evidence.records.map((record) => record[key]);
-    const min = Math.min(...values), max = Math.max(...values), padding = (max - min) * 0.06;
-    return [min - padding, max + padding];
+    const source = rangeMode === 'shared' ? evidence.records : records;
+    const values = (detailMode === 'means' ? meanRows(source) : source).map(record => record[key]);
+    const min = Math.min(...values), max = Math.max(...values), span = max - min || Math.max(Math.abs(min) * .1, .001);
+    const padding = span * .16;
+    return [key === 'reward' ? min - padding : Math.max(0, min - padding), key === 'violation' ? Math.min(1, max + padding) : max + padding];
   };
-  const domains = { violation: domain('violation'), reward: domain('reward'), liquidity: domain('liquidity') };
+  let domains = { violation: domain('violation'), reward: domain('reward'), liquidity: domain('liquidity') };
   const scale = (value, key) => (value - domains[key][0]) / (domains[key][1] - domains[key][0]) * 2.4;
   const positionOf = (record) => new THREE.Vector3(scale(record.violation, 'violation') - 1.2, scale(record.reward, 'reward') - 1.2, scale(record.liquidity, 'liquidity') - 1.2);
   controls.target.set(0, 0, 0);
@@ -317,19 +326,19 @@ export function createLandscape({ reducedMotion }) {
   ].forEach((points) => scene.add(lineFrom(points, '#8d9f7c', 0.8)));
 
   const axisLabels = [];
-  function label(text, position, kind = 'tick') {
+  function label(text, position, kind = 'tick', key = null, fraction = 0) {
     const element = document.createElement('span');
     element.textContent = text;
     element.dataset.kind = kind;
     q('#spatial-axis-labels').append(element);
-    axisLabels.push({ element, position });
+    axisLabels.push({ element, position, key, fraction });
   }
   for (let i = 0; i <= 4; i++) {
     const t = i / 4;
     const at = (key) => domains[key][0] + (domains[key][1] - domains[key][0]) * t;
-    label(`${(at('violation') * 100).toFixed(0)}%`, new THREE.Vector3(-1.2 + t * 2.4, -1.35, 1.24));
-    label(at('reward').toFixed(1), new THREE.Vector3(-1.43, -1.2 + t * 2.4, 1.2));
-    if (i > 0) label(at('liquidity').toFixed(2), new THREE.Vector3(1.38, -1.25, 1.2 - t * 2.4));
+    label('', new THREE.Vector3(-1.2 + t * 2.4, -1.35, 1.24), 'tick', 'violation', t);
+    label('', new THREE.Vector3(-1.43, -1.2 + t * 2.4, 1.2), 'tick', 'reward', t);
+    if (i > 0) label('', new THREE.Vector3(1.38, -1.25, 1.2 - t * 2.4), 'tick', 'liquidity', t);
   }
   label('Physics violation rate (%) →', new THREE.Vector3(0.1, -1.65, 1.3), 'title');
   label('Cumulative reward ↑', new THREE.Vector3(-1.15, 1.65, 1.2), 'title');
@@ -344,12 +353,21 @@ export function createLandscape({ reducedMotion }) {
   });
   const cloud = new THREE.Points(geometry, shader);
   scene.add(cloud);
+  scene.add(new THREE.AmbientLight('#eaf6dc', 2.4));
+  const meanLight = new THREE.DirectionalLight('#fff3d1', 2.5); meanLight.position.set(-3,5,4); scene.add(meanLight);
+  const meanLabelMount = document.createElement('div'); meanLabelMount.className = 'spatial-mean-labels'; q('#spatial-stage').append(meanLabelMount);
+  const meanGeometry = new THREE.SphereGeometry(.067, 24, 18);
+  const meanNodes = allPolicies.map(item => {
+    const sphere = new THREE.Mesh(meanGeometry, new THREE.MeshPhongMaterial({color:colors[item],shininess:65,specular:'#d3e8c7'}));
+    sphere.userData.policy = item; scene.add(sphere);
+    const stem = lineFrom([new THREE.Vector3(),new THREE.Vector3()],colors[item],.35); scene.add(stem);
+    const ring = new THREE.Mesh(new THREE.RingGeometry(.055,.066,32),new THREE.MeshBasicMaterial({color:colors[item],transparent:true,opacity:.55,side:THREE.DoubleSide})); ring.rotation.x=-Math.PI/2; scene.add(ring);
+    const element = document.createElement('button'); element.type='button';element.textContent=names[item];element.style.setProperty('--policy-color',colors[item]);element.setAttribute('aria-label',`Select ${names[item]} policy mean`);element.addEventListener('click',()=>choosePolicy(item));meanLabelMount.append(element);
+    return {policy:item,sphere,stem,ring,element};
+  });
   const selection = new THREE.Mesh(new THREE.SphereGeometry(0.039, 16, 12), new THREE.MeshBasicMaterial({ color: '#d89554', wireframe: true }));
   selection.visible = false;
   scene.add(selection);
-  let setting = 'main';
-  let policy = 'all';
-  let records = [];
   let selectedRecord = null;
   let cameraTarget = null;
   const backdrop = new THREE.Color('#eef2e6');
@@ -379,11 +397,29 @@ export function createLandscape({ reducedMotion }) {
     } else if (policy !== 'all') {
       q('#spatial-readout').innerHTML = `<span>90 EPISODES / POLICY MEANS</span><h4>${names[policy]}</h4><dl><dt>Reward</dt><dd>${mean('reward').toFixed(2)}</dd><dt>Physics violations</dt><dd>${(mean('violation') * 100).toFixed(2)}%</dd><dt>Artificial liquidity</dt><dd>${mean('liquidity').toFixed(4)} MWh</dd></dl>`;
     } else {
-      q('#spatial-readout').innerHTML = '<span>READING THE SPACE</span><h4>Find the trade-offs.</h4><p>Higher reward goes up. Physics violations and artificial liquidity extend along the floor. Axes retain the same scale across experiments.</p>';
+      q('#spatial-readout').innerHTML = `<span>${detailMode === 'means' ? 'POLICY AVERAGES' : 'INDIVIDUAL EPISODES'}</span><h4>Find the trade-offs.</h4><p>${detailMode === 'means' ? 'Each sphere is a policy mean from 90 recorded episodes. Select a sphere, then inspect the original episodes.' : 'Each dot is one original recorded episode. Select a policy or choose an episode for exact values.'}</p>`;
     }
     q('#spatial-clear').hidden = !selectedRecord;
   }
   function renderPoints() {
+    domains = { violation: domain('violation'), reward: domain('reward'), liquidity: domain('liquidity') };
+    axisLabels.forEach(({element,key,fraction})=>{if(!key)return;const factor=key==='violation'?100:1,span=(domains[key][1]-domains[key][0])*factor;const digits=Math.min(6,Math.max(key==='liquidity'?3:1,Math.ceil(-Math.log10(Math.max(span/4,1e-10)))));const value=(domains[key][0]+fraction*(domains[key][1]-domains[key][0]))*factor;element.textContent=value.toFixed(digits)+(key==='violation'?'%':'');});
+    document.querySelectorAll('[data-spatial-detail]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.spatialDetail===detailMode)));
+    document.querySelectorAll('[data-spatial-scale]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.spatialScale===rangeMode)));
+    q('#spatial-scale-note').textContent=rangeMode==='focused'?`Focused axes · ranges fit this experiment’s ${detailMode==='means'?'policy means':'recorded episodes'}. Baselines need not begin at zero.`:'Shared axes · identical ranges across experiments. Reward definitions still differ between penalty settings.';
+    q('#spatial-count').textContent=detailMode==='means'?`${availablePolicies().length} policy means · ${records.length} episodes`:`${records.length} recorded episodes`;
+    cloud.visible=detailMode==='episodes';
+    const means=meanRows(records);
+    meanNodes.forEach(node=>{
+      const row=means.find(item=>item.policy===node.policy),visible=detailMode==='means'&&Boolean(row),active=policy==='all'||policy===node.policy;
+      node.sphere.visible=node.stem.visible=node.ring.visible=visible;node.element.hidden=!visible;
+      if(!row)return;
+      const point=positionOf(row),ground=point.clone();ground.y=-1.195;
+      node.sphere.position.copy(point);node.sphere.scale.setScalar(policy===node.policy?1.35:1);
+      const color=new THREE.Color(colors[node.policy]);if(!active)color.lerp(backdrop,.58);node.sphere.material.color.copy(color);
+      node.stem.geometry.setFromPoints([ground,point]);node.stem.material.opacity=active?.45:.12;node.ring.position.copy(ground);node.ring.material.opacity=active?.55:.15;
+      node.element.setAttribute('aria-pressed',String(policy===node.policy));node.element.style.opacity=active?'1':'.65';
+    });
     const positions = [], pointColors = [], sizes = [];
     records.forEach((record) => {
       positions.push(...positionOf(record).toArray());
@@ -397,7 +433,7 @@ export function createLandscape({ reducedMotion }) {
     geometry.setAttribute('color', new THREE.Float32BufferAttribute(pointColors, 3));
     geometry.setAttribute('pointSize', new THREE.Float32BufferAttribute(sizes, 1));
     geometry.computeBoundingSphere();
-    selection.visible = Boolean(selectedRecord);
+    selection.visible = detailMode === 'episodes' && Boolean(selectedRecord);
     if (selectedRecord) selection.position.copy(positionOf(selectedRecord));
     document.querySelectorAll('[data-spatial-policy]').forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.spatialPolicy === policy)));
     renderReadout();
@@ -413,10 +449,12 @@ export function createLandscape({ reducedMotion }) {
     q('#spatial-policies').innerHTML = `<button type="button" data-spatial-policy="all" aria-pressed="${policy === 'all'}"><i style="--policy-color:#788e6a"></i>All policies<small>${records.length}</small></button>` + availablePolicies().map((item) => `<button type="button" data-spatial-policy="${item}" aria-pressed="${policy === item}" style="--policy-color:${colors[item]}"><i></i>${names[item]}<small>90</small></button>`).join('');
     renderPoints();
   }
+  document.querySelectorAll('[data-spatial-detail]').forEach(button=>button.addEventListener('click',()=>{detailMode=button.dataset.spatialDetail;selectedRecord=null;renderPoints();}));
+  document.querySelectorAll('[data-spatial-scale]').forEach(button=>button.addEventListener('click',()=>{rangeMode=button.dataset.spatialScale;renderPoints();}));
   q('#spatial-policies').addEventListener('click', (event) => { const button = event.target.closest('[data-spatial-policy]'); if (button) choosePolicy(button.dataset.spatialPolicy); });
   q('#spatial-setting').addEventListener('change', (event) => setSetting(event.target.value));
   q('#spatial-clear').addEventListener('click', () => { selectedRecord = null; renderPoints(); });
-  recordPicker.addEventListener('change', () => { selectedRecord = recordPicker.value ? evidence.records[Number(recordPicker.value)] : null; renderPoints(); });
+  recordPicker.addEventListener('change', () => { selectedRecord = recordPicker.value ? evidence.records[Number(recordPicker.value)] : null; if(selectedRecord)detailMode='episodes'; renderPoints(); });
   q('#spatial-home').addEventListener('click', () => { cameraTarget = home.clone(); });
   q('#spatial-front').addEventListener('click', () => { cameraTarget = new THREE.Vector3(0.05, 0.25, 7); });
   controls.addEventListener('start', () => { cameraTarget = null; });
@@ -428,6 +466,7 @@ export function createLandscape({ reducedMotion }) {
     if (!pointerStart || Math.hypot(event.clientX - pointerStart[0], event.clientY - pointerStart[1]) > 6) return;
     const rect = mount.getBoundingClientRect();
     raycaster.setFromCamera(new THREE.Vector2((event.clientX - rect.left) / rect.width * 2 - 1, -(event.clientY - rect.top) / rect.height * 2 + 1), camera);
+    if(detailMode==='means'){const hit=raycaster.intersectObjects(meanNodes.map(node=>node.sphere).filter(mesh=>mesh.visible))[0];if(hit)choosePolicy(hit.object.userData.policy);return;}
     const hit = raycaster.intersectObject(cloud).find((item) => policy === 'all' || records[item.index].policy === policy);
     if (hit) { selectedRecord = records[hit.index]; policy = selectedRecord.policy; renderPoints(); }
   });
@@ -448,7 +487,16 @@ export function createLandscape({ reducedMotion }) {
       element.style.left = `${title ? clamp(x, halfWidth + 9, width - halfWidth - 9) : x}px`;
       element.style.top = `${title ? clamp(y, 56, height - 45) : y}px`;
     });
+    if(detailMode==='means'){
+      const placed=[];
+      meanNodes.filter(node=>node.sphere.visible).forEach(node=>{
+        projected.copy(node.sphere.position).project(camera);
+        let x=clamp((projected.x*.5+.5)*width+35,42,width-44),y=clamp((-projected.y*.5+.5)*height-21,65,height-63);
+        for(const previous of placed){if(Math.abs(x-previous.x)<66&&Math.abs(y-previous.y)<24)y=clamp(previous.y+26,65,height-55);}
+        node.element.hidden=projected.z>1;node.element.style.transform=`translate(${x}px,${y}px) translate(-50%,-50%)`;placed.push({x,y});
+      });
+    }
   });
-  setSetting('main');
+  setSetting(setting);
   q('#spatial-loading').hidden = true;
 }
