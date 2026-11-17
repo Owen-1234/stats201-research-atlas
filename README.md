@@ -52,7 +52,7 @@ The new experience includes:
 
 `experience.css` and `experience.js` own the additional presentation and progressive loading; `spatial.js` owns the WebGL scenes. If WebGL is unavailable, the atlas falls back to the original flat map and the evaluation section retains its original two-dimensional visualizations.
 
-Automatic deployment uses the Vercel GitHub App with access to `Owen-1234/stats201-research-atlas`, the existing `stats201-research-atlas` Vercel project, and production branch `main`. Once that Git connection is enabled, pushes to `main` build and publish this version; other branches receive preview deployments. Manual releases can also use the deploy command above.
+Automatic deployment uses the Vercel GitHub App with access to `Owen-1234/stats201-research-atlas`, the existing `stats201-research-atlas` Vercel project, and production branch `main`. The repository is connected: pushes to `main` build and publish this version; other branches receive preview deployments. Manual releases can also use the deploy command above.
 
 ## GitHub Pages
 
