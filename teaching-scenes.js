@@ -1,56 +1,5 @@
 // Classroom illustrations. Recorded benchmark values are handled by eval-lab.js.
 const q = (s) => document.querySelector(s);
-const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-function solarArray() {
-  return `<g transform="translate(85 142)"><path d="M0 76 130 28 212 63 80 114Z" fill="#b9cbb7" opacity=".34"/><path d="M25 55 124 17 190 46 90 85Z" fill="#345e62" stroke="#dce7d7" stroke-width="2"/><path d="m25 55 65 30v8L25 63Z" fill="#244b51"/><path d="m90 85 100-39v8L90 93Z" fill="#21454b"/><g stroke="#95b7b0" stroke-width="1.1" opacity=".8"><path d="m58 42 66 30m-33-43 66 30M46 65l99-38M68 75l99-38"/></g><g stroke="#809781" stroke-width="4"><path d="M45 71v18m113-23v18M92 92v16"/></g></g>`;
-}
-
-function batteryIllustration(charge) {
-  return `<g transform="translate(374 195)"><ellipse cx="60" cy="104" rx="69" ry="21" fill="#9eb397" opacity=".14"/><path d="M10 14 49 0 105 23 65 39Z" fill="#dce6cb"/><path d="m65 39 40-16v73l-40 17Z" fill="#789774"/><path d="M10 14 65 39v74L10 88Z" fill="#b8cda3"/><path d="m47 0 17-6 25 10-17 7Z" fill="#43694b"/><path d="m25 43 25 11v22L25 65Z" fill="${charge > 0 ? '#547b4e' : '#a8bc94'}"/><path d="m25 69 25 11v22L25 91Z" fill="${charge > 1 ? '#547b4e' : '#a8bc94'}"/><path d="m77 49 17-7v14l-17 7Z" fill="#9ab18a"/><path d="m77 70 17-7v14l-17 7Z" fill="#9ab18a"/></g>`;
-}
-
-function cityIllustration() {
-  return `<g transform="translate(638 118)"><path d="m-4 117 92-36 101 44-91 36Z" fill="#a8bba6" opacity=".24"/><g stroke="#f3f4e8" stroke-width="1"><path d="m26 47 32-12 37 17-32 12Z" fill="#b2c9bd"/><path d="m26 47 37 17v77l-37-17Z" fill="#72968b"/><path d="m63 64 32-12v77l-32 12Z" fill="#537a71"/><path d="m101 81 26-10 35 16-26 10Z" fill="#d6c6a4"/><path d="m101 81 35 16v56l-35-16Z" fill="#bba580"/><path d="m136 97 26-10v56l-26 10Z" fill="#99825f"/></g><g fill="#e6d5a1"><path d="m35 66 8 3v11l-8-3Zm0 23 8 3v11l-8-3Zm15-17 7 3v11l-7-3Zm0 23 7 3v11l-7-3Zm61 4 7 3v10l-7-3Zm0 20 7 3v10l-7-3Z"/></g></g>`;
-}
-
-function renderEnergy({ storedUnits, eveningComplete, gamma }) {
-  const chosen = storedUnits !== null;
-  const stored = storedUnits ?? 0, now = 2 - stored, later = 3 * stored;
-  const stage = q('#energy-scene');
-  q('#energy-playground').dataset.phase = eveningComplete ? 'evening' : 'noon';
-  q('#energy-phase-label').textContent = eveningComplete ? '02 / THE EVENING OUTCOME' : '01 / MAKE A NOON DECISION';
-  const flow = (path, on, color, extra = '') => `<path d="${path}" fill="none" stroke="${color}" stroke-width="${on ? 4 : 1.5}" opacity="${on ? 1 : .35}" class="${on && !reduced ? 'energy-current' : ''}" ${extra}/>`;
-  stage.innerHTML = `<svg viewBox="0 0 880 390" role="img" aria-label="Two solar energy units: ${chosen ? `${now} sold at noon, ${stored} stored for evening; ${eveningComplete ? later + ' evening credits received' : 'evening not yet run'}` : 'choose whether to sell now or store for evening'}">
-    <defs><pattern id="energy-floor" width="44" height="25" patternUnits="userSpaceOnUse"><path d="M0 12.5 22 0 44 12.5 22 25Z" fill="none" stroke="#9bb399" stroke-width=".55"/></pattern><linearGradient id="energy-sky" x2="1" y2="1"><stop stop-color="#f5f2df"/><stop offset="1" stop-color="#e6eee4"/></linearGradient></defs>
-    <path d="m35 255 340-144 455 151-338 122Z" fill="url(#energy-floor)" opacity=".3"/>
-    <g class="energy-sun" transform="translate(157 66)"><circle r="21" fill="#cfb26f"/><circle r="31" fill="none" stroke="#cfb26f" opacity=".24"/>${Array.from({length:8},(_,i)=>`<path d="M0-39v-8" stroke="#c3a86d" transform="rotate(${i*45})"/>`).join('')}</g>
-    <g transform="translate(741 60)"><circle r="21" fill="#adc2b4"/><circle cx="9" cy="-7" r="18" fill="#edf2e8"/><circle cx="36" cy="-13" r="2" fill="#9eb6a5"/></g>
-    ${flow('M240 210 313 183 414 107', chosen && now > 0, '#b99b60')}
-    ${flow('M240 210 315 244 389 263', chosen && stored > 0 && !eveningComplete, '#6d946b')}
-    ${flow('M477 263 C560 294 609 235 673 211', chosen && stored > 0 && eveningComplete, '#6d946b', 'stroke-dasharray="7 6"')}
-    <g transform="translate(384 83)"><path d="m0 35 48-18 58 24-48 20Z" fill="#d4bc83"/><path d="M0 35v9l58 26v-9Z" fill="#b39861"/><path d="m58 61 48-20v9L58 70Z" fill="#8e7850"/><path d="m24 20 25-9 30 12-25 10Z" fill="#e7d7af"/><text x="54" y="-12" text-anchor="middle" class="energy-svg-small">SELL AT NOON</text><text x="54" y="91" text-anchor="middle" class="energy-svg-value">${chosen ? now : '—'} <tspan class="energy-svg-small">credits now</tspan></text></g>
-    ${solarArray()}${batteryIllustration(eveningComplete ? 0 : stored)}${cityIllustration()}
-    <text x="173" y="293" text-anchor="middle" class="energy-svg-label">Solar generation</text><text x="173" y="314" text-anchor="middle" class="energy-svg-small">2 ENERGY UNITS</text>
-    <text x="433" y="340" text-anchor="middle" class="energy-svg-label">${eveningComplete ? 'Battery discharged' : 'Keep for later'}</text><text x="433" y="360" text-anchor="middle" class="energy-svg-small">${chosen ? eveningComplete ? '0 UNITS REMAINING' : `${stored} / 2 UNITS STORED` : '2-UNIT CAPACITY'}</text>
-    <text x="735" y="298" text-anchor="middle" class="energy-svg-label">Evening market</text><text x="735" y="319" text-anchor="middle" class="energy-svg-small">${eveningComplete ? `${later} CREDITS RECEIVED` : '3 CREDITS / UNIT'}</text>
-    <text x="157" y="22" text-anchor="middle" class="energy-svg-small">12:00 / NOON</text><text x="741" y="22" text-anchor="middle" class="energy-svg-small">18:00 / EVENING</text>
-    ${chosen ? `<g class="energy-route-tag" transform="translate(302 144)"><rect x="-28" y="-13" width="56" height="25" rx="12"/><text text-anchor="middle" y="4">${now} sold</text></g><g class="energy-route-tag" transform="translate(318 274)"><rect x="-30" y="-13" width="60" height="25" rx="12"/><text text-anchor="middle" y="4">${stored} stored</text></g>` : ''}
-  </svg>`;
-  q('#energy-now-value').textContent = chosen ? String(now) : '—';
-  q('#energy-later-value').textContent = eveningComplete ? String(later) : '—';
-  q('#energy-storage-value').textContent = chosen ? String(eveningComplete ? 0 : stored) : '—';
-  q('#energy-later-label').textContent = eveningComplete ? 'EVENING REWARD' : 'EVENING / NOT RUN YET';
-  if (eveningComplete) {
-    const total = now + gamma * later;
-    q('#return-display').innerHTML = `<span>DISCOUNTED RETURN</span><strong>${total.toFixed(2)} <small>credits</small></strong><p>${now} now + ${gamma.toFixed(2)} × ${later} in the evening</p><small>Undiscounted revenue: ${now + later} credits</small>`;
-    const outcomes = [0,1,2].map(n=>({n,now:2-n,future:gamma*3*n,total:2-n+gamma*3*n}));
-    const best = Math.max(...outcomes.map(d=>d.total));
-    q('#battery-comparison').innerHTML = `<div class="energy-comparison-head"><span>COMPARE THE THREE CHOICES</span><small>Now + discounted evening reward · credits</small></div>${outcomes.map(d=>`<button type="button" data-battery-plan="${d.n}" class="energy-result-row ${d.n===stored?'chosen':''}"><span>${['Sell both','Split the day','Store both'][d.n]}</span><span class="energy-result-track"><i style="width:${d.now/6*100}%"></i><b style="width:${d.future/6*100}%"></b></span><strong>${d.total.toFixed(2)}</strong><small>${Math.abs(d.total-best)<1e-9?'BEST AT THIS γ':''}</small></button>`).join('')}<div class="energy-comparison-key"><span><i></i>Noon reward</span><span><i></i>Discounted evening reward</span></div>`;
-  } else if (chosen) {
-    q('#return-display').innerHTML = `<span>NEXT STEP</span><strong>18:00 awaits.</strong><p>Run the evening to observe the remaining reward.</p><small>${stored} ${stored === 1 ? 'unit' : 'units'} stored · evening price: 3 credits per unit</small>`;
-  }
-}
 
 function renderRouting({proposed,capacity,user,repaired}) {
   const direct = 100 - proposed, totalInstitution = 100 - user;
@@ -85,13 +34,48 @@ function renderRouting({proposed,capacity,user,repaired}) {
   document.querySelectorAll('[data-routing-preset]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.proposed===String(proposed)&&b.dataset.capacity===String(capacity))));
 }
 
-document.addEventListener('atlas:battery',e=>queueMicrotask(()=>renderEnergy(e.detail)));
 document.addEventListener('atlas:routing',e=>renderRouting(e.detail));
 document.addEventListener('click',e=>{
-  const plan=e.target.closest('[data-battery-plan]');
-  if(plan)q(`[data-store="${plan.dataset.batteryPlan}"]`).click();
   const preset=e.target.closest('[data-routing-preset]');
   if(preset){q('#placement').value=preset.dataset.proposed;q('#capacity').value=preset.dataset.capacity;window.renderCost();}
 });
-window.renderBattery();
 window.renderCost();
+
+// A small, explicitly illustrative state, using the liquidity/risk equations in env.py.
+let marketHour = 0;
+function marketTransition(state, liquidityRatio, burn, risk) {
+  const unsafe = risk ? state.unsafe : 0;
+  const unsafeBacked = unsafe * (.20 + liquidityRatio) / .98;
+  const backed = state.verified + unsafeBacked;
+  const added = backed * liquidityRatio;
+  const demand = state.demand * Math.max(.75, 1 - .80 * burn);
+  const available = state.opening + added, matched = Math.min(available, demand);
+  return {...state,unsafe,unsafeBacked,backed,added,demand,available,matched,
+    next:Math.max(available-matched,0),unmet:Math.max(demand-available,0),
+    artificial:unsafeBacked*liquidityRatio,violation:unsafeBacked/Math.max(backed,1e-9)};
+}
+function renderMarketStep() {
+  const liquidity=Number(q('#market-liquidity').value),burn=Number(q('#market-burn').value),risk=q('#market-risk').checked;
+  const first=marketTransition({hour:12,opening:.1,verified:1,unsafe:.15,demand:.7},liquidity,burn,risk);
+  const second=marketTransition({hour:13,opening:first.next,verified:.35,unsafe:.05,demand:.55},liquidity,burn,risk);
+  const d=marketHour===0?first:second,f=v=>v.toFixed(3);
+  q('#market-liquidity-output').textContent=liquidity.toFixed(2);
+  q('#market-burn-output').textContent=burn.toFixed(2);
+  document.querySelectorAll('[data-market-hour]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.marketHour)===marketHour)));
+  q('#market-inputs').innerHTML=[['Verified supply',d.verified],['Suspicious supply',d.unsafe],['Raw demand',marketHour===0?.7:.55]].map(([label,value])=>'<div><span>'+label+'</span><strong>'+f(value)+' <small>MWh</small></strong></div>').join('');
+  const svg=q('#market-waterfall'),w=Math.max(280,svg.clientWidth||780),narrow=w<500,L=narrow?32:50,R=w-12,B=narrow?205:235,T=30,ceiling=1.2,y=v=>B-v/ceiling*(B-T),step=(R-L)/4,xs=Array.from({length:4},(_,i)=>L+step*(i+.5)),bw=Math.min(72,step*.48);
+  svg.setAttribute('viewBox','0 0 '+w+' '+(narrow?265:300));
+  const bars=[{label:'Brought forward',value:d.opening,lo:0,hi:d.opening,color:'#859e87'},{label:'Liquidity added',value:d.added,lo:d.opening,hi:d.available,color:'#547f69'},{label:'Matched demand',value:-d.matched,lo:d.next,hi:d.available,color:'#b79b65'},{label:'Next state',value:d.next,lo:0,hi:d.next,color:'#3b6659'}];
+  const grid=[0,.3,.6,.9,1.2].map(v=>'<line x1="'+L+'" x2="'+R+'" y1="'+y(v)+'" y2="'+y(v)+'" class="market-grid"/><text x="'+(L-12)+'" y="'+(y(v)+4)+'" text-anchor="end" class="market-svg-axis">'+v.toFixed(1)+'</text>').join('');
+  const shapes=bars.map((b,i)=>'<rect x="'+(xs[i]-bw/2)+'" y="'+y(b.hi)+'" width="'+bw+'" height="'+(y(b.lo)-y(b.hi))+'" rx="4" fill="'+b.color+'"/><text x="'+xs[i]+'" y="'+(y(b.hi)-12)+'" text-anchor="middle" class="market-svg-number">'+(b.value<0?'−':'')+f(Math.abs(b.value))+'</text><text x="'+xs[i]+'" y="'+(B+29)+'" text-anchor="middle" class="market-svg-label">'+b.label.split(' ').map((word,j)=>'<tspan x="'+xs[i]+'" dy="'+(j?12:0)+'">'+word+'</tspan>').join('')+'</text>'+((i<3)?'<path d="M'+(xs[i]+bw/2)+' '+y([d.opening,d.available,d.next][i])+'H'+(xs[i+1]-bw/2)+'" stroke="#a4b79a" stroke-dasharray="4 4" fill="none"/>':'')).join('');
+  q('#market-waterfall').innerHTML='<title>'+d.hour+':00: '+f(d.opening)+' brought forward plus '+f(d.added)+' added, minus '+f(d.matched)+' matched, leaves '+f(d.next)+' for the next state.</title>'+grid+shapes+'<text x="'+L+'" y="16" class="market-svg-axis">LIQUIDITY · MWh EQUIVALENT</text>';
+  q('#market-step-metrics').innerHTML='<div><span>DEMAND MATCHED</span><strong>'+f(d.matched)+'<small>/ '+f(d.demand)+'</small></strong><small>MWh equivalent</small></div><div><span>UNMET DEMAND</span><strong>'+f(d.unmet)+'</strong><small>MWh equivalent</small></div><div class="market-risk-metric"><span>ARTIFICIAL LIQUIDITY</span><strong>'+d.artificial.toFixed(4)+'</strong><small>MWh · '+(d.violation*100).toFixed(1)+'% backing violation rate</small></div>';
+  q('#market-step-reading').textContent=(marketHour===0?'At 12:00, ':'At 13:00, the previous hour contributes '+f(first.next)+' to the opening state. ')+f(d.available)+' is available; '+f(d.matched)+' matches demand and '+f(d.next)+' carries forward. '+(risk?'Some new liquidity comes from suspicious supply, which the benchmark measures separately.':'With suspicious supply removed, artificial liquidity is zero.');
+  if(typeof window.paintRanges==='function')window.paintRanges();
+}
+['#market-liquidity','#market-burn','#market-risk'].forEach(id=>q(id).addEventListener('input',renderMarketStep));
+document.querySelectorAll('[data-market-hour]').forEach(b=>b.addEventListener('click',()=>{marketHour=Number(b.dataset.marketHour);renderMarketStep();}));
+q('#market-reset').addEventListener('click',()=>{q('#market-liquidity').value=.4;q('#market-burn').value=0;q('#market-risk').checked=true;marketHour=0;renderMarketStep();});
+renderMarketStep();
+
+let marketLastWidth=0;new ResizeObserver(entries=>{const width=entries[0].contentRect.width;if(Math.abs(width-marketLastWidth)>1){marketLastWidth=width;renderMarketStep();}}).observe(q('#market-waterfall'));

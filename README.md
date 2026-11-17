@@ -18,16 +18,16 @@ Open http://127.0.0.1:4173. The map, figures, and classroom interactions are loc
 
 - Click a city or its full paper title to jump directly to the corresponding study. Each study ends with **Return to the Research Atlas** and a link to the next stop. The four paper links at the end open the corresponding OpenReview, ACM, or Duke Scholars record directly.
 - Each paper title has a direct link to its OpenReview, ACM, or Duke Scholars record. Click a research figure for a full-resolution view; Escape closes the dialog.
-- The financing studio compares 4%, 8%, 12%, and a custom financing case. Adjust investment and project life, or select a rate/lifetime cell in the cost matrix.
+- The financing studio uses a real discounted cash-flow LCOE model, with upfront investment, annual fixed O&M, annual degradation, and discounted energy. ATB 2024 published utility-scale PV cost inputs are normalized to 1 MW AC; selectable resource classes and editable real discount rates are explicit. Curves compare resources; scenario cards and a rate/lifetime matrix retain exact model values. Sources and exclusions are visible in the panel.
 - The Shanghai map uses local OpenStreetMap geography. Choose Solar array or Factory, set capacity in the side panel, then click a point on land. An asset appears after a short construction delay and keeps reporting at that coordinate.
 - Inspect a marker or select its device name to see readings. The map supports dragging and zooming; Remove deletes a chosen asset, and Reset restores the demonstration.
 - Pause or accelerate the simulated clock, change cloud cover, or submit a solar report with a larger multiplier. Device values, map labels, supply/demand, and the report stream update together.
 - Each video loads after a click. Opening one restores the other’s cover; Return to video cover removes the player.
-- Run a two-step battery episode to compare the discounted returns of all three noon actions.
+- Explore the SolarChain-Eval liquidity state transition at two consecutive hours. Change liquidity support, burn and suspicious supply; the waterfall accounts for opening liquidity, added liquidity, matched demand and the next state. The illustrative states are labeled separately from recorded benchmark results, and the equations link to env.py.
 - SolarChain-Eval: switch between the policy landscape and rollout box plots; choose an outcome, toggle recorded episodes or ±1 SD, and select a policy or individual rollout. Policy selections also update the main results table.
 - The matched experiment view compares removal of the physics penalty with addition of the Planner/Auditor. Choose an outcome and policy, then inspect the paired-change histogram and four-condition matrix.
-- Replay a recorded 24-hour PPO episode, select an hour, or choose hour 15 in the timeline. The allocation plane and three action tracks update together.
-- The cost illustration compares proposed and executed placement, with a capacity marker.
+- Replay a recorded 24-hour PPO episode, select an hour, or choose hour 15 in the timeline. The proposal snapshot, recorded Planner intervals, final action and three paired action bars update together. No intermediate post-Planner action is inferred from the logs.
+- The cost illustration compares proposed and executed placement, using a proportional ribbon flow and a 100-request grid.
 - Hover or focus a ViRel method to highlight it across both charts and its reliability summary. The allocation and policy explorers retain the reported paper values.
 
 ## Vercel and the 3D experience
@@ -46,14 +46,14 @@ vercel --prod --scope owen1234
 The new experience includes:
 
 - A Three.js globe using the bundled land geography, four geographic study markers, raised research-route arcs, selectable cities, orbit/zoom controls, and a flat-map alternative.
-- A three-dimensional view of the original 1,620 benchmark records. Its axes are cumulative reward, physics violation rate (percent), and artificial liquidity (MWh). The default view shows policy means on axes focused on the current setting; switches reveal every episode or restore a common scale across settings. Tick precision adapts to small ranges. Removing the physics penalty changes the reward definition, so reward should be compared within each setting. Policy summaries, single-episode inspection, and CSV downloads retain the original recorded values.
+- A three-dimensional view of the original 1,620 benchmark records. Its axes are cumulative reward, physics violation rate (percent), and artificial liquidity (MWh). The default view is a scatter plot of all recorded episodes in the current setting (90 per policy). Optional policy means and shared axes remain available. Tick precision adapts to small ranges. Removing the physics penalty changes the reward definition, so reward should be compared within each setting. Policy summaries, single-episode inspection, and CSV downloads retain the original recorded values.
 - A warm-paper and deep-green visual system, mobile layouts, keyboard-accessible selection controls, reduced-motion support, and animation that pauses outside the viewport or in a background tab.
-- An isometric solar-to-battery teaching scene with original two-step rewards and discounted-return comparisons.
+- A benchmark-specific liquidity ledger using the published environment transition equations, with a two-hour state carryover and an explicit artificial-liquidity measure.
 - Paired experimental results shown as zero-baseline 3D columns, focused paired-value plots, or signed changes with ±1 paired SD.
 - A request-routing ribbon diagram and 100-request grid that make the capacity repair and resulting reference charges visible.
 - A local copy of Three.js 0.180.0 and its MIT license under `assets/vendor/three/`.
 
-`experience.css` and `experience.js` own the additional presentation and progressive loading; `interactives.css` and `teaching-scenes.js` implement the energy and request-routing illustrations; `spatial.js` owns the WebGL scenes. If WebGL is unavailable, the atlas falls back to the original flat map and the evaluation section retains its original two-dimensional visualizations.
+`experience.css` and `experience.js` own the additional presentation and progressive loading; `interactives.css` and `teaching-scenes.js` implement the benchmark transition and request-routing illustrations; `revision.css` styles the DCF, responsive chart alignment and audit decision review; `spatial.js` owns the WebGL scenes. If WebGL is unavailable, the atlas falls back to the original flat map and the evaluation section retains its original two-dimensional visualizations.
 
 Automatic deployment uses the Vercel GitHub App with access to `Owen-1234/stats201-research-atlas`, the existing `stats201-research-atlas` Vercel project, and production branch `main`. The repository is connected: pushes to `main` build and publish this version; other branches receive preview deployments. Manual releases can also use the deploy command above.
 
@@ -69,12 +69,12 @@ All page, script, image, and evidence links use relative paths, so the site work
 
 - `index.html`: story and section order.
 - `style.css`: base layout, visual system, responsive behavior, and print styles.
-- `lesson.css`: classroom material, RL primer, video, and two-step exercise.
+- `lesson.css`: classroom material, RL primer and video.
 - `atlas.css`: full-title atlas navigation, study layout, financing and resource comparisons, and conclusion.
 - `refinements.css`: shared chart feedback, video cover, and interaction details.
 - `studios.css`: editorial palette, financing comparison, and geographic simulation layout.
 - `studios.js`: financing controls, geographic placement, device inspector, and simulated reporting.
-- `studio-models.js`: deterministic financial and device models.
+- `studio-models.js`: real discounted cash-flow financial model and deterministic device models.
 - `assets/shanghai-basemap.svg`, `shanghai-map.js`: offline Shanghai map and projection/water geometry.
 - `assets/shanghai-osm.geojson`, `shanghai-osm-source.xml.gz`, `shanghai-map-LICENSE.txt`: OSM source extract and attribution.
 - `app.js`: paper metadata, interaction logic, and reported result tables.

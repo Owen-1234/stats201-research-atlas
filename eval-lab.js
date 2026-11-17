@@ -14,11 +14,21 @@
   const signed=(v,key)=>`${v>=0?'+':'−'}${f(Math.abs(v),key)}${['violation','slippage'].includes(key)?' pp':unit(key)?` ${unit(key)}`:''}`;
   const axisLabel=key=>`${defs[key].label}${unit(key)?` (${unit(key)})`:''} ${defs[key].direction}`;
   const text=(x,y,value,attrs='')=>`<text x="${x}" y="${y}" ${attrs}>${value}</text>`;
-  function size(selector,desktop,mobile){const svg=q(selector),w=Math.max(280,svg.clientWidth||650),h=w<500?mobile:desktop;svg.setAttribute('viewBox',`0 0 ${w} ${h}`);svg.style.height=`${h}px`;return {svg,w,h};}
+  function size(selector,desktop,mobile){
+    const svg=q(selector),w=Math.max(280,svg.clientWidth||650);
+    let h=w<500?mobile:desktop;
+    if(selector==='#eval-main-chart'&&q('#eval-landscape').clientWidth>800){
+      const plot=svg.parentElement,style=getComputedStyle(plot);
+      const chrome=[...plot.children].filter(el=>el!==svg).reduce((sum,el)=>{const cs=getComputedStyle(el);return sum+el.getBoundingClientRect().height+parseFloat(cs.marginTop)+parseFloat(cs.marginBottom);},0)+parseFloat(style.paddingTop)+parseFloat(style.paddingBottom);
+      h=Math.max(360,Math.round(q('.eval-policy-profile').getBoundingClientRect().height-chrome));
+    }
+    svg.setAttribute('viewBox','0 0 '+w+' '+h);svg.style.height=h+'px';return {svg,w,h};
+  }
   function domain(values,pad=.12){let lo=Math.min(...values),hi=Math.max(...values);if(hi-lo<1e-9){lo-=.1;hi+=.1;}const p=(hi-lo)*pad;return [lo-p,hi+p];}
   function tickValue(v,key){if(key==='liquidity')return (v*defs[key].scale).toFixed(2);if(key==='jitter')return v.toFixed(3);return (v*defs[key].scale).toFixed(key==='reward'?1:1);}
   function mainPolicies(){return policies.filter(p=>state.baselines||learned.includes(p));}
   function renderMain(){
+    renderProfile();
     const shown=mainPolicies(),key=state.view==='landscape'?state.x:state.dist,{svg,w,h}=size('#eval-main-chart',410,335),L=w<500?44:56,R=w-22,T=38,B=h-45;
     q('#eval-x-control').hidden=state.view!=='landscape';q('#eval-dist-control').hidden=state.view!=='distribution';q('#eval-sd-control').hidden=state.view!=='landscape';
     qa('[data-eval-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.evalView===state.view)));
@@ -49,7 +59,7 @@
       q('#eval-main-caption').textContent=`${defs[key].label} across evaluated episodes`;
       q('#eval-chart-note').textContent='Boxes show the median and middle 50% of recorded values. Whiskers reach the last values within 1.5 IQR; dots retain all observed episodes.';
     }
-    svg.innerHTML=content;renderProfile();renderRunReadout(state.run);
+    svg.innerHTML=content;renderRunReadout(state.run);
     qa('[data-result-policy]').forEach(row=>row.classList.toggle('selected-result',row.dataset.resultPolicy.toLowerCase()===state.policy));
   }
   function renderProfile(){
@@ -79,7 +89,7 @@
   function renderExperiments(){
     const key=state.metric,[before,after]=settingsForEffect(),selected=state.learned;
     const data=learned.map(p=>{const pairs=M.paired(group(before,p),group(after,p),key);return {policy:p,before:stats(before,p,key).mean,after:stats(after,p,key).mean,delta:M.mean(pairs.map(r=>r.delta)),sd:M.summarize(pairs,'delta').sd,pairs};});
-    q('#eval-effect-columns').hidden=state.effectView!=='columns';q('#eval-effect-chart').hidden=state.effectView==='columns';
+    q('#eval-effect-columns').toggleAttribute('hidden',state.effectView!=='columns');q('#eval-effect-chart').toggleAttribute('hidden',state.effectView==='columns');
     qa('[data-eval-effect-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.evalEffectView===state.effectView)));
     const {svg,w,h}=size('#eval-effect-chart',300,330),narrow=w<500;
     qa('[data-eval-experiment]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.evalExperiment===state.experiment)));
@@ -119,15 +129,21 @@
   let replayTimer=null;
   function pauseReplay(){if(replayTimer)clearInterval(replayTimer);replayTimer=null;state.playing=false;q('#eval-trace-play').setAttribute('aria-pressed','false');q('#eval-trace-play').textContent='▷ Replay 24 hours';}
   function renderTrace(){
-    const trace=E.trace[state.step],{svg,w,h}=size('#eval-constraint-chart',385,Math.min(335,Math.max(280,q('#eval-constraint-chart').clientWidth)+4)),S=Math.min(w-78,h-82),L=(w-S)/2+8,T=22,B=T+S,x=v=>L+v*S,y=v=>B-v*S,a=trace.proposed,b=trace.executed,bounds=trace.bounds;
-    q('#eval-timeline').innerHTML=E.trace.map(t=>`<button data-eval-step="${t.step}" class="${t.audited?'audited':'planner-only'} ${t.step===15?'paper-step':''}" aria-pressed="${t.step===state.step}" aria-label="Hour ${t.hour}, ${t.audited?'audit called':'Planner only'}, action change ${t.delta.toFixed(3)}"><i style="height:${7+Math.min(t.delta,1.5)/1.5*32}px"></i><span>${String(t.hour).padStart(2,'0')}</span></button>`).join('');
-    const triangle=`M${x(0)} ${y(0)}L${x(.98)} ${y(0)}L${x(0)} ${y(.98)}Z`;
-    const grid=[0,.25,.5,.75,1].map(v=>`<line x1="${x(v)}" x2="${x(v)}" y1="${T}" y2="${B}" class="eval-grid"/><line x1="${L}" x2="${L+S}" y1="${y(v)}" y2="${y(v)}" class="eval-grid"/>${text(x(v),B+17,v.toFixed(v===0||v===1?0:2),'text-anchor="middle" class="eval-axis"')}${text(L-10,y(v)+3,v.toFixed(v===0||v===1?0:2),'text-anchor="end" class="eval-axis"')}`).join('');
-    svg.innerHTML=`<title>Hour ${trace.hour}: original and executed allocation in the logged PPO episode</title><defs><clipPath id="eval-allocation-domain"><path d="${triangle}"/></clipPath><marker id="eval-action-arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0 0 6 3 0 6Z" fill="#6c9286"/></marker></defs><path d="${triangle}" fill="#f0f3e9"/>${grid}<rect x="${x(bounds.reward_ratio[0])}" y="${y(bounds.liquidity_ratio[1])}" width="${(bounds.reward_ratio[1]-bounds.reward_ratio[0])*S}" height="${(bounds.liquidity_ratio[1]-bounds.liquidity_ratio[0])*S}" clip-path="url(#eval-allocation-domain)" fill="#8eb09e" fill-opacity=".28" stroke="#8fad9b" stroke-width="1"/><path d="M${x(0)} ${y(.98)}L${x(.98)} ${y(0)}" stroke="#94a397" stroke-width="1.2" stroke-dasharray="4 4"/><path d="M${x(a.reward_ratio)} ${y(a.liquidity_ratio)}L${x(b.reward_ratio)} ${y(b.liquidity_ratio)}" stroke="#7c9e91" stroke-width="1.8" marker-end="url(#eval-action-arrow)"/><circle cx="${x(a.reward_ratio)}" cy="${y(a.liquidity_ratio)}" r="7" fill="#fcfcf5" stroke="#b4945d" stroke-width="2.2"/><circle cx="${x(b.reward_ratio)}" cy="${y(b.liquidity_ratio)}" r="6" fill="#568b7b" stroke="#fcfcf5" stroke-width="1.5"/>${text(x(a.reward_ratio)+12,y(a.liquidity_ratio)-10,'Proposal','class="eval-trace-point-label" fill="#9a7c49"')}${text(x(b.reward_ratio)+12,y(b.liquidity_ratio)+18,'Executed','class="eval-trace-point-label" fill="#527e70"')}${text(L,12,'Liquidity share ℓ','class="eval-axis-title"')}${text(L+S/2,h-7,'Reward share α','class="eval-axis-title" text-anchor="middle"')}`;
-    q('#eval-trace-hour').textContent=`${String(trace.hour).padStart(2,'0')}:00`;
-    q('#eval-audit-status').innerHTML=`<span class="${trace.audited?'called':'not-called'}"><i></i>${trace.audited?'AUDIT CALLED':'PLANNER ONLY'}</span><strong>${trace.audited?(trace.decision==='revise'?'The Auditor revised this action.':'The Auditor approved this action.'):'The action passed through the Planner bounds.'}</strong><p>Episode 6 · hour ${trace.hour} · ${trace.audited?'recorded Auditor decision':'no Auditor call at this step'}</p>`;
-    q('#eval-action-comparison').innerHTML=[['reward_ratio','Reward share α'],['liquidity_ratio','Liquidity share ℓ'],['burn_rate','Burn rate b']].map(([key,label])=>{const delta=b[key]-a[key];return `<div><div><span>${label}</span><strong>${a[key].toFixed(3)} <i>→</i> ${b[key].toFixed(3)}</strong></div><div class="eval-action-track"><i style="left:${a[key]*100}%" class="proposal-dot"></i><b style="left:${Math.min(a[key],b[key])*100}%;width:${Math.abs(a[key]-b[key])*100}%"></b><i style="left:${b[key]*100}%" class="executed-dot"></i></div><small>${delta>=0?'+':'−'}${(Math.abs(delta)*100).toFixed(1)} percentage points · 0–1 scale</small></div>`;}).join('');
-    q('#eval-raw-risk').textContent=`${(trace.rawRisk*100).toFixed(0)}%`;q('#eval-risk-trigger').textContent=`${(trace.riskTrigger*100).toFixed(0)}%`;q('#eval-action-delta').textContent=trace.delta.toFixed(3);q('#eval-recorded-reason').textContent=trace.reason;
+    const trace=E.trace[state.step],a=trace.proposed,b=trace.executed,bounds=trace.bounds,pct=v=>(v*100).toFixed(1),esc=s=>s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+    q('#eval-timeline').innerHTML=E.trace.map(t=>'<button data-eval-step="'+t.step+'" class="'+(t.audited?'audited':'planner-only')+'" aria-pressed="'+(t.step===state.step)+'" aria-label="Hour '+t.hour+', '+(t.audited?'audit called':'Planner only')+', action change '+t.delta.toFixed(3)+'"><i style="height:'+(7+Math.min(t.delta,1.5)/1.5*32)+'px"></i><span>'+String(t.hour).padStart(2,'0')+'</span></button>').join('');
+    q('#eval-trace-hour').textContent=String(trace.hour).padStart(2,'0')+':00';
+    const decision=trace.audited?(trace.decision==='revise'?'Auditor revised the action':'Auditor approved the action'):'Planner bounds applied';
+    q('#eval-audit-status').innerHTML='<span class="'+(trace.audited?'called':'not-called')+'"><i></i>'+(trace.audited?'AUDIT CALLED':'PLANNER ONLY')+'</span><strong>'+decision+'</strong><p>PPO · seed 20260512 · episode 6 · hour '+trace.hour+'</p>';
+    const allocation=(action,which)=>{
+      const reserved=Math.max(0,1-action.reward_ratio-action.liquidity_ratio);
+      return '<div class="audit-allocation-bar" role="img" aria-label="'+which+': producer '+pct(action.reward_ratio)+' percent, liquidity '+pct(action.liquidity_ratio)+' percent, unallocated '+pct(reserved)+' percent"><i style="width:'+pct(action.reward_ratio)+'%" class="allocation-producer"></i><i style="width:'+pct(action.liquidity_ratio)+'%" class="allocation-liquidity"></i><i style="width:'+pct(reserved)+'%" class="allocation-reserved"></i></div><div class="audit-allocation-values"><span>Producer <b>'+pct(action.reward_ratio)+'%</b></span><span>Liquidity <b>'+pct(action.liquidity_ratio)+'%</b></span><span>Unallocated <b>'+pct(reserved)+'%</b></span></div>';
+    };
+    q('#eval-action-flow').innerHTML='<section class="audit-snapshot audit-proposed"><span>01 / POLICY PROPOSES</span><h5>A frozen PPO policy</h5>'+allocation(a,'Proposed allocation')+'<small>Burn rate: '+pct(a.burn_rate)+'%</small></section><section class="audit-governance"><span>02 / GOVERNANCE CHECK</span><h5>Planner intervals</h5><div>'+[['reward_ratio','α'],['liquidity_ratio','ℓ'],['burn_rate','b']].map(([k,l])=>'<span>'+l+' <b>'+pct(bounds[k][0])+'–'+pct(bounds[k][1])+'%</b></span>').join('')+'</div><p>'+(trace.audited?'Auditor called · '+esc(trace.decision):'No Auditor call at this hour')+'</p></section><section class="audit-snapshot audit-executed"><span>03 / ENVIRONMENT EXECUTES</span><h5>The final recorded action</h5>'+allocation(b,'Executed allocation')+'<small>Burn rate: '+pct(b.burn_rate)+'%</small></section>';
+    q('#eval-action-comparison').innerHTML=[['reward_ratio','Reward share','α'],['liquidity_ratio','Liquidity share','ℓ'],['burn_rate','Burn rate','b']].map(([key,label,symbol])=>{
+      const delta=b[key]-a[key],interval=bounds[key];
+      return '<section class="audit-action-card"><header><span>'+label+'</span><i>'+symbol+'</i></header><div class="audit-paired-values"><span>'+pct(a[key])+'<small>%</small></span><i>→</i><strong>'+pct(b[key])+'<small>%</small></strong></div><div class="audit-bar-label"><span>Proposed</span><b>'+a[key].toFixed(3)+'</b></div><div class="audit-horizontal-bar"><i style="left:'+pct(interval[0])+'%;width:'+pct(interval[1]-interval[0])+'%" class="audit-interval"></i><b style="width:'+pct(a[key])+'%" class="audit-proposal-fill"></b></div><div class="audit-bar-label"><span>Executed</span><b>'+b[key].toFixed(3)+'</b></div><div class="audit-horizontal-bar"><i style="left:'+pct(interval[0])+'%;width:'+pct(interval[1]-interval[0])+'%" class="audit-interval"></i><b style="width:'+pct(b[key])+'%" class="audit-executed-fill"></b></div><div class="audit-bar-scale"><span>0</span><span>1</span></div><footer>'+(delta>=0?'+':'−')+pct(Math.abs(delta))+' <span>percentage points</span></footer></section>';
+    }).join('');
+    q('#eval-raw-risk').textContent=(trace.rawRisk*100).toFixed(0)+'%';q('#eval-risk-trigger').textContent=(trace.riskTrigger*100).toFixed(0)+'%';q('#eval-action-delta').textContent=trace.delta.toFixed(3);q('#eval-recorded-reason').textContent=trace.reason;
   }
   function handleSelection(event){const run=event.target.closest('[data-eval-run]'),policy=event.target.closest('[data-eval-policy]'),experimentPolicy=event.target.closest('[data-eval-learned]');if(run){const i=Number(run.dataset.evalRun);selectPolicy(E.records[i].policy,i);}else if(policy)selectPolicy(policy.dataset.evalPolicy);else if(experimentPolicy)selectPolicy(experimentPolicy.dataset.evalLearned);}
   document.addEventListener('click',handleSelection);

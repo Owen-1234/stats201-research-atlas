@@ -282,7 +282,7 @@ export function createLandscape({ reducedMotion }) {
   const names = { static: 'Static', random: 'Random', myopic: 'Myopic', ppo: 'PPO', sac: 'SAC', dqn: 'DQN' };
   const colors = { static: '#9baca1', random: '#bda989', myopic: '#8f91a2', ppo: '#4383a0', sac: '#4a9271', dqn: '#c39955' };
   const allPolicies = Object.keys(names);
-  let setting = q('#spatial-setting').value, policy = 'all', detailMode = 'means', rangeMode = 'focused';
+  let setting = q('#spatial-setting').value, policy = 'all', detailMode = 'episodes', rangeMode = 'focused';
   let records = evidence.records.filter(record => record.setting === setting);
   function meanRows(rows) {
     const groups = new Map();
@@ -425,7 +425,7 @@ export function createLandscape({ reducedMotion }) {
       positions.push(...positionOf(record).toArray());
       const active = policy === 'all' || record.policy === policy;
       const color = new THREE.Color(colors[record.policy]);
-      if (!active) color.lerp(backdrop, 0.83);
+      if (!active) color.lerp(backdrop, 0.62);
       pointColors.push(...color.toArray());
       sizes.push(record === selectedRecord ? 12 : active ? 6.5 : 4);
     });

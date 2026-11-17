@@ -8,31 +8,32 @@
   function paint(){if(typeof paintRanges==='function')paintRanges();}
 
   function renderFinance(){
-    const investment=Number(q('#project-cost').value)*1000,years=Number(q('#project-life').value),rate=Number(q('#wacc').value);
-    const current=M.finance({investment,years,rate}),reference=M.finance({investment,years,rate:8}),delta=current.cost-reference.cost;
-    q('#project-cost-output').textContent=`$${(investment/1e6).toFixed(2)}m`;
-    q('#project-life-output').textContent=`${years} years`;q('#wacc-output').textContent=`${rate.toFixed(1)}%`;
-    q('#annual-capital').textContent=money(current.annualCapital);
-    q('#levelized-cost').innerHTML=`$${current.cost.toFixed(1)}<small>/MWh</small>`;
-    q('#financing-delta').innerHTML=`${delta>=0?'+':'−'}$${Math.abs(delta).toFixed(1)}<small>/MWh</small>`;
-    const cases=[{name:'Lower-rate case',rate:4},{name:'Reference case',rate:8},{name:'Higher-rate case',rate:12},{name:'Your scenario',rate,selected:true}].map(d=>({...d,...M.finance({investment,years,rate:d.rate})}));
-    const max=Math.ceil(Math.max(...cases.map(d=>d.cost))/25)*25,x=v=>188+v/max*475;
-    const grid=Array.from({length:5},(_,i)=>{const value=max*i/4;return `<line x1="${x(value)}" x2="${x(value)}" y1="18" y2="231" class="finance-grid"/>${svgText(x(value),258,`$${value.toFixed(0)}`,'text-anchor="middle" class="axis-text"')}`;}).join('');
-    const bars=cases.map((d,i)=>{const y=39+i*53,parts=[d.straight,d.premium,d.operations].map(v=>v/current.energy),total=d.cost;
-      let start=188;
-      return `<g>${d.selected?`<rect x="2" y="${y-21}" width="773" height="48" rx="5" fill="#ebece5"/>`:''}${svgText(12,y-1,d.name,'class="scenario-name"')}${svgText(12,y+15,`${d.rate.toFixed(1)}% · ${years} years`,'class="axis-text"')}${parts.map((part,j)=>{const width=part/max*475,rect=`<rect x="${start}" y="${y-13}" width="${width}" height="26" class="finance-segment segment-${j}"><title>${['Straight-line capital recovery','Financing premium','Operations'][j]}: $${part.toFixed(2)}/MWh</title></rect>`;start+=width;return rect;}).join('')}${svgText(688,y+4,`$${total.toFixed(1)}`,'class="scenario-total"')}${svgText(752,y+4,'/MWh','class="axis-text"')}</g>`;
-    }).join('');
-    q('#finance-scenarios').innerHTML=`<title>Illustrative cost of a 1 MW solar project under four financing rates, ${years} year life</title>${grid}${bars}`;
-    q('#finance-scenarios-mobile').innerHTML=cases.map(d=>`<div class="finance-small-row ${d.selected?'selected':''}"><div><span>${d.name}<small>${d.rate.toFixed(1)}% · ${years} years</small></span><strong>$${d.cost.toFixed(1)}<small>/MWh</small></strong></div><div class="finance-small-track">${[d.straight,d.premium,d.operations].map((v,i)=>`<i class="segment-${i}" style="width:${v/current.energy/max*100}%"></i>`).join('')}</div></div>`).join('');
-    q('#finance-caption').textContent=`At ${rate.toFixed(1)}%, annual capital recovery is ${money(current.annualCapital)}. Adding ${money(current.operations)} in operating costs and dividing by ${current.energy.toLocaleString('en-US')} MWh gives $${current.cost.toFixed(1)}/MWh.`;
-    const lives=[10,15,20,25,30],rates=[2,4,6,8,10,12,14,16];
-    const cells=rates.flatMap(r=>lives.map(n=>M.finance({investment,years:n,rate:r}).cost)),min=Math.min(...cells),maxCell=Math.max(...cells);
-    q('#finance-matrix').innerHTML=`<span class="matrix-corner">Rate / life</span>${lives.map(n=>`<span class="matrix-heading">${n} yr</span>`).join('')}${rates.map(r=>`<span class="matrix-heading">${r}%</span>${lives.map(n=>{const cost=M.finance({investment,years:n,rate:r}).cost,t=(cost-min)/(maxCell-min),active=r===rate&&n===years,light=96-t*65;return `<button data-finance-rate="${r}" data-finance-years="${n}" class="${active?'selected':''}" style="background:hsl(207 23% ${light}%);color:${t>.56?'#fff':'#233b4c'}" aria-label="${r} percent financing, ${n} years: ${cost.toFixed(1)} dollars per MWh" aria-pressed="${active}">$${cost.toFixed(0)}</button>`;}).join('')}`).join('')}`;
-    q('#finance-interpretation').textContent=Math.abs(delta)<.05?`This scenario matches the 8% reference. The panels, generation, and operating budget are identical across the four cases; financing alone changes the annual revenue they need.`:`With the same asset and annual generation, ${rate.toFixed(1)}% financing ${delta>0?'adds':'removes'} $${Math.abs(delta).toFixed(1)} per MWh relative to the 8% reference. A longer life spreads recovery over more years; it does not remove the cost of waiting for that revenue.`;
+    const investment=Number(q('#project-cost').value)*1000,years=Number(q('#project-life').value),rate=Number(q('#wacc').value),capacityFactor=Number(q('#finance-resource').value);
+    const evaluate=(r,cf=capacityFactor,n=years)=>M.finance({investment,years:n,rate:r,capacityFactor:cf});
+    const current=evaluate(rate),reference=evaluate(8),delta=current.cost-reference.cost;
+    q('#project-cost-output').textContent='$'+(investment/1e6).toFixed(2)+'m';
+    q('#project-life-output').textContent=years+' years';q('#wacc-output').textContent=rate.toFixed(1)+'%';
+    q('#annual-capital').textContent='$'+(current.pvCost/1e6).toFixed(2)+'m';
+    q('#levelized-cost').innerHTML='$'+current.cost.toFixed(1)+'<small>/MWh</small>';
+    q('#financing-delta').innerHTML=(delta>=0?'+':'−')+'$'+Math.abs(delta).toFixed(1)+'<small>/MWh</small>';
+    q('#finance-energy').textContent=current.energy.toLocaleString('en-US',{maximumFractionDigits:1})+' MWh';
+    const resources=[{cf:.214,color:'#a7b99b'},{cf:.269,color:'#497c69'},{cf:.34,color:'#baa06d'}];
+    const ceiling=Math.ceil(evaluate(16,.214).cost/25)*25,L=60,R=748,T=30,B=285,x=v=>L+(v-2)/14*(R-L),y=v=>B-v/ceiling*(B-T);
+    const grid=Array.from({length:5},(_,i)=>{const v=ceiling*i/4;return '<line x1="'+L+'" x2="'+R+'" y1="'+y(v)+'" y2="'+y(v)+'" class="finance-grid"/>'+svgText(L-10,y(v)+4,'$'+v.toFixed(0),'text-anchor="end" class="dcf-axis"');}).join('');
+    const ticks=[2,4,6,8,10,12,14,16].map(r=>svgText(x(r),B+24,r+'%','text-anchor="middle" class="dcf-axis"')).join('');
+    const lines=resources.map(d=>'<polyline points="'+Array.from({length:57},(_,i)=>{const r=2+i*.25;return x(r)+','+y(evaluate(r,d.cf).cost);}).join(' ')+'" fill="none" stroke="'+d.color+'" stroke-width="'+(d.cf===capacityFactor?3.4:1.7)+'" opacity="'+(d.cf===capacityFactor?1:.65)+'"/>').join('');
+    const labelX=Math.min(R-69,Math.max(L+69,x(rate))),labelY=Math.max(T+16,y(current.cost)-24);
+    q('#finance-scenarios').innerHTML='<title>Discounted cash-flow LCOE, '+years+' years, 0.7 percent annual degradation</title>'+grid+ticks+lines+'<path d="M'+x(rate)+' '+T+'V'+B+'" stroke="#90a589" stroke-dasharray="4 5"/><circle cx="'+x(rate)+'" cy="'+y(current.cost)+'" r="6" fill="#416f5b" stroke="#fffef7" stroke-width="2"/><rect x="'+(labelX-58)+'" y="'+(labelY-18)+'" width="116" height="28" rx="5" fill="#f4f7eb" stroke="#cfddc4"/>'+svgText(labelX,labelY+1,'$'+current.cost.toFixed(1)+' / MWh','text-anchor="middle" class="dcf-point-label"')+svgText(L,15,'REAL LCOE · $/MWh','class="dcf-axis"')+svgText((L+R)/2,342,'Real discount rate','text-anchor="middle" class="dcf-axis"');
+    const cases=[{name:'Lower rate',r:4},{name:'Reference',r:8},{name:'Higher rate',r:12},{name:'Your scenario',r:rate}];
+    q('#finance-scenarios-mobile').innerHTML=cases.map((d,i)=>'<div class="'+(i===3?'selected':'')+'"><span>'+d.name+' · '+d.r.toFixed(1)+'%</span><strong>$'+evaluate(d.r).cost.toFixed(1)+'<small>/MWh</small></strong></div>').join('');
+    q('#finance-caption').textContent='At '+rate.toFixed(1)+'%, discounted costs are '+money(current.pvCost)+' and discounted generation is '+current.pvEnergy.toLocaleString('en-US',{maximumFractionDigits:0})+' MWh. Their ratio is $'+current.cost.toFixed(1)+'/MWh. Every curve discounts annual output after 0.7% yearly degradation.';
+    const lives=[10,15,20,25,30],rates=[2,4,6,8,10,12,14,16],cells=rates.flatMap(r=>lives.map(n=>evaluate(r,capacityFactor,n).cost)),min=Math.min(...cells),max=Math.max(...cells);
+    q('#finance-matrix').innerHTML='<span class="matrix-corner">Rate / life</span>'+lives.map(n=>'<span class="matrix-heading">'+n+' yr</span>').join('')+rates.map(r=>'<span class="matrix-heading">'+r+'%</span>'+lives.map(n=>{const cost=evaluate(r,capacityFactor,n).cost,t=(cost-min)/(max-min),active=r===rate&&n===years;return '<button data-finance-rate="'+r+'" data-finance-years="'+n+'" style="background:hsl(95 18% '+(96-t*50)+'%);color:'+(t>.7?'#fff':'#385b43')+'" aria-label="'+r+' percent real discount rate, '+n+' years: '+cost.toFixed(1)+' dollars per MWh" aria-pressed="'+active+'">$'+cost.toFixed(0)+'</button>';}).join('')).join('');
+    q('#finance-interpretation').textContent='At the displayed price, the present value of revenue equals the present value of investment and operating costs. '+(Math.abs(delta)<.05?'This scenario uses the 8% reference rate.':rate.toFixed(1)+'% '+(delta>0?'raises':'lowers')+' the required price by $'+Math.abs(delta).toFixed(1)+'/MWh versus 8%, with physical generation unchanged.');
     paint();
   }
-  ['#project-cost','#project-life','#wacc'].forEach(id=>q(id).addEventListener('input',renderFinance));
-  q('#finance-reset').addEventListener('click',()=>{q('#project-cost').value=1000;q('#project-life').value=20;q('#wacc').value=8;renderFinance();});
+  ['#project-cost','#project-life','#wacc','#finance-resource'].forEach(id=>q(id).addEventListener('input',renderFinance));
+  q('#finance-reset').addEventListener('click',()=>{q('#project-cost').value=1560;q('#project-life').value=30;q('#wacc').value=8;q('#finance-resource').value=.269;renderFinance();});
   q('#finance-matrix').addEventListener('click',event=>{const cell=event.target.closest('[data-finance-rate]');if(!cell)return;q('#wacc').value=cell.dataset.financeRate;q('#project-life').value=cell.dataset.financeYears;renderFinance();q(`#finance-matrix [data-finance-rate="${cell.dataset.financeRate}"][data-finance-years="${cell.dataset.financeYears}"]`).focus({preventScroll:true});});
 
   const GEO=window.ShanghaiAtlasMap;

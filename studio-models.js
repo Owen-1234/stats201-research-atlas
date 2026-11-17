@@ -2,10 +2,16 @@
 (function(root){
   'use strict';
   const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
-  function finance({investment=1000000,years=20,rate=8}={}){
-    const r=rate/100,annualCapital=r===0?investment/years:investment*r/(1-Math.pow(1+r,-years));
-    const straight=investment/years,operations=20000,energy=8760*.2;
-    return {annualCapital,straight,premium:annualCapital-straight,operations,energy,cost:(annualCapital+operations)/energy};
+  // Real-dollar, unlevered discounted cash flow. ATB 2024 utility-scale PV
+  // benchmark inputs are normalized to 1 MW AC; this is not a 1 MW project quote.
+  function finance({investment=1560000,years=30,rate=8,capacityFactor=.269,degradation=.007,operations=22000}={}){
+    const r=rate/100,energy=8760*capacityFactor;
+    const cashflows=Array.from({length:years},(_,i)=>{const year=i+1,discount=1/(1+r)**year;return {year,energy:energy*(1-degradation)**i,operations,discount};});
+    const pvOperations=cashflows.reduce((sum,d)=>sum+d.operations*d.discount,0);
+    const pvEnergy=cashflows.reduce((sum,d)=>sum+d.energy*d.discount,0);
+    const pvCost=investment+pvOperations,cost=pvCost/pvEnergy;
+    const annuity=cashflows.reduce((sum,d)=>sum+d.discount,0),annualCapital=investment/annuity;
+    return {annualCapital,operations,energy,cost,pvOperations,pvEnergy,pvCost,cashflows};
   }
   function daylight(hour){return Math.max(0,Math.sin((hour-6)/12*Math.PI))*(hour>=6&&hour<=18?1:0);}
   function device(asset,hour,cloud=15){

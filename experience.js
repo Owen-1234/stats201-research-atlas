@@ -38,7 +38,7 @@ async function startGlobe() {
   if (globeStarting) return globeStarting;
   globeStarting = (async () => {
     try {
-      const { createGlobe } = await import('./spatial.js?v=7');
+      const { createGlobe } = await import('./spatial.js?v=12');
       globe = await createGlobe({ cities, onSelect: selectCity, reducedMotion: reducedMotion.matches });
       selectCity(activeCity.id, false);
     } catch (error) {
@@ -79,7 +79,7 @@ const spatialObserver = new IntersectionObserver(async (entries) => {
   if (!entries.some((entry) => entry.isIntersecting)) return;
   spatialObserver.disconnect();
   try {
-    const { createLandscape } = await import('./spatial.js?v=7');
+    const { createLandscape } = await import('./spatial.js?v=12');
     createLandscape({ reducedMotion: reducedMotion.matches });
   } catch (error) {
     console.warn('The 3D evidence view is unavailable; the linked two-dimensional results remain available.', error);

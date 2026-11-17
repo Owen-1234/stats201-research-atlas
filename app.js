@@ -170,51 +170,6 @@ function renderCost() {
 }
 $('#placement').addEventListener('input',renderCost); $('#capacity').addEventListener('input',renderCost);
 
-// Two-step classroom exercise. Fixed illustrative prices, not a policy trained
-// on the SolarChain benchmark. All decisions are made by the reader.
-let storedUnits = null;
-let eveningComplete = false;
-function renderBattery() {
-  paintRanges();
-  const gamma=Number($('#discount').value);
-  document.dispatchEvent(new CustomEvent('atlas:battery',{detail:{storedUnits,eveningComplete,gamma}}));
-  $('#discount-output').textContent=gamma.toFixed(2);
-  $$('[data-store]').forEach(el=>{const active=storedUnits!==null&&Number(el.dataset.store)===storedUnits;el.classList.toggle('active',active);el.setAttribute('aria-pressed',String(active));});
-  const charge=storedUnits===null||eveningComplete?0:storedUnits;
-  $$('#battery-drawing>span').forEach((el,i)=>el.classList.toggle('charged',i<charge));
-  $('#battery-drawing').setAttribute('aria-label',`Battery storing ${charge} energy units`);
-  $('#battery-time').textContent=eveningComplete?'18:00 / EVENING':'12:00 / NOON';
-  $('#battery-price').textContent=eveningComplete?'3 credits per unit':'1 credit per unit';
-  $('#run-evening').disabled=storedUnits===null||eveningComplete;
-  const stored=storedUnits??0;
-  $('#episode-path').innerHTML=`<div class="${storedUnits!==null?'complete':''}"><span>12:00</span><strong>${storedUnits===null?'2 units available':`${2-stored} sold`}</strong><small>${storedUnits===null?'Choose an action':`${stored} stored`}</small></div><span class="episode-link">${storedUnits===null?'→':`${stored} units →`}</span><div class="${eveningComplete?'complete':''}"><span>18:00</span><strong>${eveningComplete?`${stored} sold`:'Evening market'}</strong><small>${eveningComplete?`${3*stored} credits received`:'3 credits per unit'}</small></div>`;
-  if(storedUnits===null){
-    $('#battery-feedback').textContent='Choose how much to store. The evening result depends on this decision.';
-    $('#episode-ledger').innerHTML=''; $('#battery-comparison').innerHTML='';
-    $('#return-display').innerHTML='<span>Discounted return</span><strong>G = r<sub>noon</sub> + γr<sub>evening</sub></strong>';
-    return;
-  }
-  const immediate=2-storedUnits, later=3*storedUnits, total=immediate+gamma*later;
-  $('#episode-ledger').innerHTML=`<table><thead><tr><th scope="col">Time</th><th scope="col">Action</th><th scope="col">Reward</th><th scope="col">Stored after</th></tr></thead><tbody><tr><th scope="row">Noon</th><td>Sell ${immediate}, store ${storedUnits}</td><td>${immediate}</td><td>${storedUnits}</td></tr>${eveningComplete?`<tr><th scope="row">Evening</th><td>Sell ${storedUnits}</td><td>${later}</td><td>0</td></tr>`:''}</tbody></table>`;
-  if(!eveningComplete){
-    $('#battery-comparison').innerHTML='';
-    $('#battery-feedback').textContent=`You receive ${immediate} ${immediate===1?'credit':'credits'} now and keep ${storedUnits} ${storedUnits===1?'unit':'units'} for the evening.`;
-    $('#return-display').innerHTML='<span>Next step</span><strong>Run the evening to calculate G.</strong>';
-    return;
-  }
-  const allReturns=[0,1,2].map(store=>2-store+gamma*3*store);
-  $('#battery-comparison').innerHTML=`<span class="comparison-caption">Return from each possible noon action</span>${allReturns.map((value,i)=>`<div class="${i===storedUnits?'chosen':''}"><span>Store ${i}</span><div><i style="width:${value/6*100}%"></i></div><strong>${value.toFixed(2)}</strong></div>`).join('')}`;
-  const best=Math.max(...allReturns);
-  const bestActions=allReturns.map((value,i)=>Math.abs(value-best)<1e-9?i:null).filter(value=>value!==null);
-  const verdict=Math.abs(total-best)<1e-9?'This is a best action for these prices and this discount factor.':`Storing ${bestActions.join(' or ')} units gives a higher discounted return of ${best.toFixed(2)}.`;
-  $('#battery-feedback').textContent=`The evening sale brings ${later} ${later===1?'credit':'credits'}. ${verdict}`;
-  $('#return-display').innerHTML=`<span>Discounted return for this episode</span><strong>${immediate} + ${gamma.toFixed(2)} × ${later} = ${total.toFixed(2)}</strong><small>Undiscounted sales revenue: ${immediate+later} credits.</small>`;
-}
-$$('[data-store]').forEach(el=>el.addEventListener('click',()=>{storedUnits=Number(el.dataset.store);eveningComplete=false;renderBattery();}));
-$('#run-evening').addEventListener('click',()=>{if(storedUnits!==null){eveningComplete=true;renderBattery();}});
-$('#reset-battery').addEventListener('click',()=>{storedUnits=null;eveningComplete=false;renderBattery();});
-$('#discount').addEventListener('input',renderBattery);
-
 // Classroom videos load on request; opening one restores the other's cover.
 const classroomVideos=[
   {key:'rl',id:'2xATEwcRpy8',title:'Udacity: Reinforcement Learning Basics, complete video (about two and a half minutes)'},
@@ -256,4 +211,4 @@ window.addEventListener('scroll',()=>{
   });
 },{passive:true});
 
-selectPaper('capital'); renderVirel(); renderAllocation(20); renderCost(); renderBattery();
+selectPaper('capital'); renderVirel(); renderAllocation(20); renderCost();
