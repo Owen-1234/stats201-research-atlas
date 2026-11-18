@@ -27,7 +27,7 @@ Open http://127.0.0.1:4173. The map, figures, and classroom interactions are loc
 - SolarChain-Eval: switch between the policy landscape and rollout box plots; choose an outcome, toggle recorded episodes or ±1 SD, and select a policy or individual rollout. Policy selections also update the main results table.
 - The matched experiment view compares removal of the physics penalty with addition of the Planner/Auditor. Choose an outcome and policy, then inspect the paired-change histogram and four-condition matrix.
 - Compare two recorded PPO decisions using a compact 3D action chart: an Auditor intervention at 15:00 and a Planner adjustment at 01:00. Paired columns show reward, liquidity and burn on a common 0–100% scale. The full 24-hour source record remains downloadable.
-- The ongoing research illustration follows one Web AI request from its proposed host through a runtime check to its executed host. A single GPU-busy switch changes the executed device and its resource account.
+- The original Who Bears the Cost project flowchart is displayed above the simplified introduction and can be expanded to full resolution. The ongoing research illustration follows one Web AI request from its proposed host through a runtime check to its executed host. A single GPU-busy switch changes the executed device and its resource account.
 - Hover or focus a ViRel method to highlight it across both charts and its reliability summary. The allocation and policy explorers retain the reported paper values.
 
 ## Vercel and the 3D experience

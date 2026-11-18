@@ -277,6 +277,6 @@ The 3D cloud shows the original recorded episodes by default. The compact audit 
 
 ## 18 November 2026: concise placement introduction and 3D action comparison
 
-The placement sketch was checked against the local project README, `src/ecochainai/phase4/repair.py` (endpoint-busy capacity failure and selection of a feasible action), and `src/ecochainai/phase2/accounting.py` (party-level resource accounts). The displayed busy/ready scenario selects between a local host and an available institutional host; it is a short introduction to the research question. The original architecture remains available through the figure viewer.
+The placement sketch was checked against the local project README, `src/ecochainai/phase4/repair.py` (endpoint-busy capacity failure and selection of a feasible action), and `src/ecochainai/phase2/accounting.py` (party-level resource accounts). The displayed busy/ready scenario selects between a local host and an available institutional host; it is a short introduction to the research question. The original architecture is displayed directly above the simplified introduction and remains expandable through the figure viewer.
 
 The compact audit chart reads `trace[15]` and `trace[1]` from the unchanged evaluation evidence. Front-face heights are the recorded action values times one common scale; all six columns use 0–100%, fixed depth and explicit numeric labels. Zero remains zero height. The two tabs select an Auditor intervention and a Planner-only adjustment. The full original trace download remains available.
