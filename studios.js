@@ -68,14 +68,12 @@
       button.innerHTML = `<span>${r}% real rate</span><strong>$${evaluate(r).cost.toFixed(1)}<small>/MWh</small></strong>`;
     });
     q('#finance-caption').textContent='At '+rate.toFixed(1)+'%, discounted costs are '+money(current.pvCost)+' and discounted generation is '+current.pvEnergy.toLocaleString('en-US',{maximumFractionDigits:0})+' MWh. Their ratio is $'+current.cost.toFixed(1)+'/MWh. Every curve discounts annual output after 0.7% yearly degradation.';
-    const lives=[10,15,20,25,30],rates=[2,4,6,8,10,12,14,16],cells=rates.flatMap(r=>lives.map(n=>evaluate(r,capacityFactor,n).cost)),min=Math.min(...cells),max=Math.max(...cells);
-    q('#finance-matrix').innerHTML='<span class="matrix-corner">Rate / life</span>'+lives.map(n=>'<span class="matrix-heading">'+n+' yr</span>').join('')+rates.map(r=>'<span class="matrix-heading">'+r+'%</span>'+lives.map(n=>{const cost=evaluate(r,capacityFactor,n).cost,t=(cost-min)/(max-min),active=r===rate&&n===years;return '<button data-finance-rate="'+r+'" data-finance-years="'+n+'" style="background:hsl(95 18% '+(96-t*50)+'%);color:'+(t>.7?'#fff':'#385b43')+'" aria-label="'+r+' percent real discount rate, '+n+' years: '+cost.toFixed(1)+' dollars per MWh" aria-pressed="'+active+'">$'+cost.toFixed(0)+'</button>';}).join('')).join('');
     q('#finance-interpretation').textContent='At the displayed price, the present value of revenue equals the present value of investment and operating costs. '+(Math.abs(delta)<.05?'This scenario uses the 8% reference rate.':rate.toFixed(1)+'% '+(delta>0?'raises':'lowers')+' the required price by $'+Math.abs(delta).toFixed(1)+'/MWh versus 8%, with physical generation unchanged.');
     paint();
   }
   ['#project-cost','#project-life','#wacc','#finance-resource'].forEach(id=>q(id).addEventListener('input',renderFinance));
   q('#finance-reset').addEventListener('click',()=>{q('#project-cost').value=1560;q('#project-life').value=30;q('#wacc').value=8;q('#finance-resource').value=.269;renderFinance();});
-  q('#finance-matrix').addEventListener('click',event=>{const cell=event.target.closest('[data-finance-rate]');if(!cell)return;q('#wacc').value=cell.dataset.financeRate;q('#project-life').value=cell.dataset.financeYears;renderFinance();q(`#finance-matrix [data-finance-rate="${cell.dataset.financeRate}"][data-finance-years="${cell.dataset.financeYears}"]`).focus({preventScroll:true});});
+
 
 
   q('#finance-scenarios-mobile').addEventListener('click', event => {

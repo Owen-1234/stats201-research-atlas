@@ -36,4 +36,20 @@ assert.equal(records.filter((record) => record.setting === 'main').length, 540);
 assert.equal(records.filter((record) => record.setting === 'noPhysics').length, 540);
 for (const setting of ['llm', 'llmNoPhysics']) assert.equal(records.filter((record) => record.setting === setting).length, 270);
 for (const record of records) for (const key of ['reward', 'violation', 'liquidity']) assert(Number.isFinite(record[key]), `${key} must be finite.`);
-console.log(`Verified ${ids.length} unique anchors, ${new Set(targets).size} local resources, ${scripts.length} script syntaxes, ${originals.length} inline originals, 1,620 original evaluation records.`);
+vm.runInNewContext(await readFile(path.join(root, 'assets/capital-evidence.js'), 'utf8'), context);
+const sensitivities = context.window.CapitalSensitivity;
+const capitalCsv = (await readFile(path.join(root, 'evidence/capital-price-sensitivity.csv'), 'utf8')).trim().split(/\r?\n/).slice(1).map(line => line.split(','));
+assert.equal(sensitivities.length, 81, 'Keep all 3-region × 9-technology × 3-fuel sensitivity estimates.');
+assert.equal(capitalCsv.length, 81);
+assert.equal(new Set(sensitivities.map(row => [row.region, row.technology, row.fuel].join('/'))).size, 81);
+for (const row of sensitivities) {
+  const source = capitalCsv.find(item => item[0] === row.region && item[1] === row.technology && item[2] === row.fuel + ' Price');
+  assert(source, `Missing source row for ${row.region}/${row.technology}/${row.fuel}`);
+  assert.equal(row.deltaBp, Number(source[5]), 'Plotted change must equal the reported result.');
+  assert.equal(row.elasticity, Number(source[3]));
+  assert.equal(row.meanWacc, Number(source[4]));
+  assert.equal(row.months, 120);
+  const converted = Math.expm1(row.elasticity * Math.log(1.1)) * row.meanWacc * 10000;
+  assert(Math.abs(row.deltaBp - converted) < 1e-9, 'Check the original-unit elasticity to basis-point conversion.');
+}
+console.log(`Verified ${ids.length} unique anchors, ${new Set(targets).size} local resources, ${scripts.length} script syntaxes, ${originals.length} inline originals, 1,620 original evaluation records, and 81 source-matched capital sensitivity estimates.`);
