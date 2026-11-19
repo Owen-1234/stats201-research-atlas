@@ -57,25 +57,13 @@ const papers = {
     how: 'A frozen metadata controller selects one inference action per query. Evaluation separates task performance, intervention-defined reliability, and measured GPU energy.',
     lesson: 'The released replication reports SCOPE energy reductions of 11.87% on 7B and 10.62% on 13B under the tested setup. Token reduction and measured energy are evaluated separately.',
     figures: [['virel-workflow.png', 'Original framework figure from the GreenMM talk.'], ['virel-energy.png', 'Original energy results from the GreenMM talk; GPU energy and model-scale comparisons are distinguished.']],
-    links: [['Code & result summaries', 'https://github.com/Global-Nomad-Nexus/ViRel-Budget'], ['ACM proceedings', 'https://dl.acm.org/doi/10.1145/3840750.3841450']],
+    links: [['Code & result summaries', 'https://github.com/SeanWan514/ViRel-Budget'], ['ACM proceedings', 'https://dl.acm.org/doi/10.1145/3840750.3841450']],
     note: 'Energy percentages come from the released 630-query replication. Reliability is measured through behavior under defined visual interventions, alongside workload, backend, pruner, and hardware measurements.'
   }
 };
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
-let selectedPaper = 'capital';
-function selectPaper(id) {
-  if (!papers[id]) return;
-  selectedPaper=id;
-  $$('[data-paper]').forEach(el=>{
-    const active=el.dataset.paper===id;
-    el.classList.toggle('active',active);
-    if(active)el.setAttribute('aria-current','location');
-    else el.removeAttribute('aria-current');
-  });
-}
-
 function openPaper(id) {
   const p = papers[id];
   if (!p) return;
@@ -84,21 +72,43 @@ function openPaper(id) {
   $('#paper-dialog').scrollTop = 0;
 }
 
-function openImage(src, caption) {
-  $('#expanded-image').src = src;
-  $('#expanded-image').alt = caption;
-  $('#expanded-caption').textContent = caption;
-  $('#original-link').href = src;
+let figureGroup = [];
+let figureIndex = 0;
+function showFigure(index) {
+  if (index < 0 || index >= figureGroup.length) return;
+  figureIndex = index;
+  const button = figureGroup[index];
+  $('#expanded-image').src = button.dataset.image;
+  $('#expanded-image').alt = button.querySelector('img')?.alt || button.dataset.caption;
+  $('#expanded-caption').textContent = button.dataset.caption;
+  $('#original-link').href = button.dataset.image;
+  $('#figure-position').textContent = `${index + 1} of ${figureGroup.length}`;
+  $('#figure-prev').disabled = index === 0;
+  $('#figure-next').disabled = index === figureGroup.length - 1;
+  $('#figure-pager').hidden = figureGroup.length < 2;
+}
+function openImage(button) {
+  const chapter = button.closest('[data-study], #future, #paper-dialog');
+  const figures = chapter ? [...chapter.querySelectorAll('.image-button[data-image]')] : [];
+  figureGroup = figures.some(figure => figure.dataset.image === button.dataset.image) ? figures : [button];
+  showFigure(figureGroup.findIndex(figure => figure.dataset.image === button.dataset.image));
   $('#image-dialog').showModal();
 }
 
+$('#figure-prev').addEventListener('click', () => showFigure(figureIndex - 1));
+$('#figure-next').addEventListener('click', () => showFigure(figureIndex + 1));
+$('#image-dialog').addEventListener('keydown', event => {
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    event.preventDefault();
+    showFigure(figureIndex + (event.key === 'ArrowLeft' ? -1 : 1));
+  }
+});
+
 document.addEventListener('click', event => {
-  const stop = event.target.closest('[data-paper]');
   const paper = event.target.closest('[data-open-paper]');
   const figure = event.target.closest('[data-image]');
-  if (stop) selectPaper(stop.dataset.paper);
   if (paper) openPaper(paper.dataset.openPaper);
-  if (figure) openImage(figure.dataset.image, figure.dataset.caption);
+  if (figure) openImage(figure);
   const close = event.target.closest('.dialog-close');
   if (close) close.closest('dialog').close();
 });
@@ -116,31 +126,64 @@ function paintRanges(){
 }
 document.addEventListener('input',event=>{if(event.target.matches('input[type=range]'))paintRanges();});
 
-const virelData={
-  '7B':[{name:'SCOPE',energy:-11.87,avoid:33.97,unsafe:.63},{name:'FastV',energy:3.11,avoid:61.27,unsafe:.79},{name:'Random',energy:5.96,avoid:55.56,unsafe:2.54}],
-  '13B':[{name:'SCOPE',energy:-10.62,avoid:50,unsafe:1.27},{name:'FastV',energy:1.35,avoid:77.78,unsafe:2.54},{name:'Random',energy:3.92,avoid:52.22,unsafe:1.43}]
+const virelData = {
+  '7B': [
+    {name: 'SCOPE', energy: -11.87, interval: [-16.30, -7.19], avoid: 33.97, unsafe: 0.63},
+    {name: 'FastV', energy: 3.11, interval: [-0.75, 6.84], avoid: 61.27, unsafe: 0.79},
+    {name: 'Random', energy: 5.96, interval: [0.95, 11.40], avoid: 55.56, unsafe: 2.54},
+  ],
+  '13B': [
+    {name: 'SCOPE', energy: -10.62, interval: [-13.46, -7.48], avoid: 50.00, unsafe: 1.27},
+    {name: 'FastV', energy: 1.35, interval: [-1.39, 4.13], avoid: 77.78, unsafe: 2.54},
+    {name: 'Random', energy: 3.92, interval: [0.55, 7.40], avoid: 52.22, unsafe: 1.43},
+  ],
 };
-let selectedBackend='7B';
-function renderVirel(){
-  const values=virelData[selectedBackend],energyX=v=>250+v/15*160,avoidX=v=>90+v/100*310;
-  const energyGrid=[-15,-10,-5,0,5,10].map(v=>`<line x1="${energyX(v)}" x2="${energyX(v)}" y1="35" y2="187" stroke="${v===0?'#7795b6':'#dce0da'}" stroke-width="${v===0?'1.3':'.7'}"/><text x="${energyX(v)}" y="212" text-anchor="middle" class="chart-tick">${v}%</text>`).join('');
-  const energyBars=values.map((d,i)=>{const y=60+i*51,pos=energyX(d.energy);return `<g class="method-result" data-method="${d.name}" tabindex="0" role="img" aria-label="${d.name}: ${d.energy>0?'plus ':''}${d.energy.toFixed(2)} percent energy change"><title>${d.name}: ${d.energy.toFixed(2)}% GPU energy change, ${d.unsafe.toFixed(2)}% unsafe acceptance</title><rect class="method-row" x="0" y="${y-21}" width="462" height="42" rx="5" fill="transparent"/><text x="3" y="${y+5}" font-size="12" fill="#25496c">${d.name}</text><rect x="${Math.min(250,pos)}" y="${y-10}" width="${Math.abs(pos-250)}" height="22" rx="3" fill="${d.energy<0?'#486c87':'#b48850'}"/><text x="${d.energy<0?pos-7:pos+7}" y="${y+5}" text-anchor="${d.energy<0?'end':'start'}" font-size="11" fill="#3d5a78">${d.energy>0?'+':''}${d.energy.toFixed(2)}%</text></g>`;}).join('');
-  $('#virel-energy-chart').innerHTML=`<title>${selectedBackend} measured GPU energy change compared with dense inference</title>${energyGrid}${energyBars}`;
-  const avoidGrid=[0,25,50,75,100].map(v=>`<line x1="${avoidX(v)}" x2="${avoidX(v)}" y1="35" y2="187" stroke="#dce0da" stroke-width=".7"/><text x="${avoidX(v)}" y="212" text-anchor="middle" class="chart-tick">${v}%</text>`).join('');
-  const avoidBars=values.map((d,i)=>{const y=60+i*51;return `<g class="method-result" data-method="${d.name}" tabindex="0" role="img" aria-label="${d.name}: ${d.avoid.toFixed(2)} percent of queries avoiding dense inference"><title>${d.name}: ${d.avoid.toFixed(2)}% dense avoidance, ${d.unsafe.toFixed(2)}% unsafe acceptance</title><rect class="method-row" x="0" y="${y-21}" width="462" height="42" rx="5" fill="transparent"/><text x="3" y="${y+5}" font-size="12" fill="#25496c">${d.name}</text><rect x="90" y="${y-10}" width="310" height="22" rx="3" fill="#e5e9e3"/><rect x="90" y="${y-10}" width="${avoidX(d.avoid)-90}" height="22" rx="3" fill="${i===0?'#486c87':'#a6b9be'}"/><text x="${avoidX(d.avoid)+7}" y="${y+5}" font-size="11" fill="#3d5a78">${d.avoid.toFixed(2)}%</text></g>`;}).join('');
-  $('#virel-avoidance-chart').innerHTML=`<title>${selectedBackend} queries avoiding dense inference</title>${avoidGrid}${avoidBars}`;
-  $('#virel-summary').innerHTML=values.map(d=>`<div data-method="${d.name}"><strong>${d.name}</strong><span>${d.unsafe.toFixed(2)}% unsafe acceptance</span></div>`).join('');
-  $$('[data-backend]').forEach(el=>{const active=el.dataset.backend===selectedBackend;el.classList.toggle('active',active);el.setAttribute('aria-pressed',String(active));});
+let selectedBackend = '7B';
+let selectedMethod = 'SCOPE';
+const signedPercent = value => `${value < 0 ? '−' : '+'}${Math.abs(value).toFixed(2)}%`;
+// The source reports intervals for energy reduction. Above, both endpoints
+// have been negated and reordered to express change relative to dense.
+function renderVirel() {
+  const axisPosition = value => (value + 20) / 35 * 100;
+  const rows = virelData[selectedBackend];
+  $('#resource-rows').innerHTML = rows.map(row => {
+    const [low, high] = row.interval;
+    return `<button type="button" class="resource-row" data-method="${row.name}" aria-pressed="false" aria-label="${row.name}, GPU energy change ${signedPercent(row.energy)}, 95% confidence interval ${signedPercent(low)} to ${signedPercent(high)}, dense avoidance ${row.avoid.toFixed(2)}%, unsafe acceptance ${row.unsafe.toFixed(2)}%">
+      <strong>${row.name}</strong>
+      <span class="interval-cell"><span class="mobile-column">GPU energy change</span>
+        <span class="energy-estimate">${signedPercent(row.energy)}</span>
+        <span class="energy-plot" aria-hidden="true" style="--low:${axisPosition(low)}%;--high:${axisPosition(high)}%;--point:${axisPosition(row.energy)}%">
+          <i class="energy-zero"></i><i class="energy-whisker"></i><i class="energy-dot"></i>
+        </span>
+        <span class="energy-scale" aria-hidden="true"><i>−20%</i><i>0</i><i>+15%</i></span>
+        <span class="sr-only">95% confidence interval ${signedPercent(low)} to ${signedPercent(high)}.</span>
+      </span>
+      <span class="avoid-cell"><span class="mobile-column">Dense avoidance</span><b>${row.avoid.toFixed(2)}%</b><i aria-hidden="true" style="--avoid:${row.avoid}%"></i></span>
+      <span class="unsafe-cell"><span class="mobile-column">Unsafe acceptance</span>${row.unsafe.toFixed(2)}%</span>
+    </button>`;
+  }).join('');
+  $$('[data-backend]').forEach(button => {
+    button.setAttribute('aria-pressed', String(button.dataset.backend === selectedBackend));
+  });
+  selectMethod(selectedMethod);
 }
-$$('[data-backend]').forEach(el=>el.addEventListener('click',()=>{selectedBackend=el.dataset.backend;renderVirel();}));
-
-const virelExplorer=$('.virel-explorer');
-function highlightMethod(name){virelExplorer.querySelectorAll('[data-method]').forEach(el=>el.classList.toggle('method-highlight',el.dataset.method===name));}
-virelExplorer.addEventListener('pointerover',event=>highlightMethod(event.target.closest('[data-method]')?.dataset.method));
-virelExplorer.addEventListener('pointerleave',()=>highlightMethod());
-virelExplorer.addEventListener('focusin',event=>highlightMethod(event.target.closest('[data-method]')?.dataset.method));
-virelExplorer.addEventListener('focusout',()=>highlightMethod());
-
+function selectMethod(name) {
+  selectedMethod = name;
+  const row = virelData[selectedBackend].find(method => method.name === name);
+  $$('#resource-rows button').forEach(button => {
+    button.setAttribute('aria-pressed', String(button.dataset.method === name));
+  });
+  const [low, high] = row.interval;
+  $('#virel-summary').innerHTML = `<strong>${name} · ${selectedBackend}</strong> Skipped dense inference on ${row.avoid.toFixed(2)}% of queries. Measured GPU energy was <b>${Math.abs(row.energy).toFixed(2)}% ${row.energy < 0 ? 'lower' : 'higher'}</b> than dense inference (95% CI for change ${signedPercent(low)} to ${signedPercent(high)}).`;
+}
+$$('[data-backend]').forEach(button => button.addEventListener('click', () => {
+  selectedBackend = button.dataset.backend;
+  renderVirel();
+}));
+$('#resource-rows').addEventListener('click', event => {
+  const button = event.target.closest('[data-method]');
+  if (button) selectMethod(button.dataset.method);
+});
 
 const allocations = {
   0: {fulfill:96.1,reward:0,slip:32.356},
@@ -149,15 +192,27 @@ const allocations = {
   25: {fulfill:93.9,reward:11220,slip:33.032},
   50: {fulfill:78.2,reward:22441,slip:33.297}
 };
+const allocationPlot = $('#allocation-rows');
+allocationPlot.innerHTML = Object.entries(allocations).map(([ratio, result]) => {
+  const position = (result.fulfill - 70) / 30 * 100;
+  return `<button type="button" class="allocation-row" data-ratio="${ratio}" aria-label="${ratio}% reward, ${100-ratio}% liquidity, ${result.fulfill.toFixed(1)}% of demand fulfilled">
+    <span>${ratio} / ${100-ratio}</span><i class="fulfillment-track" aria-hidden="true" style="--point:${position}%"><i></i></i><strong>${result.fulfill.toFixed(1)}%</strong></button>`;
+}).join('');
 function renderAllocation(ratio) {
-  const d=allocations[ratio];
-  $$('[data-ratio]').forEach(el=>{const on=Number(el.dataset.ratio)===ratio;el.classList.toggle('active',on);el.setAttribute('aria-pressed',String(on));});
-  $('#producer-bar').style.width=`${ratio}%`; $('#producer-bar').textContent=ratio?`${ratio}%`:'';
-  $('#liquidity-bar').style.width=`${100-ratio}%`; $('#liquidity-bar').textContent=`${100-ratio}%`;
-  $('.allocation-bar').setAttribute('aria-label',`${ratio}% producer reward; ${100-ratio}% shared liquidity`);
-  $('#allocation-results').innerHTML=`<div><span>DEMAND FULFILLED</span><strong>${d.fulfill.toFixed(1)}<small>%</small></strong></div><div><span>PRODUCER REWARD</span><strong>${d.reward.toLocaleString('en-US')}<small> kWh</small></strong></div><div><span>SLIPPAGE PROXY</span><strong>${d.slip.toFixed(2)}<small>%</small></strong></div>`;
+  const result = allocations[ratio];
+  $$('#allocation-rows button').forEach(button => {
+    button.setAttribute('aria-pressed', String(Number(button.dataset.ratio) === ratio));
+  });
+  $('#allocation-selected').textContent = `${ratio} / ${100-ratio}`;
+  $('#producer-bar').style.width = `${ratio}%`;
+  $('#liquidity-bar').style.width = `${100-ratio}%`;
+  $('.allocation-bar').setAttribute('aria-label', `${ratio}% producer reward and ${100-ratio}% shared liquidity`);
+  $('#allocation-results').innerHTML = `<p><span>Producer reward</span><strong>${result.reward.toLocaleString('en-US')} <small>kWh</small></strong></p><p><span>Demand fulfilled</span><strong>${result.fulfill.toFixed(1)}%</strong></p><p><span>Slippage proxy</span><strong>${result.slip.toFixed(3)}%</strong></p>`;
 }
-$$('[data-ratio]').forEach(el=>el.addEventListener('click',()=>renderAllocation(Number(el.dataset.ratio))));
+allocationPlot.addEventListener('click', event => {
+  const button = event.target.closest('[data-ratio]');
+  if (button) renderAllocation(Number(button.dataset.ratio));
+});
 
 // Classroom videos load on request; opening one restores the other's cover.
 const classroomVideos=[
@@ -185,19 +240,5 @@ classroomVideos.forEach(video=>{
   $(`#reset-${video.key}-video`).addEventListener('click',()=>resetClassroomVideo(video));
 });
 
-let scrollScheduled=false;
-window.addEventListener('scroll',()=>{
-  if(scrollScheduled)return;
-  scrollScheduled=true;
-  requestAnimationFrame(()=>{
-    scrollScheduled=false;
-    const cutoff=window.innerHeight*.35;
-    const study=$$('[data-study]').find(el=>{
-      const r=el.getBoundingClientRect();
-      return r.top<=cutoff&&r.bottom>cutoff;
-    });
-    if(study&&study.dataset.study!==selectedPaper)selectPaper(study.dataset.study);
-  });
-},{passive:true});
-
-selectPaper('capital'); renderVirel(); renderAllocation(20);
+renderVirel();
+renderAllocation(20);

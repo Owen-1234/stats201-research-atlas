@@ -1,197 +1,158 @@
 # Between Data and Decisions
 
-Shilin Ou · The Research Atlas · STATS 201: Introduction to Machine Learning in Social Science
+Shilin Ou · Duke Kunshan University
 
-## Timing
+STATS 201 · Introduction to Machine Learning in Social Science
 
-The atlas is the table of contents for the talk. Click a city to enter the corresponding study and use its return button to come back. The four papers follow Singapore, Shanghai, Jeju, and Rio. The Jeju section introduces RL; the Rio section opens with a two-minute pruning lesson.
+30-minute English speaking script · 19 November 2026
 
-| Time | Section | Use in the room |
+## Running order
+
+Aim for about 112 spoken words per minute and use the pauses marked below. Read the plain paragraphs aloud. The indented cues are for the presenter. The clock includes time to look at the figures, play both complete videos, and hear an answer from the room. The chapter menu stays at the top of the page. [Open the atlas](https://stats201-research-atlas.vercel.app/)
+
+| Clock | On screen | Live action |
 | --- | --- | --- |
-| 00:00–02:00 | The Research Atlas | Introduce the question and the four stops |
-| 02:00–05:00 | Singapore: Capital Cost | One financing calculation and the forecasting workflow |
-| 05:00–11:00 | Shanghai: SolarChain | Verification, the physical-bound example, and allocation |
-| 11:00–16:00 | Jeju: RL background | Udacity short lesson (~2½ min) and one battery episode |
-| 16:00–22:00 | Jeju: SolarChain-Eval | The objective, experiments, and an intervention trace |
-| 22:00–24:00 | Pruning background | Mısra Turp’s complete two-minute network-pruning lesson |
-| 24:00–27:00 | Rio: ViRel-Budget | Representation, proxy metrics, and measured GPU energy |
-| 27:00–28:00 | Ongoing work | Who Bears the Cost? |
-| 28:00–30:00 | Conclusion and discussion | Representation and the people affected by a decision |
+| 00:00–02:00 | Opening and reading route | Find the four studies and the ongoing project |
+| 02:00–05:00 | Singapore · Capital Cost | Trace the paper workflow, then compare 4%, 8%, and 12% |
+| 05:00–11:00 | Shanghai · SolarChain | Inspect one report, then compare the 20/80 and 50/50 allocations |
+| 11:00–16:00 | Jeju · Reinforcement learning | Play Udacity’s full lesson (about 2½ min) and carry liquidity into 13:00 |
+| 16:00–22:00 | Jeju · SolarChain-Eval | Follow one SAC episode, one matched comparison, and one PPO intervention |
+| 22:00–24:00 | Rio · Pruning | Play Mısra Turp’s full two-minute video |
+| 24:00–27:00 | Rio · ViRel-Budget | Read the fox illustration and the 13B replication intervals |
+| 27:00–28:00 | Who Bears the Cost? | Trace the original flowchart and switch the local GPU’s availability |
+| 28:00–30:00 | Discussion | Invite one answer about whose outcome changes |
 
-The page includes more figures than need to be discussed in thirty minutes. Use one main figure per study; the others can support questions. The text below is a speaking draft with short demonstration cues. It keeps the two SolarChain papers as the main technical examples.
+## 00:00–02:00 · Opening
 
-## 00:00–02:00 · The Research Atlas
+Good afternoon. I’m Shilin Ou. Imagine that you own a rooftop solar panel. At noon it sends a number to a market. Before anyone pays you, somebody has to decide whether to believe the reading. And before we can even ask that question, somebody had to decide whether the panel was worth financing. Those are two quite different decisions about the same piece of equipment.
 
-Good afternoon. I’m Shilin Ou. Today I’ll use four projects to talk about the space between data and decisions. We’ll start with prediction, move to checking evidence, introduce reinforcement learning, and then look at how to measure the resources used by an AI system.
+Today I want to follow what happens between a model’s inputs and a decision that affects somebody. The map takes us through four studies. In Singapore the model predicts a financing condition. In Shanghai a report can enter a settlement. In Jeju a policy chooses how to run that market. In Rio we measure the electricity a model uses to answer a question.
 
-This map is the structure of the talk. Singapore is the capital-cost project. Shanghai is SolarChain, where we check generation reports before market settlement. Jeju is SolarChain-Eval, where a learned policy controls market parameters. Rio is ViRel-Budget, which studies visual computation and GPU energy.
+> Leave the reading route on screen for about 20 seconds. Give students time to read across the verbs. [Reading route](https://stats201-research-atlas.vercel.app/#talk-route)
 
-**Point to the four titles, then select Singapore.**
+There’s one more question after the four studies. If we move a computation to a different machine, whose energy account picks it up? We’ll come back to that at the end. For now, keep the rooftop in mind. Let’s start at the point where someone has to fund it.
 
-The connection to this course is how we turn a social or economic question into a learning problem. That requires choices about the target, available evidence, and evaluation. The projects give us concrete examples of those choices. We’ll introduce the RL vocabulary before the Jeju experiments.
+## 02:00–05:00 · Singapore — predicting the cost of capital
 
-## 02:00–05:00 · Singapore: Capital Cost
+The financing study asks how fossil-fuel price scenarios relate to the cost of financing different energy technologies. Our target is WACC, the weighted average cost of capital. In plain language, it combines the cost of borrowing with the return expected by people who put their own capital into the project.
 
-The first project looks at the financing side of energy transition. A technology can stay physically identical while its financing conditions change. The target here is the weighted average cost of capital, or WACC: the average expected cost of financing the asset.
+> Open the original method figure. Trace fuel-price forecasts, the inflation estimate, and the project-level WACC model from left to right. Allow about 15 seconds to read it, then close it. [Paper workflow](https://stats201-research-atlas.vercel.app/#capital-method)
 
-**Compare 4%, 8%, and 12%, then click one rate/lifetime cell. Keep this to about forty-five seconds.**
+Each step passes an estimate to the next. If an oil-price forecast misses a turn, the financing model inherits that input. The paper checks how the fitted relationships carry forward when later scenario years are held out. Some later periods have a narrow range of WACC values, so small errors can move the fit statistic appreciably. That matters if someone wants to use these scenarios to judge future investment conditions.
 
-The reference installation has one megawatt of capacity, a one-million-dollar investment, a twenty-year life, and a twenty-percent capacity factor. At eight-percent financing, annual capital recovery is about a hundred and two thousand dollars. With twenty thousand dollars of annual operation and 1,752 megawatt-hours of generation, the illustrative levelized cost is about 69.6 dollars per megawatt-hour. At four percent, it is about 53.4. The bars separate straight-line recovery, the financing premium, and operation. The matrix shows how the financing rate and project life interact. This comparison holds the installation and its annual generation fixed.
+What would a different financing rate actually mean for a solar project? The next chart lets us do that calculation. Imagine one megawatt of capacity at the benchmark cost of 1.56 million dollars, a thirty-year operating life, and the middle solar-resource class. A payment in thirty years has less present value than the same payment today. We want a constant electricity price that can recover the upfront investment and the operating costs from the electricity sold over that life.
 
-The study uses a staged modeling pipeline. It first models fuel-price paths, then estimates inflation, and finally uses regression models for capital costs across project types. The original workflow figure shows those stages. A modeling chain also means that assumptions and uncertainty from an earlier stage can enter a later one.
+> Select **Restore benchmark inputs**. Point to the 8% result, then choose the **4% real rate** and **12% real rate** buttons under the curve. Pause about 25 seconds across the two clicks. [Financing studio](https://stats201-research-atlas.vercel.app/#finance-studio)
 
-**Show the original forecast comparison or workflow.**
+At eight percent the answer is about seventy-three dollars per megawatt-hour. At four percent it is about fifty-two, and at twelve percent it is about ninety-six. The panels produce the same physical output in all three cases. Discounting changes the value of future electricity relative to the cost paid at installation. The paper supplies the forecasting question. The discounted cash-flow calculation shows why the financing condition matters to a developer.
 
-The predictive question is how well the variables describe WACC in these scenarios. A causal study would also examine the process connecting fuel prices to financing and the other conditions that change along the way.
+## 05:00–11:00 · Shanghai — which solar reports reach settlement?
 
-The paper uses holdout and rolling-origin checks to examine stability. That is a useful habit when time is involved: examine whether a model carries forward, as well as how it fits the available panel. We interpret the capital-cost estimates as predictive sensitivity in the scenario setup.
+Now suppose the panels have been built and someone is ready to pay for electricity. A rooftop reports that it produced more than its neighbors. Maybe a cloud passed over the other street. Maybe the reading is wrong. What information would you want before settling that claim?
 
-**Use Return to the Research Atlas, then select Shanghai.**
+In SolarChain we follow a report from physical evidence through verification, planner review, and allocation. The monthly experiment covers fifty simulated nodes in five Chinese cities and thirty-six thousand hourly generation records. The weather observations come from real cities. The panel profiles, reported generation, demand, and injected cases are produced by the simulator. That gives us a known set of labels for checking the detector.
 
-## 05:00–11:00 · Shanghai: SolarChain
+> Show the five-city original, then the original architecture just below it. Let the audience find the handoff from verification to settlement. Keep about 20 seconds for the figures. [Shanghai study](https://stats201-research-atlas.vercel.app/#verify)
 
-Suppose a rooftop installation reports electricity it did not produce. A market might count that report as supply and allocate a reward. Our first SolarChain paper follows a report through the system to see what evidence can be checked before it reaches settlement.
+Picture the role of the person who reviews a flagged report. A score tells them that the case deserves attention. An estimated upper bound tells them what the system thought was physically plausible for that panel at that hour. They can look at the recent readings and the local context before approving a payment. Those two pieces of information answer different questions.
 
-The monthly benchmark has fifty simulated nodes in five Chinese cities and thirty-six thousand hourly records. The inputs have different origins. City-level weather comes from Open-Meteo. A physical model uses solar position, panel attributes, and temperature correction to generate plausible bounds. Individual nodes, reported output, demand, trades, and attacks are simulated.
+> On the city map, select **Reset**, then **Pause** while it is daylight. Use the preloaded **PV-01**. Point to **AC output**, **Physical upper bound**, and **Reported output**. Choose **Try 1.8×**, let the flag appear, and give the room about 30 seconds to compare the three readings. Finish with **Restore measured report**. [Shanghai map](https://stats201-research-atlas.vercel.app/#solar-city)
 
-**Show the five-city figure briefly, then trace a path in the architecture.**
+I’m changing the claim while the clock is stopped. Watch the generation reading. The device is still producing the same power. The report now exceeds its bound, and the market excludes that report from verified supply. A buyer still has the same demand. That is why an error in a sensor record can become an economic event. It changes how much supply reaches the account against which the buyer can trade.
 
-A report arrives with physical and contextual evidence. The verifier checks it. A planner can inspect the candidate before approval. Accepted generation enters the allocation and settlement steps. The log records the decisions for replay. Follow that path through the figure.
+On the original monthly labels, the IQR/MAD statistical rule scores one on F1. The adaptive verifier scores 0.988 and detects all the injected positives in that comparison. Precision tells us how many flags correspond to an injected case. Recall tells us how many injected cases the rule found. In the wider stress test, coordinated claims close to the physical boundary remain difficult. Two plausible-looking reports can agree with one another. A reviewer needs to know how that agreement was produced.
 
-### Building and checking a local network
+Imagine two calls to the person reviewing those reports. One comes from a producer whose legitimate reading was rejected on an unusually clear day. The other comes from a factory that expected electricity the market had credited but that no panel actually produced. Both people can point to the same accuracy table and still want different evidence. The producer wants to see the boundary applied to that particular panel. The factory wants to know which accepted reports actually backed its trade. Keeping the decision record lets us ask both questions.
 
-**Use the real Shanghai map. Pause the clock, choose Solar array, and click a point on land. Add a factory next. Spend about seventy-five seconds on this demonstration.**
+Once the report is accepted, there’s another choice. What share of accepted value goes directly to producers, and what share stays in the market to support trading?
 
-We place solar arrays and factories on OpenStreetMap streets and building footprints. An array adds generation; a factory adds demand. The icons stay at their selected coordinates, and the numbers on the map come from the same simulation as the device inspector and supply account.
+> Show **20 / 80**. Ask the room to predict what happens to fulfillment if producers receive half. Wait for one prediction, then select **50 / 50**. Allow about 30 seconds. [Five reported allocations](https://stats201-research-atlas.vercel.app/#allocation-lab)
 
-**Inspect an array and choose Try 1.8×. Follow the flagged report in the stream, then restore the measured report.**
+At twenty-eighty, the simulations fulfill 95.6 percent of demand and allocate 8,976 kilowatt-hours of reward to producers. At fifty-fifty, rewards rise to 22,441 and fulfillment falls to 78.2 percent. Each dot is a reported split, averaged over the same seven scenarios. A buyer waiting for a trade and a producer waiting for payment could reasonably rank these options differently. In the next paper we give a policy the power to change the allocation every hour. We still have to tell it what a good outcome is.
 
-The physical output stays the same when we inflate a report. Its claimed output can exceed the bound, however, so the verifier excludes that claim from verified supply. The factory still has demand to meet. Pause on that distinction: generation, a reported measurement, and the amount admitted to an economic account are different quantities.
+## 11:00–16:00 · Jeju — learning from feedback
 
-The original scatter plot shows the paper’s above-bound cases. The planner interface shows where a reviewer can inspect evidence for a decision. The classroom simulation gives us a way to follow one report through that logic.
+We’ll begin with Udacity’s introduction to reinforcement learning. Watch what the agent sends to the environment, then watch what comes back. That exchange is what our market example needs.
 
-### Comparing the verifiers
+> Play **Reinforcement Learning Basics** in full, about 2½ minutes. [RL lesson](https://stats201-research-atlas.vercel.app/#rl-basics)
 
-We test the methods on the same ordered monthly records. Attacks are the positive class. Recall measures how many injected attacks are detected; precision measures how often a flagged report is one of those attacks.
+The state is the information the agent has when it acts. Its policy chooses an action. The market responds with a reward and a next state. If today’s allocation leaves some liquidity in the market, the next decision starts with that balance. We can watch this happen in two hours of the benchmark equations.
 
-IQR/MAD reaches F1 equal to one on the original injected labels. The adaptive verifier reaches zero point nine eight eight. The adaptive method is rule based and also records contextual evidence. So we can compare aggregate accuracy, computational cost, and what a reviewer can inspect about an individual result.
+> Choose **Reset the example** at noon. Leave burn at zero and suspicious supply included. Move **Liquidity support** from 0.40 to its maximum, 0.78. Pause at the last column, then select **13:00 · next state**. Allow about 35 seconds for the ledger. [Two-hour market ledger](https://stats201-research-atlas.vercel.app/#energy-playground)
 
-The broader eleven-category stress test includes harder cases. Near-bound fraud and coordinated near-bound reports remain difficult. That suggests where authenticated context or another detection mechanism could be useful. It also shows why a single aggregate result does not describe every kind of error.
+At the starting setting, roughly 0.537 is available at noon and all of it matches demand. Nothing carries forward. At the higher setting, the market can meet the noon demand and carry 0.297 into the next hour. Read the first column at one o’clock. That same 0.297 has become the opening balance. Meanwhile some new liquidity comes from suspicious supply. The example keeps a separate count of that backing.
 
-### Allocating accepted value
+These inputs were chosen for the classroom. In training, a policy encounters many transitions and learns from the rewards over an episode. Our episodes last twenty-four hours. A larger allocation can help the next hour and support a questionable report in the current one. The way we score those consequences gives the policy its incentive.
 
-**Compare 20/80 with 50/50. Allow a brief prediction before clicking.**
+## 16:00–22:00 · Jeju — evaluating a market policy
 
-After accepting generation, the prototype allocates value to producer rewards and shared liquidity. The paper sweeps forty-one allocations across seven simulated scenarios. The interface shows selected entries.
+A policy here chooses three settings every hour. It assigns a producer reward share, a liquidity share, and a burn rate. The environment rewards matched energy and applies penalties for outcomes including unmet demand, physical risk, and abrupt changes in action. We compare six policies under the full reward, three learned policies and three rules.
 
-With twenty percent rewards and eighty percent liquidity, reported fulfillment is ninety-five point six percent. At fifty-fifty, producer rewards increase while fulfillment falls to seventy-eight point two percent in those conditions. The selected default depends on a score that puts half its weight on fulfillment and the rest on rewards and other market outcomes.
+> In **One policy. More than one outcome.**, keep **With physics penalty · RL** and **All episodes**. Select **SAC**, then select the first episode in the picker, from training seed 20260511. Allow about 20 seconds to locate the cloud and read the highlighted result. [3D policy plot](https://stats201-research-atlas.vercel.app/#spatial-lab)
 
-These weights belong in the research discussion. A producer and a buyer may prefer different allocations. The next study lets a policy learn to choose market parameters over time, which makes the objective especially important.
+Each point is one whole evaluated day. There are ninety for each policy, from three training seeds. The vertical direction is cumulative reward. The two directions along the floor give physical violations and artificial liquidity. Artificial liquidity is market backing assigned to physically unsupported supply. Two days with a similar reward can differ in how much of that supply the policy backed.
 
-**Return to the atlas and select Jeju.**
+For the selected SAC day, the reward is about minus twenty point five four, and artificial liquidity is 0.0444 megawatt-hours. Now I’m going to carry that very same observation into the flat plot. You can check the seed and episode number underneath. Those identifiers let us follow a case through two views.
 
-## 11:00–16:00 · Jeju: reinforcement learning background
+> Click **Open this episode in 2D**. Point to the selected dot and the larger mean ring. In the SAC profile, click **Artificial liquidity** for its distribution. Leave about 20 seconds for the room to find the median and the spread. [Main comparison](https://stats201-research-atlas.vercel.app/#eval-landscape)
 
-We’ll start with Udacity’s short introduction. It draws the exchange between an agent and its environment. Watch what flows in each direction: an action goes out; a state and a reward come back.
+The selected episode tells us what happened on a particular day. The boxes summarize many days. Under the constrained reward SAC averages about 0.0686 megawatt-hours of artificial liquidity. PPO averages 0.1453. SAC also has higher average slippage, 1.78 percent compared with PPO’s 1.34 percent. If a trader cares about the terms on which a trade clears, that second comparison belongs beside the first.
 
-**Play the complete Reinforcement Learning Basics video, approximately 2½ minutes.**
+There’s a useful difference between the box and the ring you saw a moment ago. The ring marked an average. The line inside the box is the median day, and the box spans the middle half of the observations. If you were running a market, you might care a great deal about the days outside that box. Notice also how these ninety episodes were collected. Thirty come from each of three training seeds. That distinction matters if someone asks how much evidence we have about variation from training the policy again.
 
-In our setting, the agent is the software choosing an action. A state describes what it uses now. A policy specifies how it chooses. The environment produces a reward and a new state after the action.
+Now we can change an incentive and ask a more specific question. What happens to questionable backing when we train without the physics penalty?
 
-**Choose one noon action in the battery example, then run the evening. Keep the demonstration to about forty-five seconds.**
+> Follow **Compare penalty effects**. Use **Remove physics penalty**, **Artificial liquidity**, and **SAC** with **With LLM governance** clear. Point to the two columns and the histogram below. Allow about 20 seconds. [Matched experiments](https://stats201-research-atlas.vercel.app/#eval-experiments)
 
-We have two energy units. Each earns one credit now or three later. Storing both gives zero now and six in the evening. At gamma equal to zero point nine, the discounted return is five point four. Selling both now gives two. The small comparison below the ledger shows all three actions under the same discount factor. Lower gamma and watch when the preferred action changes.
+Mean artificial liquidity rises from 0.0686 to 0.1925 megawatt-hours. Subtract within each matched seed and evaluated episode, then average those ninety differences. The increase is 0.1238. The displayed means are rounded separately. The histogram lets us see how the changes varied from episode to episode. The definition of reward changes between these two settings. Artificial liquidity keeps the same unit and meaning in both.
 
-The example gives us fixed prices so we can work out the answer directly. An RL algorithm updates a policy from many interactions. It needs experience with uncertain actions as well as opportunities to use what it has learned. An episode is one run; in SolarChain-Eval, it lasts twenty-four hours. An allocation also affects the liquidity available later in the episode.
+There’s a second experiment about what reaches execution. We freeze a trained policy and put a Planner and an Auditor between its proposal and the environment. The log lets us inspect which settings changed before the market used them.
 
-## 16:00–22:00 · Jeju: SolarChain-Eval
+> Follow **Inspect the recorded intervention**. Use **Auditor intervention** at 15:00. Point to the paired liquidity columns, then to the burn pair. Allow about 15 seconds. [Recorded action](https://stats201-research-atlas.vercel.app/#eval-replay)
 
-### The learning problem · about one minute
+In this PPO episode the proposal puts 93.1 percent into liquidity. The executed setting is 20 percent. The proposed burn is 20 percent and the executed burn is zero. We can name the decision, the hour, and the settings that actually ran. The aggregate effect of oversight depends on the base policy. That is why we keep both the population comparison and the individual record.
 
-SolarChain-Eval gives a policy control over hourly market parameters. Its state describes supply, demand, liquidity, price, and physical risk. The action chooses producer rewards, liquidity support, and token burning. Reward and liquidity shares must sum to no more than zero point nine eight.
+Our last study follows what actually ran on a GPU. As we move to Rio, watch what the next video removes from the network.
 
-We compare static, random, and myopic rules with PPO, SAC, and DQN. PPO and SAC use continuous actions; DQN chooses from a grid of a hundred and twenty-five combinations. The reward favors matched energy and penalizes drawdown, abrupt changes, unmet demand, physical risk, and unequal allocations across cities. These terms express the priorities the policy learns to pursue.
+## 22:00–24:00 · Rio — pruning
 
-### Comparing the policies · about 90 seconds
+> Play Mısra Turp’s **Pruning a neural network** in full. This two-minute block is reserved for the video. [Pruning lesson](https://stats201-research-atlas.vercel.app/#pruning-basics)
 
-**Use Compare policies. Select SAC, then change the horizontal axis from physics violation rate to mean slippage.**
+## 24:00–27:00 · Rio — measuring the cost of an answer
 
-Each small dot is a recorded episode, and a large ring is a policy mean. All six policies use the full reward. PPO and SAC have higher mean reward than the fixed and myopic rules. SAC has the lowest mean physics violation rate and the least artificial liquidity among the learned policies.
+The video removed connections from a network. ViRel-Budget makes a choice about the visual information passed into a vision-language model. Look at the fox. If the question is about the animal, some regions of the image may matter much more than others. Change the question to one about the background and those priorities can change too.
 
-Changing the axis reveals another part of the comparison: SAC’s mean slippage is one point seven eight percent; PPO’s is one point three four percent.
+> Show the original fox and token-grid illustration below the player. Give students about 10 seconds to decide which regions they would keep for each question. [Rio study](https://stats201-research-atlas.vercel.app/#virel-study)
 
-**Switch to Rollout distributions and choose artificial liquidity.**
+Our controller uses the available metadata to choose an inference action for each query. It stays frozen during evaluation. We compare the answer with dense inference, examine behavior under defined visual changes, and measure energy on the device. Skipping a dense pass tells us which path the controller chose. The energy reading tells us what that whole path cost on this GPU.
 
-The box contains the middle half of the recorded values; its line is the median. PPO’s wider spread is visible alongside its mean. There are ninety episodes per policy across three training seeds. We can select a dot to inspect one episode.
+> Choose **LLaVA 13B**, then **FastV**. Give students time to locate the energy estimate, the zero mark, and the dense-avoidance percentage. Select **SCOPE** and read across the same columns. Allow about 25 seconds. [GPU measurements](https://stats201-research-atlas.vercel.app/#virel-results)
 
-### Changing a condition · about 90 seconds
+FastV avoids dense inference on 77.78 percent of the queries. Its measured energy change is plus 1.35 percent. The interval reaches from minus 1.39 to plus 4.13 percent, so these data leave room for either direction. SCOPE avoids dense inference on half the queries and uses 10.62 percent less GPU energy. Its entire reported interval lies on the lower-energy side of zero.
 
-**Use Change an experimental condition. Choose Remove physics penalty, uncheck With LLM governance, and select SAC.**
+The rightmost column asks a different question about the same queries. On this model size, the reported unsafe-acceptance rates are 2.54 percent for FastV and 1.27 percent for SCOPE. Someone responsible for answer quality would want that column alongside the energy measurement.
 
-SAC’s artificial liquidity rises from zero point zero six eight six to zero point one nine two five megawatt-hours. The mean paired increase is zero point one two three eight. Each pair matches the same training run, policy, and evaluation episode. The histogram below shows all ninety changes.
+These results come from three group-disjoint draws of 210 queries, on one GPU. If I had shown you only the avoidance column, FastV would have looked like the obvious choice for saving energy. Which measurement would you put in a procurement report? And if a computation can move between devices, whose meter would you read?
 
-Artificial liquidity measures market backing assigned to invalid supply. Its increase tells us what the policy does when the reward places less weight on physical risk. PPO and DQN show the same direction of change.
+## 27:00–28:00 · Ongoing work — Who Bears the Cost?
 
-**Choose Add Planner / Auditor and check Physics penalty included.**
+> Point to proposal, execution, and accounts on the original flowchart. In the short example below it, clear **Your GPU is busy**. Allow about 12 seconds. [Original project flowchart](https://stats201-research-atlas.vercel.app/#cost-architecture)
 
-The policy is trained first and stays frozen during this evaluation. A Planner bounds its proposals, and an Auditor can revise high-risk actions. Negative jitter changes mean smoother actions: SAC and DQN decrease, while PPO increases. The four-cell matrix lets us inspect both experimental conditions together.
+This is the question in our ongoing project. A gateway proposes sending a request to your GPU. In the example, it is busy, so an available institutional GPU takes the request. Now I’ll make your GPU available. The proposal is the same, but this time the work runs on your device. The energy account follows the machine that ran it. We want a record that lets a user or an institution reconstruct that change and see which party was assigned the resource use.
 
-### Following one action · about two minutes
+## 28:00–30:00 · Discussion
 
-**Use Inspect an audit record. Select hour 1, then hour 15 in the timeline. Start and pause Replay 24 hours briefly.**
+We began with a rooftop and a financing rate. Keeping the equipment fixed and changing that rate changed the electricity price the developer needed. In Shanghai a physical check changed the supply credited to a producer. In Jeju a change in the reward changed the kind of supply a policy backed. And in Rio we could test an energy-saving claim because someone measured electricity on the GPU.
 
-This is PPO episode six from the May twelve training run, without the physics penalty. Some hours pass through the Planner alone; ochre marks identify calls to the Auditor.
+Each case suggests a practical question you can ask of a machine learning study. Pick one quantity the researchers chose to represent. Who would notice first if that choice changed? Would it be the person who receives a payment, the buyer waiting for a trade, or the person whose device runs the model?
 
-At hour fifteen, proposed liquidity is zero point nine three one. The Auditor reduces it to zero point two and removes the proposed burn. Reward share moves slightly from zero point zero four nine to zero point zero five. The plane shows the allocation shares against the benchmark limit and Planner bounds. Burn has its own track.
+> Ask the question shown on screen. Leave 35–45 seconds for a response. If someone names a party, ask which recorded quantity would let them check their prediction. [Discussion](https://stats201-research-atlas.vercel.app/#discussion)
 
-The record preserves the context, proposal, execution, and reason for the change. Across evaluated policies, oversight reduces artificial liquidity for PPO and raises it slightly for SAC and DQN under the constrained reward. The hourly record helps explain a particular intervention; the paired experiments show its broader effects. Together they let us ask how a decision was produced and whose outcomes it changes.
+Thank you. I’d be glad to return to any figure you’d like to examine together.
 
-**Return to the atlas and select Rio.**
+## For questions after the talk
 
-## 22:00–24:00 · Pruning background
-
-Before the last paper, here is a short explanation of pruning. Watch how the network changes when some connections are removed.
-
-**Play Mısra Turp’s complete two-minute video, Pruning a neural Network for faster training times.**
-
-## 24:00–27:00 · Rio: ViRel-Budget
-
-The video removes network connections. Our next study selects visual information. A vision-language model represents an image as tokens, which carry information about regions of the image into the model. The fox example gives us a way to picture what selecting a smaller set means.
-
-**Show the original image and its token-grid illustration, then the workflow.**
-
-ViRel-Budget chooses an inference action for each query. A frozen metadata controller makes that choice. We evaluate how the answer compares with dense inference, how it behaves under defined visual interventions, and how much GPU energy the selected path uses.
-
-**Choose LLaVA 13B and compare the two charts.**
-
-SCOPE reduces measured GPU energy by ten point six two percent in the released replication. FastV avoids dense inference on seventy-seven point seven eight percent of queries, while its measured energy is one point three five percent higher. A reduction in the computational proxy can coexist with a higher measured resource cost.
-
-These results use three group-disjoint draws of two hundred and ten queries, six hundred and thirty in total. The selector lets us make the same comparison on the other model size.
-
-For this course, the interesting point is how we define an outcome. A token count tells us about one part of the computation. An energy reading tells us what happened on the GPU. Behavioral tests tell us what changed in the answer. Measuring all three helps us understand where the trade-offs come from.
-
-## 27:00–28:00 · Ongoing work: Who Bears the Cost?
-
-Our ongoing project moves to the placement of Web AI requests. A gateway can use a user-side GPU or an institutional GPU. Runtime constraints can change the proposal before execution, shifting resources and reference charges between the two parties.
-
-**Keep the proposal at eighty percent and capacity at sixty percent, then move capacity once.**
-
-This illustration has a hundred equal-cost requests. The proposal puts eighty on the user side, but capacity permits sixty. Twenty move to the institution, and the accounts follow the executed sixty-forty split.
-
-The project records the proposed and executed placements, the reason for repair, and the resulting accounts. It includes receipts and an independent verifier to check those records. The connection to the earlier studies is the difference between a policy’s output and what a system actually does. Explaining the outcome requires the record of that change and the allocation of its consequences.
-
-## 28:00–30:00 · Conclusion
-
-A model works with a representation of a problem: fuel prices as predictors, a generation report as evidence, physical risk as a penalty, or visual reliance as an evaluation label. Each representation makes some differences measurable and leaves others outside the analysis. Choosing which differences matter draws on both empirical evidence and the experience of the people affected.
-
-For social science, this brings the people affected by a model into the definition of the task. A false rejection can change a producer’s payment. A reward weight can favor participation or shared liquidity. An inference policy can shift resource use between devices. Following these effects across participants gives an aggregate score its social meaning.
-
-Machine learning gives us ways to examine such choices empirically. We can test a representation in another setting, alter an incentive, measure an intervention, or trace where a cost went. The evidence can inform how the system should be used, alongside the priorities and experience of the people who use it.
-
-**Ask the closing question and allow a response:** If you changed one assumption in these studies, whose outcome would you expect to change first?
-
-Thank you. I’d be glad to return to any study.
-
-## Material to leave for questions
-
-The full detector table, the paired policy comparisons, algorithm references, and the original figures provide additional depth. If time is short, keep the primer, one physics-penalty comparison, one audit trace, and the Rio proxy/measurement comparison. Each study’s return button makes it easy to revisit a figure without following the whole page again.
+- The finance matrix lets you hold the rate fixed and change the life. The ATB cost inputs, capacity factors, and zero-NPV equation sit below the curve. [Financing studio](https://stats201-research-atlas.vercel.app/#finance-studio)
+- For a second governance example, **Planner adjustment** at 01:00 takes proposed liquidity from 93.1% to 40.0%. The full 24-hour record is linked below the figure. [Recorded action](https://stats201-research-atlas.vercel.app/#eval-replay)
+- On LLaVA 7B, SCOPE’s measured change is −11.87%. Select the same method on both model sizes to inspect the estimates and intervals. [Replication results](https://github.com/SeanWan514/ViRel-Budget#-main-finding)
+- Each research image opens at full resolution. Use the left and right arrows to move among the originals in that chapter and Escape to return. [Paper directory](https://stats201-research-atlas.vercel.app/#sources)

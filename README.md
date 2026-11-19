@@ -1,8 +1,8 @@
 # Between Data and Decisions · The Research Atlas · STATS 201
 
-[Open the Research Atlas](https://owen-1234.github.io/stats201-research-atlas/) · [Four research papers](https://owen-1234.github.io/stats201-research-atlas/#sources)
+[Open the Research Atlas](https://stats201-research-atlas.vercel.app/) · [30-minute speaking script](notes/speaker-notes.md) · [Four research papers](https://stats201-research-atlas.vercel.app/#sources)
 
-An English-language, 30-minute research atlas by Shilin Ou, following Singapore, Shanghai, Jeju, and Rio de Janeiro. The Jeju study includes an RL primer and Udacity’s complete, approximately 2½-minute lesson. Before ViRel-Budget, Mısra Turp’s complete two-minute pruning video introduces the idea of selecting what computation to keep. Built as a static GitHub Pages site, with no build tools or package installation.
+An English-language, 30-minute research atlas by Shilin Ou, following Singapore, Shanghai, Jeju, and Rio de Janeiro. The Jeju study includes an RL primer and Udacity’s complete, approximately 2½-minute lesson. Before ViRel-Budget, Mısra Turp’s complete two-minute pruning video introduces the idea of selecting what computation to keep. The same static source serves Vercel and GitHub Pages.
 
 ## Preview
 
@@ -16,19 +16,20 @@ Open http://127.0.0.1:4173. The map, figures, and classroom interactions are loc
 
 ## Classroom controls
 
-- Click a city or its full paper title to jump directly to the corresponding study. Each study ends with **Return to the Research Atlas** and a link to the next stop. The four paper links at the end open the corresponding OpenReview, ACM, or Duke Scholars record directly.
-- Each paper title has a direct link to its OpenReview, ACM, or Duke Scholars record. Click a research figure for a full-resolution view; Escape closes the dialog.
-- The financing studio uses a real discounted cash-flow LCOE model, with upfront investment, annual fixed O&M, annual degradation, and discounted energy. ATB 2024 published utility-scale PV cost inputs are normalized to 1 MW AC; selectable resource classes and editable real discount rates are explicit. Curves compare resources; scenario cards and a rate/lifetime matrix retain exact model values. Sources and exclusions are visible in the panel.
+- Choose a research stop on the cover globe and follow its question. The reading route lists the five research questions and their speaking times. The chapter menu works throughout the page. The route also offers the downloadable English script.
+- Each paper title has a direct link to its OpenReview, ACM, or Duke Scholars record. All 19 original research and talk images have full-resolution views. Previous/Next and the arrow keys browse the current chapter. Escape returns to the page.
+- The financing studio uses a real discounted cash-flow LCOE model, with upfront investment, annual fixed O&M, annual degradation, and discounted energy. ATB 2024 published utility-scale PV cost inputs are normalized to 1 MW AC; selectable resource classes and editable real discount rates are explicit. Curves compare resources. The 4%, 8% and 12% presets update the discount rate while preserving the other assumptions. The rate/lifetime matrix applies both inputs. Sources and exclusions are visible in the panel.
 - The Shanghai map uses local OpenStreetMap geography. Choose Solar array or Factory, set capacity in the side panel, then click a point on land. An asset appears after a short construction delay and keeps reporting at that coordinate.
 - Inspect a marker or select its device name to see readings. The map supports dragging and zooming; Remove deletes a chosen asset, and Reset restores the demonstration.
 - Pause or accelerate the simulated clock, change cloud cover, or submit a solar report with a larger multiplier. Device values, map labels, supply/demand, and the report stream update together.
 - Each video loads after a click. Opening one restores the other’s cover; Return to video cover removes the player.
 - Explore the SolarChain-Eval liquidity state transition at two consecutive hours. Change liquidity support, burn and suspicious supply; the waterfall accounts for opening liquidity, added liquidity, matched demand and the next state. The illustrative states are labeled separately from recorded benchmark results, and the equations link to env.py.
-- SolarChain-Eval: switch between the policy landscape and rollout box plots; choose an outcome, toggle recorded episodes or ±1 SD, and select a policy or individual rollout. Policy selections also update the main results table.
+- SolarChain-Eval: switch between the policy landscape and rollout box plots; choose an outcome, toggle recorded episodes or ±1 SD, and select a policy or individual rollout. Opening a main-setting episode from the 3D view carries its exact record into the 2D plot. Other settings carry the selected policy into the main comparison.
 - The matched experiment view compares removal of the physics penalty with addition of the Planner/Auditor. Choose an outcome and policy, then inspect the paired-change histogram and four-condition matrix.
 - Compare two recorded PPO decisions using a compact 3D action chart: an Auditor intervention at 15:00 and a Planner adjustment at 01:00. Paired columns show reward, liquidity and burn on a common 0–100% scale. The full 24-hour source record remains downloadable.
 - The original Who Bears the Cost project flowchart is displayed above the simplified introduction and can be expanded to full resolution. The ongoing research illustration follows one Web AI request from its proposed host through a runtime check to its executed host. A single GPU-busy switch changes the executed device and its resource account.
-- Hover or focus a ViRel method to highlight it across both charts and its reliability summary. The allocation and policy explorers retain the reported paper values.
+- The Shanghai allocation dot plot shows the five published splits on a common fulfillment scale. Select a row to inspect the producer reward and slippage proxy.
+- The ViRel comparison aligns measured GPU energy and its 95% confidence interval with dense avoidance and unsafe acceptance. Choose a model size and select a method for the numerical reading.
 
 ## Vercel and the 3D experience
 
@@ -84,7 +85,8 @@ All page, script, image, and evidence links use relative paths, so the site work
 - `evidence/`: downloadable CSV/JSON records and source-file hashes.
 - `scripts/build_eval_evidence.py`: regenerate the evidence bundle from the local research runs and verify it against the manuscript.
 - `assets/`: original research images and local map geometry.
-- `notes/speaker-notes.md`: 30-minute speaking plan.
+- `reading-room.css`: atlas cover, chapter menu, original-figure navigation and paper-result charts.
+- `notes/speaker-notes.md`: full English speaking script with timings and links to the live controls. The build publishes this file under the same path.
 - `notes/sources.md`: figure provenance and numerical definitions.
 
 Retain the figure attribution when reusing the page. The figures and project materials retain their original rights; this draft does not assign a new blanket license to them.

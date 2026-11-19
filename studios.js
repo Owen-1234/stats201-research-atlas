@@ -7,6 +7,42 @@
   const svgText=(x,y,t,extra='')=>`<text x="${x}" y="${y}" ${extra}>${t}</text>`;
   function paint(){if(typeof paintRanges==='function')paintRanges();}
 
+
+  function drawFinancingCurve(evaluate, rate, capacityFactor, years) {
+    const svg = q('#finance-scenarios');
+    const width = Math.max(220, Math.round(svg.clientWidth || 680));
+    const compact = width < 450;
+    const height = compact ? 218 : 275;
+    svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    const left = 44, right = width - 18, top = 29, bottom = height - 43;
+    const ceiling = Math.ceil(evaluate(16, .214).cost / 40) * 40;
+    const x = r => left + (r - 2) / 14 * (right - left);
+    const y = cost => bottom - cost / ceiling * (bottom - top);
+    const grid = [0, 1, 2, 3, 4].map(i => {
+      const cost = ceiling * i / 4;
+      return `<line x1="${left}" x2="${right}" y1="${y(cost)}" y2="${y(cost)}" class="finance-grid"/>${svgText(left - 7, y(cost) + 4, '$'+cost, 'text-anchor="end" class="dcf-axis"')}`;
+    }).join('');
+    const rates = compact ? [2, 6, 10, 14, 16] : [2, 4, 6, 8, 10, 12, 14, 16];
+    const ticks = rates.map(r => svgText(x(r), bottom + 17, r+'%', 'text-anchor="middle" class="dcf-axis"')).join('');
+    const resources = [{cf: .214, line: '#74866f', dash: '5 3'}, {cf: .269, line: '#256557', dash: ''}, {cf: .34, line: '#9b692e', dash: '2 3'}];
+    const curves = resources.map(resource => {
+      const points = Array.from({length: 57}, (_, i) => {
+        const r = 2 + i / 4;
+        return `${x(r)},${y(evaluate(r, resource.cf).cost)}`;
+      });
+      return `<polyline points="${points.join(' ')}" fill="none" stroke="${resource.line}" stroke-dasharray="${resource.dash}" stroke-width="${resource.cf === capacityFactor ? 3 : 1.8}"/>`;
+    }).join('');
+    const cost = evaluate(rate).cost;
+    const labelX = Math.min(right - 35, Math.max(left + 35, x(rate)));
+    const labelY = Math.max(top + 4, y(cost) - 20);
+    svg.innerHTML = `<title>${years}-year discounted cash-flow model. At ${rate}% the selected plant requires $${cost.toFixed(1)} per MWh.</title>
+      ${grid}${ticks}${curves}<path d="M${x(rate)} ${top}V${bottom}" stroke="#73877a" stroke-dasharray="3 4"/>
+      <circle cx="${x(rate)}" cy="${y(cost)}" r="5.5" fill="#164c42" stroke="#fff" stroke-width="2"/>
+      <rect x="${labelX - 34}" y="${labelY - 14}" width="68" height="22" rx="5" fill="#205849"/>
+      ${svgText(labelX, labelY+1, '$'+cost.toFixed(1), 'text-anchor="middle" class="dcf-value"')}
+      ${svgText(left, 14, 'Real $/MWh', 'class="dcf-axis"')}${svgText((left+right)/2, height-3, 'Real discount rate', 'text-anchor="middle" class="dcf-axis"')}`;
+  }
+
   function renderFinance(){
     const investment=Number(q('#project-cost').value)*1000,years=Number(q('#project-life').value),rate=Number(q('#wacc').value),capacityFactor=Number(q('#finance-resource').value);
     const evaluate=(r,cf=capacityFactor,n=years)=>M.finance({investment,years:n,rate:r,capacityFactor:cf});
@@ -17,15 +53,20 @@
     q('#levelized-cost').innerHTML='$'+current.cost.toFixed(1)+'<small>/MWh</small>';
     q('#financing-delta').innerHTML=(delta>=0?'+':'−')+'$'+Math.abs(delta).toFixed(1)+'<small>/MWh</small>';
     q('#finance-energy').textContent=current.energy.toLocaleString('en-US',{maximumFractionDigits:1})+' MWh';
-    const resources=[{cf:.214,color:'#a7b99b'},{cf:.269,color:'#497c69'},{cf:.34,color:'#baa06d'}];
-    const ceiling=Math.ceil(evaluate(16,.214).cost/25)*25,L=60,R=748,T=30,B=285,x=v=>L+(v-2)/14*(R-L),y=v=>B-v/ceiling*(B-T);
-    const grid=Array.from({length:5},(_,i)=>{const v=ceiling*i/4;return '<line x1="'+L+'" x2="'+R+'" y1="'+y(v)+'" y2="'+y(v)+'" class="finance-grid"/>'+svgText(L-10,y(v)+4,'$'+v.toFixed(0),'text-anchor="end" class="dcf-axis"');}).join('');
-    const ticks=[2,4,6,8,10,12,14,16].map(r=>svgText(x(r),B+24,r+'%','text-anchor="middle" class="dcf-axis"')).join('');
-    const lines=resources.map(d=>'<polyline points="'+Array.from({length:57},(_,i)=>{const r=2+i*.25;return x(r)+','+y(evaluate(r,d.cf).cost);}).join(' ')+'" fill="none" stroke="'+d.color+'" stroke-width="'+(d.cf===capacityFactor?3.4:1.7)+'" opacity="'+(d.cf===capacityFactor?1:.65)+'"/>').join('');
-    const labelX=Math.min(R-69,Math.max(L+69,x(rate))),labelY=Math.max(T+16,y(current.cost)-24);
-    q('#finance-scenarios').innerHTML='<title>Discounted cash-flow LCOE, '+years+' years, 0.7 percent annual degradation</title>'+grid+ticks+lines+'<path d="M'+x(rate)+' '+T+'V'+B+'" stroke="#90a589" stroke-dasharray="4 5"/><circle cx="'+x(rate)+'" cy="'+y(current.cost)+'" r="6" fill="#416f5b" stroke="#fffef7" stroke-width="2"/><rect x="'+(labelX-58)+'" y="'+(labelY-18)+'" width="116" height="28" rx="5" fill="#f4f7eb" stroke="#cfddc4"/>'+svgText(labelX,labelY+1,'$'+current.cost.toFixed(1)+' / MWh','text-anchor="middle" class="dcf-point-label"')+svgText(L,15,'REAL LCOE · $/MWh','class="dcf-axis"')+svgText((L+R)/2,342,'Real discount rate','text-anchor="middle" class="dcf-axis"');
-    const cases=[{name:'Lower rate',r:4},{name:'Reference',r:8},{name:'Higher rate',r:12},{name:'Your scenario',r:rate}];
-    q('#finance-scenarios-mobile').innerHTML=cases.map((d,i)=>'<div class="'+(i===3?'selected':'')+'"><span>'+d.name+' · '+d.r.toFixed(1)+'%</span><strong>$'+evaluate(d.r).cost.toFixed(1)+'<small>/MWh</small></strong></div>').join('');
+
+    drawFinancingCurve(evaluate, rate, capacityFactor, years);
+    const presets = q('#finance-scenarios-mobile');
+    [4, 8, 12].forEach(r => {
+      let button = presets.querySelector(`[data-preset-rate="${r}"]`);
+      if (!button) {
+        button = document.createElement('button');
+        button.type = 'button';
+        button.dataset.presetRate = r;
+        presets.append(button);
+      }
+      button.setAttribute('aria-pressed', String(r === rate));
+      button.innerHTML = `<span>${r}% real rate</span><strong>$${evaluate(r).cost.toFixed(1)}<small>/MWh</small></strong>`;
+    });
     q('#finance-caption').textContent='At '+rate.toFixed(1)+'%, discounted costs are '+money(current.pvCost)+' and discounted generation is '+current.pvEnergy.toLocaleString('en-US',{maximumFractionDigits:0})+' MWh. Their ratio is $'+current.cost.toFixed(1)+'/MWh. Every curve discounts annual output after 0.7% yearly degradation.';
     const lives=[10,15,20,25,30],rates=[2,4,6,8,10,12,14,16],cells=rates.flatMap(r=>lives.map(n=>evaluate(r,capacityFactor,n).cost)),min=Math.min(...cells),max=Math.max(...cells);
     q('#finance-matrix').innerHTML='<span class="matrix-corner">Rate / life</span>'+lives.map(n=>'<span class="matrix-heading">'+n+' yr</span>').join('')+rates.map(r=>'<span class="matrix-heading">'+r+'%</span>'+lives.map(n=>{const cost=evaluate(r,capacityFactor,n).cost,t=(cost-min)/(max-min),active=r===rate&&n===years;return '<button data-finance-rate="'+r+'" data-finance-years="'+n+'" style="background:hsl(95 18% '+(96-t*50)+'%);color:'+(t>.7?'#fff':'#385b43')+'" aria-label="'+r+' percent real discount rate, '+n+' years: '+cost.toFixed(1)+' dollars per MWh" aria-pressed="'+active+'">$'+cost.toFixed(0)+'</button>';}).join('')).join('');
@@ -36,6 +77,19 @@
   q('#finance-reset').addEventListener('click',()=>{q('#project-cost').value=1560;q('#project-life').value=30;q('#wacc').value=8;q('#finance-resource').value=.269;renderFinance();});
   q('#finance-matrix').addEventListener('click',event=>{const cell=event.target.closest('[data-finance-rate]');if(!cell)return;q('#wacc').value=cell.dataset.financeRate;q('#project-life').value=cell.dataset.financeYears;renderFinance();q(`#finance-matrix [data-finance-rate="${cell.dataset.financeRate}"][data-finance-years="${cell.dataset.financeYears}"]`).focus({preventScroll:true});});
 
+
+  q('#finance-scenarios-mobile').addEventListener('click', event => {
+    const button = event.target.closest('[data-preset-rate]');
+    if (!button) return;
+    q('#wacc').value = button.dataset.presetRate;
+    renderFinance();
+  });
+  let lastCurveWidth = 0;
+  new ResizeObserver(([entry]) => {
+    if (Math.abs(lastCurveWidth - entry.contentRect.width) < 1) return;
+    lastCurveWidth = entry.contentRect.width;
+    renderFinance();
+  }).observe(q('#finance-scenarios'));
   const GEO=window.ShanghaiAtlasMap;
   const baseline=()=>[
     {id:'PV-01',type:'solar',lat:31.2410,lon:121.4860,row:0,col:1,capacity:24,bias:1},

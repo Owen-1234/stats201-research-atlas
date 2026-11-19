@@ -149,6 +149,17 @@
   }
   function handleSelection(event){const run=event.target.closest('[data-eval-run]'),policy=event.target.closest('[data-eval-policy]'),experimentPolicy=event.target.closest('[data-eval-learned]');if(run){const i=Number(run.dataset.evalRun);selectPolicy(E.records[i].policy,i);}else if(policy)selectPolicy(policy.dataset.evalPolicy);else if(experimentPolicy)selectPolicy(experimentPolicy.dataset.evalLearned);}
   document.addEventListener('click',handleSelection);
+  q('#spatial-compare').addEventListener('click', event => {
+    const {policy, record} = event.currentTarget.dataset;
+    if (!policies.includes(policy)) return;
+    state.view = 'landscape';
+    const index = record ? Number(record) : null;
+    if (index !== null) {
+      state.showRuns = true;
+      q('#eval-show-runs').checked = true;
+    }
+    selectPolicy(policy, index);
+  });
   q('#eval-main-chart').addEventListener('keydown',event=>{if(['Enter',' '].includes(event.key)&&event.target.closest('[data-eval-policy]')){event.preventDefault();handleSelection(event);}});
   q('#eval-effect-chart').addEventListener('keydown',event=>{if(['Enter',' '].includes(event.key)&&event.target.closest('[data-eval-learned]')){event.preventDefault();handleSelection(event);}});
   q('#eval-main-chart').addEventListener('pointerover',event=>{const dot=event.target.closest('[data-eval-run]');if(dot)renderRunReadout(Number(dot.dataset.evalRun));});

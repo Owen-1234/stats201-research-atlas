@@ -1,10 +1,10 @@
 const q = (selector) => document.querySelector(selector);
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const cities = [
-  { id: 'capital', name: 'Singapore', number: '01', lat: 1.29, lon: 103.85, tag: 'PREDICT', title: 'What does the energy transition cost?', description: 'Follow fuel prices into the financing conditions that shape energy investment.', href: '#capital', coordinates: '01°17′ N · 103°51′ E', offset: [-75, 51] },
-  { id: 'solar', name: 'Shanghai', number: '02', lat: 31.23, lon: 121.47, tag: 'VERIFY', title: 'Can we trust a solar report?', description: 'Follow a generation report from physical evidence to a verified market settlement.', href: '#verify', coordinates: '31°14′ N · 121°28′ E', offset: [-86, -36] },
-  { id: 'eval', name: 'Jeju Island', number: '03', lat: 33.49, lon: 126.53, tag: 'LEARN', title: 'What makes a market policy trustworthy?', description: 'Explore the trade-offs between trading performance, physical risk, and agent oversight.', href: '#learn', coordinates: '33°29′ N · 126°32′ E', offset: [57, -62] },
-  { id: 'virel', name: 'Rio de Janeiro', number: '04', lat: -22.91, lon: -43.17, tag: 'MEASURE', title: 'What are the resources behind an answer?', description: 'See how visual-token budgets change reliability, computation, and measured GPU energy.', href: '#virel', coordinates: '22°55′ S · 043°10′ W', offset: [25, -32] },
+  { id: 'capital', name: 'Singapore', number: '01', lat: 1.29, lon: 103.85, title: 'How do fuel prices relate to capital costs?', href: '#capital', coordinates: '01°17′ N · 103°51′ E', offset: [-75, 51] },
+  { id: 'solar', name: 'Shanghai', number: '02', lat: 31.23, lon: 121.47, title: 'Can we trust a solar report?', href: '#verify', coordinates: '31°14′ N · 121°28′ E', offset: [-86, -36] },
+  { id: 'eval', name: 'Jeju Island', number: '03', lat: 33.49, lon: 126.53, title: 'What makes a market policy trustworthy?', href: '#learn', coordinates: '33°29′ N · 126°32′ E', offset: [57, -62] },
+  { id: 'virel', name: 'Rio de Janeiro', number: '04', lat: -22.91, lon: -43.17, title: 'What are the resources behind an answer?', href: '#virel', coordinates: '22°55′ S · 043°10′ W', offset: [25, -32] },
 ];
 let globe;
 let activeCity = cities[0];
@@ -14,14 +14,17 @@ function selectCity(id, focus = true) {
   const city = cities.find((item) => item.id === id);
   if (!city) return;
   activeCity = city;
-  document.querySelectorAll('[data-globe-city]').forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.globeCity === id)));
+  q('#atlas-city').value = id;
   document.querySelectorAll('.globe-city-label').forEach((button) => { button.dataset.active = String(button.dataset.city === id); });
-  q('#globe-study-tag').textContent = city.tag;
   q('#globe-study-title').textContent = city.title;
-  q('#globe-study-description').textContent = city.description;
   q('#globe-study-link').href = city.href;
   q('#globe-coordinate').textContent = city.coordinates;
-  if (typeof window.selectPaper === 'function') window.selectPaper(id);
+  document.querySelectorAll('.map-stop').forEach(link => {
+    const active = link.dataset.paper === id;
+    link.classList.toggle('active', active);
+    if (active) link.setAttribute('aria-current', 'location');
+    else link.removeAttribute('aria-current');
+  });
   globe?.select(id, focus);
 }
 
@@ -38,7 +41,7 @@ async function startGlobe() {
   if (globeStarting) return globeStarting;
   globeStarting = (async () => {
     try {
-      const { createGlobe } = await import('./spatial.js?v=14');
+      const { createGlobe } = await import('./spatial.js?v=15');
       globe = await createGlobe({ cities, onSelect: selectCity, reducedMotion: reducedMotion.matches });
       selectCity(activeCity.id, false);
     } catch (error) {
@@ -47,7 +50,6 @@ async function startGlobe() {
       q('#globe-loading').classList.add('scene-error');
       q('#atlas-mode-3d').disabled = true;
       setAtlasMode('flat');
-      q('#atlas-mode-flat').focus({ preventScroll: true });
     }
   })();
   return globeStarting;
@@ -55,13 +57,44 @@ async function startGlobe() {
 
 q('#atlas-mode-3d').addEventListener('click', () => setAtlasMode('3d'));
 q('#atlas-mode-flat').addEventListener('click', () => setAtlasMode('flat'));
-document.querySelectorAll('[data-globe-city]').forEach((button) => button.addEventListener('click', () => selectCity(button.dataset.globeCity)));
+q('#atlas-city').addEventListener('change', event => selectCity(event.target.value));
+q('#flat-atlas').addEventListener('click', event => {
+  const stop = event.target.closest('.map-stop');
+  if (stop) selectCity(stop.dataset.paper, false);
+});
+selectCity(activeCity.id, false);
 
+const chapters = q('#chapter-menu');
+const chapterLinks = [...chapters.querySelectorAll('a[href^="#"]')];
+const chapterSections = chapterLinks.map(link => q(link.hash));
+chapters.addEventListener('click', event => {
+  if (event.target.closest('a')) chapters.open = false;
+});
+document.addEventListener('pointerdown', event => {
+  if (!chapters.contains(event.target)) chapters.open = false;
+});
+chapters.addEventListener('focusout', event => {
+  if (event.relatedTarget && !chapters.contains(event.relatedTarget)) chapters.open = false;
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && chapters.open) {
+    chapters.open = false;
+    chapters.querySelector('summary').focus();
+  }
+});
 const progress = q('#reading-progress-fill');
 let progressQueued = false;
+let currentChapter = -1;
 function updateProgress() {
   const distance = document.documentElement.scrollHeight - innerHeight;
   progress.style.width = `${distance > 0 ? Math.min(100, Math.max(0, scrollY / distance * 100)) : 0}%`;
+  const cutoff = Math.min(220, innerHeight * 0.3);
+  const index = Math.max(0, chapterSections.findLastIndex(section => section.getBoundingClientRect().top <= cutoff));
+  if (currentChapter !== index) {
+    chapterLinks[currentChapter]?.removeAttribute('aria-current');
+    chapterLinks[index].setAttribute('aria-current', 'location');
+    currentChapter = index;
+  }
   progressQueued = false;
 }
 addEventListener('scroll', () => {
@@ -79,7 +112,7 @@ const spatialObserver = new IntersectionObserver(async (entries) => {
   if (!entries.some((entry) => entry.isIntersecting)) return;
   spatialObserver.disconnect();
   try {
-    const { createLandscape } = await import('./spatial.js?v=14');
+    const { createLandscape } = await import('./spatial.js?v=15');
     createLandscape({ reducedMotion: reducedMotion.matches });
   } catch (error) {
     console.warn('The 3D evidence view is unavailable; the linked two-dimensional results remain available.', error);

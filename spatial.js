@@ -402,6 +402,12 @@ export function createLandscape({ reducedMotion }) {
     q('#spatial-clear').hidden = !selectedRecord;
   }
   function renderPoints() {
+    const comparison = q('#spatial-compare');
+    comparison.dataset.policy = policy;
+    comparison.dataset.record = setting === 'main' && selectedRecord ? String(selectedRecord.index) : '';
+    comparison.textContent = comparison.dataset.record
+      ? 'Open this episode in 2D →'
+      : policy === 'all' ? 'Compare in the main 2D plot →' : `Compare ${names[policy]} in the main 2D plot →`;
     domains = { violation: domain('violation'), reward: domain('reward'), liquidity: domain('liquidity') };
     axisLabels.forEach(({element,key,fraction})=>{if(!key)return;const factor=key==='violation'?100:1,span=(domains[key][1]-domains[key][0])*factor;const digits=Math.min(6,Math.max(key==='liquidity'?3:1,Math.ceil(-Math.log10(Math.max(span/4,1e-10)))));const value=(domains[key][0]+fraction*(domains[key][1]-domains[key][0]))*factor;element.textContent=value.toFixed(digits)+(key==='violation'?'%':'');});
     document.querySelectorAll('[data-spatial-detail]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.spatialDetail===detailMode)));
