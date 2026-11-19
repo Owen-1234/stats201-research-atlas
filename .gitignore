@@ -16,3 +16,6 @@ dist/
 
 .qa/
 notes/vercel-setup-*.md
+
+# Presenter script is kept locally
+notes/speaker-notes.md

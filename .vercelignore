@@ -3,8 +3,7 @@
 .DS_Store
 node_modules
 dist
-notes/*
-!notes/speaker-notes.md
+notes
 *.log
 .env*
 assets/shanghai-osm-source.xml.gz

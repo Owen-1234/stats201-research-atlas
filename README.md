@@ -1,6 +1,6 @@
 # Between Data and Decisions · The Research Atlas · STATS 201
 
-[Open the Research Atlas](https://stats201-research-atlas.vercel.app/) · [30-minute speaking script](notes/speaker-notes.md) · [Four research papers](https://stats201-research-atlas.vercel.app/#sources)
+[Open the Research Atlas](https://stats201-research-atlas.vercel.app/) · [Four research papers](https://stats201-research-atlas.vercel.app/#sources)
 
 An English-language, 30-minute research atlas by Shilin Ou, following Singapore, Shanghai, Jeju, and Rio de Janeiro. The Jeju study includes an RL primer and Udacity’s complete, approximately 2½-minute lesson. Before ViRel-Budget, Mısra Turp’s complete two-minute pruning video introduces the idea of selecting what computation to keep. The same static source serves Vercel and GitHub Pages.
 
@@ -16,7 +16,7 @@ Open http://127.0.0.1:4173. The map, figures, and classroom interactions are loc
 
 ## Classroom controls
 
-- Choose a research stop on the cover globe and follow its question. The reading route lists the five research questions and their speaking times. The chapter menu works throughout the page. The route also offers the downloadable English script.
+- Choose a research stop on the cover globe and follow its question. The reading route lists the five research questions and their speaking times. The chapter menu works throughout the page.
 - Each paper title has a direct link to its OpenReview, ACM, or Duke Scholars record. All 19 original research and talk images have full-resolution views. Previous/Next and the arrow keys browse the current chapter. Escape returns to the page.
 - The financing studio uses a real discounted cash-flow LCOE model, with upfront investment, annual fixed O&M, annual degradation, and discounted energy. ATB 2024 published utility-scale PV cost inputs are normalized to 1 MW AC; selectable resource classes and editable real discount rates are explicit. Curves compare resources. The 4%, 8% and 12% presets update the discount rate while preserving the other assumptions. The rate/lifetime matrix applies both inputs. Sources and exclusions are visible in the panel.
 - The Shanghai map uses local OpenStreetMap geography. Choose Solar array or Factory, set capacity in the side panel, then click a point on land. An asset appears after a short construction delay and keeps reporting at that coordinate.
@@ -86,7 +86,6 @@ All page, script, image, and evidence links use relative paths, so the site work
 - `scripts/build_eval_evidence.py`: regenerate the evidence bundle from the local research runs and verify it against the manuscript.
 - `assets/`: original research images and local map geometry.
 - `reading-room.css`: atlas cover, chapter menu, original-figure navigation and paper-result charts.
-- `notes/speaker-notes.md`: full English speaking script with timings and links to the live controls. The build publishes this file under the same path.
 - `notes/sources.md`: figure provenance and numerical definitions.
 
 Retain the figure attribution when reusing the page. The figures and project materials retain their original rights; this draft does not assign a new blanket license to them.
