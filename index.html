@@ -27,7 +27,7 @@
   <link rel="stylesheet" href="interactives.css?v=14">
   <link rel="stylesheet" href="revision.css?v=14">
   <link rel="stylesheet" href="simple-scenes.css?v=14">
-  <link rel="stylesheet" href="reading-room.css?v=15">
+  <link rel="stylesheet" href="reading-room.css?v=16">
   <script type="module" src="teaching-scenes.js?v=14"></script>
 </head>
 <body>
@@ -54,16 +54,20 @@
 
   <main>
     <section class="opening-spread wrap" id="top" aria-labelledby="atlas-title">
-      <div class="opening-copy">
+      <div>
         <p class="opening-course">STATS 201 <span>Machine learning in social science</span></p>
         <h1 id="atlas-title">Between data<br><em>and decisions.</em></h1>
+      </div>
+      <div>
         <p class="opening-deck">What happens between a model’s prediction and the decision someone has to live with?</p>
         <p class="opening-detail">Four studies follow that question from the financing of a solar project to the energy a GPU uses to answer a single query.</p>
-        <div class="opening-actions"><a class="start-study" href="#capital">Start in Singapore <span aria-hidden="true">→</span></a><a class="route-jump" href="#talk-route">See the 30-minute route <span aria-hidden="true">↓</span></a></div>
+        <div class="opening-actions"><a class="start-study" href="#capital">Start in Singapore <span aria-hidden="true">→</span></a></div>
         <p class="opening-author"><a href="https://www.linkedin.com/in/shilin-ou-069284352/" target="_blank" rel="noopener">Shilin Ou ↗</a><span>Duke Kunshan University</span></p>
       </div>
-      <section class="cover-map" id="journey" aria-label="The research atlas">
-        <div class="map-mast"><h2>The research atlas</h2><div class="atlas-view-switch" role="group" aria-label="Atlas display"><button type="button" id="atlas-mode-3d" aria-pressed="true">3D globe</button><button type="button" id="atlas-mode-flat" aria-pressed="false">Flat map</button></div></div>
+    </section>
+
+    <section class="cover-map" id="journey" aria-labelledby="atlas-map-title">
+        <div class="map-mast wrap"><h2 id="atlas-map-title">The research atlas</h2><div class="atlas-view-switch" role="group" aria-label="Atlas display"><button type="button" id="atlas-mode-3d" aria-pressed="true">3D globe</button><button type="button" id="atlas-mode-flat" aria-pressed="false">Flat map</button></div></div>
         <div class="globe-experience" id="globe-experience">
           <div class="globe-stage" id="globe-stage" aria-label="Interactive three-dimensional research globe">
             <div class="globe-canvas-mount" id="globe-mount"></div>
@@ -90,21 +94,22 @@
             </svg>
             <div class="map-bottom"><div class="map-controls"><button id="map-zoom" aria-label="Zoom into East Asia">East Asia ↗</button><button id="map-reset" aria-label="Reset world map">World ↺</button></div></div>
           </div>
-        <div class="cover-place">
-          <div><label for="atlas-city">Research stop</label><select id="atlas-city"><option value="capital">Singapore</option><option value="solar">Shanghai</option><option value="eval">Jeju Island</option><option value="virel">Rio de Janeiro</option></select></div>
-          <a id="globe-study-link" href="#capital"><span id="globe-study-title">How do fuel prices relate to capital costs?</span><b aria-hidden="true">↗</b></a>
+        <div class="cover-place-band">
+          <div class="cover-place wrap">
+            <div><label for="atlas-city">Research stop</label><select id="atlas-city"><option value="capital">Singapore</option><option value="solar">Shanghai</option><option value="eval">Jeju Island</option><option value="virel">Rio de Janeiro</option></select></div>
+            <a id="globe-study-link" href="#capital"><span id="globe-study-title">How do fuel prices relate to capital costs?</span><b aria-hidden="true">↗</b></a>
+          </div>
         </div>
-      </section>
     </section>
 
     <section class="route-outline wrap" id="talk-route" aria-labelledby="route-title">
-      <div class="route-title"><h2 id="route-title">The reading route</h2><div class="route-meta"><span>30 minutes</span></div></div>
+      <div class="route-title"><h2 id="route-title">The reading route</h2><span>30 minutes</span></div>
       <div class="reading-stops">
-        <a href="#capital"><small>02–05 min · Singapore</small><strong>Predict</strong><span>What sets the cost of capital?</span></a>
-        <a href="#verify"><small>05–11 min · Shanghai</small><strong>Verify</strong><span>Which solar reports can settle?</span></a>
-        <a href="#learn"><small>11–22 min · Jeju</small><strong>Learn</strong><span>What does a market reward?</span></a>
-        <a href="#virel"><small>22–27 min · Rio</small><strong>Measure</strong><span>Does less computation save energy?</span></a>
-        <a href="#future"><small>27–28 min · Ongoing work</small><strong>Account</strong><span>Whose GPU does the work?</span></a>
+        <a href="#capital"><strong>Singapore</strong><span>What sets the cost of capital?</span></a>
+        <a href="#verify"><strong>Shanghai</strong><span>Which solar reports can settle?</span></a>
+        <a href="#learn"><strong>Jeju Island</strong><span>What does a market reward?</span></a>
+        <a href="#virel"><strong>Rio de Janeiro</strong><span>Does less computation save energy?</span></a>
+        <a href="#future"><strong>Ongoing work</strong><span>Whose GPU does the work?</span></a>
       </div>
       <div class="route-ends"><a href="#top">00–02 min · Opening</a><a href="#discussion">28–30 min · Discussion →</a></div>
     </section>
