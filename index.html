@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="atlas.css">
   <link rel="stylesheet" href="refinements.css">
   <link rel="stylesheet" href="studios.css">
-  <script src="app.js?v=15" defer></script>
+  <script src="app.js?v=16" defer></script>
   <script src="studio-models.js?v=14" defer></script>
   <script src="assets/shanghai-map.js" defer></script>
   <script src="studios.js?v=15" defer></script>
@@ -23,11 +23,11 @@
   <script src="eval-lab.js?v=15" defer></script>
   <link rel="stylesheet" href="experience.css?v=14">
   <script type="importmap">{"imports":{"three":"./assets/vendor/three/three.module.js"}}</script>
-  <script type="module" src="experience.js?v=15"></script>
+  <script type="module" src="experience.js?v=16"></script>
   <link rel="stylesheet" href="interactives.css?v=14">
   <link rel="stylesheet" href="revision.css?v=14">
   <link rel="stylesheet" href="simple-scenes.css?v=14">
-  <link rel="stylesheet" href="reading-room.css?v=16">
+  <link rel="stylesheet" href="reading-room.css?v=17">
   <script type="module" src="teaching-scenes.js?v=14"></script>
 </head>
 <body>
@@ -61,45 +61,28 @@
       <div>
         <p class="opening-deck">What happens between a model’s prediction and the decision someone has to live with?</p>
         <p class="opening-detail">Four studies follow that question from the financing of a solar project to the energy a GPU uses to answer a single query.</p>
-        <div class="opening-actions"><a class="start-study" href="#capital">Start in Singapore <span aria-hidden="true">→</span></a></div>
         <p class="opening-author"><a href="https://www.linkedin.com/in/shilin-ou-069284352/" target="_blank" rel="noopener">Shilin Ou ↗</a><span>Duke Kunshan University</span></p>
       </div>
     </section>
 
     <section class="cover-map" id="journey" aria-labelledby="atlas-map-title">
-        <div class="map-mast wrap"><h2 id="atlas-map-title">The research atlas</h2><div class="atlas-view-switch" role="group" aria-label="Atlas display"><button type="button" id="atlas-mode-3d" aria-pressed="true">3D globe</button><button type="button" id="atlas-mode-flat" aria-pressed="false">Flat map</button></div></div>
-        <div class="globe-experience" id="globe-experience">
-          <div class="globe-stage" id="globe-stage" aria-label="Interactive three-dimensional research globe">
-            <div class="globe-canvas-mount" id="globe-mount"></div>
-            <div class="globe-labels" id="globe-labels"></div>
-            <p class="scene-loading" id="globe-loading" role="status">Preparing your view of the world…</p>
-            <div class="globe-coordinate" id="globe-coordinate">01°17′ N &nbsp; 103°51′ E</div>
-            <div class="globe-tools" role="group" aria-label="Globe controls"><button type="button" id="globe-rotate" aria-pressed="true" aria-label="Pause globe rotation">Ⅱ</button><button type="button" id="globe-zoom-in" aria-label="Zoom in on globe">+</button><button type="button" id="globe-zoom-out" aria-label="Zoom out on globe">−</button><button type="button" id="globe-reset" aria-label="Reset globe view">↺</button></div>
-            <div class="globe-instructions"><span aria-hidden="true">↔</span> Drag to orbit <i>·</i> Pinch to zoom <i>·</i> Pick a place</div>
-          </div>
+      <h2 class="map-mast wrap" id="atlas-map-title">The research atlas</h2>
+      <div class="globe-experience" id="globe-experience">
+        <div class="globe-stage" id="globe-stage" aria-label="Interactive three-dimensional research globe">
+          <div class="globe-canvas-mount" id="globe-mount"></div>
+          <div class="globe-labels" id="globe-labels"></div>
+          <p class="scene-loading" id="globe-loading" role="status">Preparing your view of the world…</p>
+          <div class="globe-coordinate" id="globe-coordinate">01°17′ N &nbsp; 103°51′ E</div>
+          <div class="globe-tools" role="group" aria-label="Globe controls"><button type="button" id="globe-rotate" aria-pressed="true" aria-label="Pause globe rotation">Ⅱ</button><button type="button" id="globe-zoom-in" aria-label="Zoom in on globe">+</button><button type="button" id="globe-zoom-out" aria-label="Zoom out on globe">−</button><button type="button" id="globe-reset" aria-label="Reset globe view">↺</button></div>
+          <div class="globe-instructions"><span aria-hidden="true">↔</span> Drag to orbit <i>·</i> Pinch to zoom <i>·</i> Pick a place</div>
         </div>
-          <div class="map-canvas" id="flat-atlas" hidden>
-            <svg id="world-map" viewBox="0 0 1000 440" role="group" aria-label="Research atlas: Singapore, Shanghai, Jeju Island, and Rio de Janeiro. Each city links directly to its study.">
-              <defs><pattern id="map-grid" width="83.333" height="91.034" patternUnits="userSpaceOnUse"><path d="M 83.333 0 L 0 0 0 91.034" fill="none" stroke="#e0e4de" stroke-width=".7"/></pattern></defs>
-              <rect width="1000" height="440" fill="url(#map-grid)"/>
-              <image href="assets/world-land.svg" width="1000" height="440"/>
-              <g id="map-routes" fill="none" stroke="#a1b1af" stroke-width="1.4" stroke-dasharray="4 5">
-                <path d="M788,254 Q780,192 837,163"/><path d="M837,163 Q851,137 851,156"/><path d="M851,156 Q610,20 380,327"/>
-              </g>
-              <text class="ocean-label" x="490" y="250">ATLANTIC OCEAN</text><text class="ocean-label" x="645" y="352">INDIAN OCEAN</text><text class="ocean-label" x="100" y="240">PACIFIC OCEAN</text>
-              <a class="map-stop active" data-paper="capital" href="#capital" aria-label="Singapore: Fossil Fuel Prices and Capital Cost: A Machine Learning Driven Study on Energy Transition"><title>Fossil Fuel Prices and Capital Cost: A Machine Learning Driven Study on Energy Transition</title><circle class="marker-halo" cx="788.4" cy="253.8" r="15"/><circle class="marker-dot" cx="788.4" cy="253.8" r="5"/><path class="leader" d="M788,254 L765,278 L723,278"/><text x="684" y="296">01  Singapore</text></a>
-              <a class="map-stop" data-paper="solar" href="#verify" aria-label="Shanghai: SolarChain: A Physics-Grounded Embodied IoT System for Verifiable Urban Solar Market Design"><title>SolarChain: A Physics-Grounded Embodied IoT System for Verifiable Urban Solar Market Design</title><circle class="marker-halo" cx="837.4" cy="163.2" r="15"/><circle class="marker-dot" cx="837.4" cy="163.2" r="5"/><path class="leader" d="M837,163 L812,181 L760,181"/><text x="722" y="197">02  Shanghai</text></a>
-              <a class="map-stop" data-paper="eval" href="#learn" aria-label="Jeju Island: SolarChain-Eval: A Physics-Constrained Benchmark for Trustworthy Economic Agents in Decentralized Energy Markets"><title>SolarChain-Eval: A Physics-Constrained Benchmark for Trustworthy Economic Agents in Decentralized Energy Markets</title><circle class="marker-halo" cx="851.4" cy="156.3" r="15"/><circle class="marker-dot" cx="851.4" cy="156.3" r="5"/><path class="leader" d="M851,156 L876,131 L925,131"/><text x="880" y="114">03  Jeju Island</text></a>
-              <a class="map-stop" data-paper="virel" href="#virel" aria-label="Rio de Janeiro: ViRel-Budget: Reliability-Constrained Visual-Token Budgeting for Green Vision-Language Inference"><title>ViRel-Budget: Reliability-Constrained Visual-Token Budgeting for Green Vision-Language Inference</title><circle class="marker-halo" cx="380.1" cy="327.2" r="15"/><circle class="marker-dot" cx="380.1" cy="327.2" r="5"/><path class="leader" d="M380,327 L405,350 L467,350"/><text x="411" y="370">04  Rio de Janeiro</text></a>
-            </svg>
-            <div class="map-bottom"><div class="map-controls"><button id="map-zoom" aria-label="Zoom into East Asia">East Asia ↗</button><button id="map-reset" aria-label="Reset world map">World ↺</button></div></div>
-          </div>
-        <div class="cover-place-band">
-          <div class="cover-place wrap">
-            <div><label for="atlas-city">Research stop</label><select id="atlas-city"><option value="capital">Singapore</option><option value="solar">Shanghai</option><option value="eval">Jeju Island</option><option value="virel">Rio de Janeiro</option></select></div>
-            <a id="globe-study-link" href="#capital"><span id="globe-study-title">How do fuel prices relate to capital costs?</span><b aria-hidden="true">↗</b></a>
-          </div>
+      </div>
+      <div class="cover-place-band">
+        <div class="cover-place wrap">
+          <div><label for="atlas-city">Research stop</label><select id="atlas-city"><option value="capital">Singapore</option><option value="solar">Shanghai</option><option value="eval">Jeju Island</option><option value="virel">Rio de Janeiro</option></select></div>
+          <a id="globe-study-link" href="#capital"><span id="globe-study-title">How do fuel prices relate to capital costs?</span><b aria-hidden="true">↗</b></a>
         </div>
+      </div>
     </section>
 
     <section class="route-outline wrap" id="talk-route" aria-labelledby="route-title">

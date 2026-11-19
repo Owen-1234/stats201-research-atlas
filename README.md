@@ -16,7 +16,7 @@ Open http://127.0.0.1:4173. The map, figures, and classroom interactions are loc
 
 ## Classroom controls
 
-- Choose a research stop on the cover globe and follow its question. The reading route lists the five research questions and their speaking times. The chapter menu works throughout the page.
+- Choose a research stop on the cover globe and follow its question. The reading route links the five research questions to their chapters. The chapter menu works throughout the page.
 - Each paper title has a direct link to its OpenReview, ACM, or Duke Scholars record. All 19 original research and talk images have full-resolution views. Previous/Next and the arrow keys browse the current chapter. Escape returns to the page.
 - The financing studio uses a real discounted cash-flow LCOE model, with upfront investment, annual fixed O&M, annual degradation, and discounted energy. ATB 2024 published utility-scale PV cost inputs are normalized to 1 MW AC; selectable resource classes and editable real discount rates are explicit. Curves compare resources. The 4%, 8% and 12% presets update the discount rate while preserving the other assumptions. The rate/lifetime matrix applies both inputs. Sources and exclusions are visible in the panel.
 - The Shanghai map uses local OpenStreetMap geography. Choose Solar array or Factory, set capacity in the side panel, then click a point on land. An asset appears after a short construction delay and keeps reporting at that coordinate.
@@ -46,7 +46,7 @@ vercel --prod --scope owen1234
 
 The new experience includes:
 
-- A Three.js globe using the bundled land geography, four geographic study markers, raised research-route arcs, selectable cities, orbit/zoom controls, and a flat-map alternative.
+- A full-width Three.js globe using the bundled land geography, four geographic study markers, raised research-route arcs, selectable cities, and orbit and zoom controls.
 - A three-dimensional view of the original 1,620 benchmark records. Its axes are cumulative reward, physics violation rate (percent), and artificial liquidity (MWh). The default view is a scatter plot of all recorded episodes in the current setting (90 per policy). Optional policy means and shared axes remain available. Tick precision adapts to small ranges. Removing the physics penalty changes the reward definition, so reward should be compared within each setting. Policy summaries, single-episode inspection, and CSV downloads retain the original recorded values.
 - A warm-paper and deep-green visual system, mobile layouts, keyboard-accessible selection controls, reduced-motion support, and animation that pauses outside the viewport or in a background tab.
 - A benchmark-specific liquidity ledger using the published environment transition equations, with a two-hour state carryover and an explicit artificial-liquidity measure.
@@ -54,7 +54,7 @@ The new experience includes:
 - A single-request placement sketch connecting runtime repair with user-side or institutional resource accounts, using one availability switch.
 - A local copy of Three.js 0.180.0 and its MIT license under `assets/vendor/three/`.
 
-`experience.css` and `experience.js` own the additional presentation and progressive loading; `interactives.css` and `teaching-scenes.js` implement the benchmark transition and request-routing illustrations; `revision.css` styles the DCF and responsive chart alignment; `simple-scenes.css` styles the compact 3D action comparison and placement introduction; `spatial.js` owns the WebGL scenes. If WebGL is unavailable, the atlas falls back to the original flat map and the evaluation section retains its original two-dimensional visualizations.
+`experience.css` and `experience.js` own the additional presentation and progressive loading; `interactives.css` and `teaching-scenes.js` implement the benchmark transition and request-routing illustrations; `revision.css` styles the DCF and responsive chart alignment; `simple-scenes.css` styles the compact 3D action comparison and placement introduction; `spatial.js` owns the WebGL scenes. If WebGL is unavailable, the research stop selector and chapter links still work. The evaluation section retains its two-dimensional visualizations.
 
 Automatic deployment uses the Vercel GitHub App with access to `Owen-1234/stats201-research-atlas`, the existing `stats201-research-atlas` Vercel project, and production branch `main`. The repository is connected: pushes to `main` build and publish this version; other branches receive preview deployments. Manual releases can also use the deploy command above.
 

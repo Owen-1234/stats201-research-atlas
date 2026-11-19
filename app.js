@@ -118,8 +118,6 @@ $$('dialog').forEach(dialog => dialog.addEventListener('click', event => {
     if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) dialog.close();
   }
 }));
-$('#map-zoom').addEventListener('click', () => {$('#world-map').setAttribute('viewBox','665 65 300 290'); $('#map-zoom').setAttribute('aria-pressed','true');});
-$('#map-reset').addEventListener('click', () => {$('#world-map').setAttribute('viewBox','0 0 1000 440'); $('#map-zoom').setAttribute('aria-pressed','false');});
 
 function paintRanges(){
   $$('input[type=range]').forEach(input=>input.style.setProperty('--range-progress',`${(Number(input.value)-Number(input.min))/(Number(input.max)-Number(input.min))*100}%`));

@@ -8,7 +8,6 @@ const cities = [
 ];
 let globe;
 let activeCity = cities[0];
-let globeStarting;
 
 function selectCity(id, focus = true) {
   const city = cities.find((item) => item.id === id);
@@ -19,49 +18,27 @@ function selectCity(id, focus = true) {
   q('#globe-study-title').textContent = city.title;
   q('#globe-study-link').href = city.href;
   q('#globe-coordinate').textContent = city.coordinates;
-  document.querySelectorAll('.map-stop').forEach(link => {
-    const active = link.dataset.paper === id;
-    link.classList.toggle('active', active);
-    if (active) link.setAttribute('aria-current', 'location');
-    else link.removeAttribute('aria-current');
-  });
   globe?.select(id, focus);
 }
 
-function setAtlasMode(mode) {
-  const flat = mode === 'flat';
-  q('#flat-atlas').hidden = !flat;
-  q('#globe-experience').hidden = flat;
-  q('#atlas-mode-3d').setAttribute('aria-pressed', String(!flat));
-  q('#atlas-mode-flat').setAttribute('aria-pressed', String(flat));
-  if (!flat) startGlobe();
-}
-
 async function startGlobe() {
-  if (globeStarting) return globeStarting;
-  globeStarting = (async () => {
-    try {
-      const { createGlobe } = await import('./spatial.js?v=15');
-      globe = await createGlobe({ cities, onSelect: selectCity, reducedMotion: reducedMotion.matches });
-      selectCity(activeCity.id, false);
-    } catch (error) {
-      console.warn('The 3D atlas is unavailable; the flat atlas remains available.', error);
-      q('#globe-loading').textContent = 'The 3D view is unavailable on this device. Use the flat map to explore every study.';
-      q('#globe-loading').classList.add('scene-error');
-      q('#atlas-mode-3d').disabled = true;
-      setAtlasMode('flat');
+  try {
+    const { createGlobe } = await import('./spatial.js?v=15');
+    globe = await createGlobe({ cities, onSelect: selectCity, reducedMotion: reducedMotion.matches });
+    selectCity(activeCity.id, false);
+  } catch (error) {
+    console.warn('The 3D atlas could not load.', error);
+    const loading = q('#globe-loading');
+    loading.textContent = 'Choose a research stop below to explore the atlas.';
+    loading.classList.add('scene-error');
+    q('#globe-stage').classList.add('is-unavailable');
+    for (const selector of ['#globe-mount', '#globe-labels', '#globe-coordinate', '.globe-tools', '.globe-instructions']) {
+      q(selector).hidden = true;
     }
-  })();
-  return globeStarting;
+  }
 }
 
-q('#atlas-mode-3d').addEventListener('click', () => setAtlasMode('3d'));
-q('#atlas-mode-flat').addEventListener('click', () => setAtlasMode('flat'));
 q('#atlas-city').addEventListener('change', event => selectCity(event.target.value));
-q('#flat-atlas').addEventListener('click', event => {
-  const stop = event.target.closest('.map-stop');
-  if (stop) selectCity(stop.dataset.paper, false);
-});
 selectCity(activeCity.id, false);
 
 const chapters = q('#chapter-menu');
