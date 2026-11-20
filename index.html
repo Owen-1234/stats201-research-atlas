@@ -88,7 +88,7 @@
     </section>
 
     <section class="route-outline wrap" id="talk-route" aria-labelledby="route-title">
-      <div class="route-title"><h2 id="route-title">The reading route</h2><span>30 minutes</span></div>
+      <div class="route-title"><h2 id="route-title">The reading route</h2></div>
       <div class="reading-stops">
         <a href="#capital"><strong>Fossil Fuel and Capital Cost</strong><span>What sets the cost of capital?</span></a>
         <a href="#verify"><strong>SolarChain</strong><span>Which solar reports can settle?</span></a>
@@ -96,11 +96,11 @@
         <a href="#virel"><strong>ViRel-Budget</strong><span>Does less computation save energy?</span></a>
         <a href="#future"><strong>Ongoing work</strong><span>Whose GPU does the work?</span></a>
       </div>
-      <div class="route-ends"><a href="#top">00–02 min · Opening</a><a href="#discussion">28–30 min · Discussion →</a></div>
+      <div class="route-ends"><a href="#top">Opening</a><a href="#discussion">Discussion →</a></div>
     </section>
 
     <section class="chapter wrap paper-chapter" id="capital" data-study="capital">
-      <div class="chapter-label"><span class="section-number">02</span><span>SINGAPORE / PREDICTION</span><span class="time-label">02–05 MIN</span></div>
+      <div class="chapter-label"><span class="section-number">02</span><span>SINGAPORE / PREDICTION</span></div>
       <div class="chapter-heading"><h2>Financing the<br><em>energy transition.</em></h2><p>The first study asks how fuel-price scenarios relate to the cost of financing energy projects. The target is WACC, the weighted average cost of capital: a financial condition that can change even when the technology stays the same.</p></div>
       <p class="article-title">Fossil Fuel Prices and Capital Cost: A Machine Learning Driven Study on Energy Transition</p>
       <div class="publication-links"><a href="https://openreview.net/forum?id=ary7hTgqkx" target="_blank" rel="noopener"><span>PAPER</span>OpenReview ↗</a><a class="jump-demo" href="#capital-sensitivity">Explore the paper’s results ↓</a></div>
@@ -126,7 +126,7 @@
     </section>
 
     <section class="chapter wrap paper-chapter" id="verify" data-study="solar">
-      <div class="chapter-label"><span class="section-number">03</span><span>SHANGHAI / SOLARCHAIN</span><span class="time-label">05–11 MIN</span></div>
+      <div class="chapter-label"><span class="section-number">03</span><span>SHANGHAI / SOLARCHAIN</span></div>
       <div class="chapter-heading"><h2>Checking the reports<br><em>before settlement.</em></h2><p>SolarChain follows a solar generation report through verification, human review, and market settlement. We wanted to see where a false report could enter the system and what evidence a reviewer would have.</p></div>
       <p class="article-title">SolarChain: A Physics-Grounded Embodied IoT System for Verifiable Urban Solar Market Design</p>
       <div class="publication-links"><a href="https://scholars.duke.edu/publication/1828101" target="_blank" rel="noopener"><span>PAPER</span>Duke Scholars ↗</a><a href="https://github.com/Global-Nomad-Nexus/SolarSave" target="_blank" rel="noopener">Code &amp; materials ↗</a><a class="jump-demo" href="#solar-city">Inspect a report ↓</a><a class="jump-demo" href="#allocation-lab">Compare allocations ↓</a></div>
@@ -173,12 +173,12 @@
     </section>
 
     <section class="learn-band" id="learn" data-study="eval"><div class="wrap chapter">
-      <div class="chapter-label"><span class="section-number">04</span><span>JEJU / SOLARCHAIN-EVAL</span><span class="time-label">11–22 MIN</span></div>
+      <div class="chapter-label"><span class="section-number">04</span><span>JEJU / SOLARCHAIN-EVAL</span></div>
       <div class="chapter-heading"><h2>Training a policy<br><em>for the solar market.</em></h2><p>SolarChain-Eval gives an agent control over hourly market parameters. We compare its trading performance with physical risk and examine how its behavior changes when we remove a penalty or add an auditor.</p></div>
       <p class="article-title">SolarChain-Eval: A Physics-Constrained Benchmark for Trustworthy Economic Agents in Decentralized Energy Markets</p>
       <div class="publication-links"><a href="https://openreview.net/forum?id=XcWTS5iVvY" target="_blank" rel="noopener"><span>PAPER</span>OpenReview ↗</a><a href="https://github.com/Global-Nomad-Nexus/SolarChain-Eval" target="_blank" rel="noopener">Code &amp; materials ↗</a><a class="jump-demo" href="#energy-playground">Try one market step ↓</a><a class="jump-demo" href="#spatial-lab">Explore the rollouts ↓</a></div>
     <section class="atlas-primer" id="rl-basics">
-      <div class="chapter-label"><span class="section-number">RL</span><span>BACKGROUND / REINFORCEMENT LEARNING</span><span class="time-label">11–16 MIN</span></div>
+      <div class="chapter-label"><span class="section-number">RL</span><span>BACKGROUND / REINFORCEMENT LEARNING</span></div>
       <div class="chapter-heading"><h2>Learning from<br><em>decisions and feedback.</em></h2><p>A forecasting model estimates tomorrow’s generation. A reinforcement learning agent chooses an action, observes what happens, and uses the feedback to improve its policy. The action can change the situation it faces next.</p></div>
       <div class="video-layout"><div class="video-frame" id="rl-video-frame"><button class="video-launch" id="load-rl-video" aria-label="Play Udacity’s complete Reinforcement Learning Basics video, about two and a half minutes"><svg class="video-loop-art" viewBox="0 0 560 220" aria-hidden="true"><defs><marker id="video-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 10 5 0 10Z" fill="#83b9ed"/></marker></defs><path d="M160 82 Q280 5 400 82 M400 132 Q280 210 160 132" fill="none" stroke="#83b9ed" stroke-width="1.5" marker-end="url(#video-arrow)"/><rect x="43" y="73" width="125" height="68" rx="10"/><rect x="392" y="73" width="125" height="68" rx="10"/><text x="105" y="114" text-anchor="middle">Agent</text><text x="455" y="114" text-anchor="middle">Environment</text><text class="loop-art-label" x="280" y="41" text-anchor="middle">ACTION</text><text class="loop-art-label" x="280" y="196" text-anchor="middle">STATE + REWARD</text></svg><span class="video-play">▷</span><span class="video-kicker">UDACITY / HAND-DRAWN INTRODUCTION</span><strong>Reinforcement Learning<br>Basics</strong><span>2½ min · full video</span></button></div><div class="video-context"><span class="eyebrow">A SHORT INTRODUCTION</span><h3>Learning through<br>action and feedback.</h3><p>Udacity draws the exchange between an agent and its environment: an action changes the situation, and the environment returns a new state and a reward. Watch for the two directions of that exchange.</p><p class="video-credit">Complete short lesson, approximately 2½ minutes.<br>English captions are available in the player.</p><a href="https://www.youtube.com/watch?v=2xATEwcRpy8" target="_blank" rel="noopener">Watch on YouTube ↗</a><button id="reset-rl-video" hidden>Return to video cover</button></div></div>
 
@@ -196,7 +196,7 @@
       <p class="reading-note">Background reading: <a href="https://huggingface.co/learn/deep-rl-course/unit1/rl-framework" target="_blank" rel="noopener">Hugging Face’s RL framework</a> and the <a href="https://huggingface.co/learn/deep-rl-course/unit1/exp-exp-tradeoff" target="_blank" rel="noopener">exploration/exploitation discussion</a>. Algorithm papers appear below.</p>
     </section>
 
-<section class="atlas-benchmark" id="benchmark"><div class="content-heading"><span class="eyebrow">16–22 MIN / THE EXPERIMENTS</span><h3>Putting the learning problem into the market</h3></div>      <div class="mdp-strip"><div><span>STATE</span><strong>What is happening?</strong><small>Supply, demand, liquidity, risk</small></div><b aria-hidden="true">→</b><div><span>ACTION</span><strong>What should we do?</strong><small>Reward share, liquidity, burn</small></div><b aria-hidden="true">→</b><div><span>REWARD</span><strong>What counts as success?</strong><small>Market utility − risk penalties</small></div><b aria-hidden="true">↻</b></div>
+<section class="atlas-benchmark" id="benchmark"><div class="content-heading"><span class="eyebrow">THE EXPERIMENTS</span><h3>Putting the learning problem into the market</h3></div>      <div class="mdp-strip"><div><span>STATE</span><strong>What is happening?</strong><small>Supply, demand, liquidity, risk</small></div><b aria-hidden="true">→</b><div><span>ACTION</span><strong>What should we do?</strong><small>Reward share, liquidity, burn</small></div><b aria-hidden="true">→</b><div><span>REWARD</span><strong>What counts as success?</strong><small>Market utility − risk penalties</small></div><b aria-hidden="true">↻</b></div>
       <p class="benchmark-bridge">The first prototype excludes rejected reports from its settlement trace. This benchmark separately models how much suspicious supply an action backs, so we can measure the risk a policy supports under different incentives.</p>
       <div class="table-scroll"><table class="research-table formulation-table"><caption>The RL formulation used in the paper.</caption><thead><tr><th scope="col">Component</th><th scope="col">In SolarChain-Eval</th><th scope="col">Why it is included</th></tr></thead><tbody><tr><th scope="row">State</th><td>Time of day, verified/reported generation, physical bound, demand gap, liquidity, price, risk, slippage, and previous allocations.</td><td>The controller needs to respond to the current market and its recent decisions.</td></tr><tr><th scope="row">Action</th><td>Producer reward share α, liquidity support ℓ, and burn rate b. The allocation satisfies α + ℓ ≤ 0.98.</td><td>These parameters change market backing, trading, and the next hour’s liquidity.</td></tr><tr><th scope="row">Episode</th><td>A 24-hour market cycle starting at the beginning of a day.</td><td>Policies face the transition from daylight generation to later demand.</td></tr></tbody></table></div>
       <details class="discussion-prompt"><summary>Which learning algorithms did we use? <span>+</span></summary><div class="algorithm-notes"><div><h4>PPO</h4><p>Updates a policy from newly collected rollouts, using a clipped objective that discourages large policy changes. Here it chooses continuous market parameters.</p><a href="https://arxiv.org/abs/1707.06347" target="_blank" rel="noopener">Schulman et al., 2017 ↗</a></div><div><h4>SAC</h4><p>An actor-critic method that learns from replayed experience and includes an entropy objective. It also uses continuous actions here.</p><a href="https://arxiv.org/abs/1801.01290" target="_blank" rel="noopener">Haarnoja et al., 2018 ↗</a></div><div><h4>DQN</h4><p>Learns action values. We give it a discrete grid of 5 × 5 × 5 = 125 combinations of the same three market parameters.</p><a href="https://arxiv.org/abs/1312.5602" target="_blank" rel="noopener">Mnih et al., 2013 ↗</a></div></div></details>
@@ -251,7 +251,7 @@
     </div></section>
 
     <section class="chapter wrap paper-chapter virel-section" id="virel" data-study="virel">
-      <div class="chapter-label"><span class="section-number">05</span><span>RIO DE JANEIRO / MEASUREMENT</span><span class="time-label">22–27 MIN</span></div>
+      <div class="chapter-label"><span class="section-number">05</span><span>RIO DE JANEIRO / MEASUREMENT</span></div>
       <div class="chapter-heading" id="virel-study"><h2>The resources<br><em>behind an answer.</em></h2><p>ViRel-Budget studies how much visual computation a vision-language model can skip while preserving its answer behavior. We compare inference choices, reliability, and measured GPU energy.</p></div>
       <p class="article-title">ViRel-Budget: Reliability-Constrained Visual-Token Budgeting for Green Vision-Language Inference</p>
       <div class="publication-links"><a href="https://dl.acm.org/doi/10.1145/3840750.3841450" target="_blank" rel="noopener"><span>PAPER</span>ACM proceedings ↗</a><a href="https://github.com/SeanWan514/ViRel-Budget" target="_blank" rel="noopener">Code &amp; materials ↗</a><a class="jump-demo" href="#virel-results">Compare GPU measurements ↓</a></div>
@@ -273,7 +273,7 @@
     </section>
 
     <section class="chapter wrap future-section" id="future">
-      <div class="chapter-label"><span class="section-number">06</span><span>ONGOING WORK / WEB AI INFRASTRUCTURE</span><span class="time-label">27–28 MIN</span></div>
+      <div class="chapter-label"><span class="section-number">06</span><span>ONGOING WORK / WEB AI INFRASTRUCTURE</span></div>
       <div class="chapter-heading"><h2>Who bears<br><em>the cost?</em></h2><p>Our ongoing project studies placement of Web AI requests on user-side and institutional GPUs. A runtime constraint can change a proposed placement before execution, shifting energy use and reference charges between the two parties.</p></div>
       <figure class="full-figure cost-figure" id="cost-architecture"><button class="image-button" data-image="assets/cost-placement.png" data-caption="Who Bears the Cost? · project diagram tracing visible inputs, deterministic runtime repair, and party-level accounts."><img src="assets/cost-placement.png" alt="Who Bears the Cost project diagram: visible inputs, runtime repair, and allocation of GPU energy and reference charges" loading="lazy" width="2400" height="977"></button><figcaption><span>FUTURE RESEARCH</span> Follow the proposed action, the executed action, and the account assigned to each party.</figcaption></figure>
       <section class="placement-story" id="routing-lab" aria-label="Web AI placement and who bears its resource cost">
@@ -286,7 +286,7 @@
     </section>
 
     <section class="discussion-section conclusion-section" id="discussion"><div class="wrap">
-      <div class="eyebrow">07 / CONCLUSION · 28–30 MIN</div>
+      <div class="eyebrow">07 / CONCLUSION</div>
       <div class="conclusion-layout"><div><h2>What we choose<br><em>to learn.</em></h2><p class="conclusion-deck">The model’s boundaries are part of the research question.</p></div><div class="conclusion-prose"><p>A model works with a representation of a problem: fuel prices as predictors, a generation report as evidence, physical risk as a penalty, or visual reliance as an evaluation label. Each representation makes some differences measurable and leaves others outside the analysis. Choosing which differences matter draws on both empirical evidence and the experience of the people affected.</p><p>For social science, this brings the people affected by a model into the definition of the task. A false rejection can change a producer’s payment. A reward weight can favor participation or shared liquidity. An inference policy can shift resource use between devices. Following these effects across participants gives an aggregate score its social meaning.</p><p>Machine learning gives us ways to examine such choices empirically. We can test a representation in another setting, alter an incentive, measure an intervention, or trace where a cost went. The resulting evidence can inform a decision about how the system should be used, alongside the priorities and experience of the people who use it.</p></div></div>
       <div class="conclusion-question"><span>FOR THE DISCUSSION</span><p>If you changed one assumption in these studies, whose outcome would you expect to change first?</p></div>
       <div class="discussion-bottom"><p>Thank you. I’d be glad to return to any study.</p><a class="back-to-atlas" href="#journey">↖ Return to the Research Atlas</a></div>
